@@ -118,6 +118,14 @@ function FS25_EnhancedVehicle:new(mission, modDirectory, modName, i18n, gui, inp
 
   FS25_EnhancedVehicle.hl_distances = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -12, -14, -16, -18, -20 }
 
+  FS25_EnhancedVehicle.functionsConfig = {
+    differential = { key = "diffIsEnabled",         var = "functionDiffIsEnabled",         default = true },
+    hydraulic    = { key = "hydraulicIsEnabled",    var = "functionHydraulicIsEnabled",    default = true },
+    snap         = { key = "snapIsEnabled",         var = "functionSnapIsEnabled",         default = true },
+    park         = { key = "parkingBrakeIsEnabled", var = "functionParkingBrakeIsEnabled", default = true },
+    odometer     = { key = "odoMeterIsEnabled",     var = "functionOdoMeterIsEnabled",     default = true }
+  }
+
   -- load sound effects
   if g_dedicatedServerInfo == nil then
     local file, id
@@ -228,25 +236,12 @@ end
 -- ###  state: true or false
 
 function FS25_EnhancedVehicle:functionEnable(name, state)
-  if name == "differential" then
-    lC:setConfigValue("global.functions", "diffIsEnabled", state)
-    FS25_EnhancedVehicle.functionDiffIsEnabled = state
-  end
-  if name == "hydraulic" then
-    lC:setConfigValue("global.functions", "hydraulicIsEnabled", state)
-    FS25_EnhancedVehicle.functionHydraulicIsEnabled = state
-  end
-  if name == "snap" then
-    lC:setConfigValue("global.functions", "snapIsEnabled", state)
-    FS25_EnhancedVehicle.functionSnapIsEnabled = state
-  end
-  if name == "park" then
-    lC:setConfigValue("global.functions", "parkingBrakeIsEnabled", state)
-    FS25_EnhancedVehicle.functionParkingBrakeIsEnabled = state
-  end
-  if name == "odometer" then
-    lC:setConfigValue("global.functions", "odoMeterIsEnabled", state)
-    FS25_EnhancedVehicle.functionOdoMeterIsEnabled = state
+  EnsureBoolean(state)
+  
+  local config = FS25_EnhancedVehicle.functionsConfig[name]
+  if config then
+    lC:setConfigValue("global.functions", config.key, state)
+    FS25_EnhancedVehicle[config.var] = state
   end
 end
 
@@ -256,23 +251,12 @@ end
 -- ###  returns true or false
 
 function FS25_EnhancedVehicle:functionStatus(name)
-  if name == "differential" then
-    return(lC:getConfigValue("global.functions", "diffIsEnabled"))
+  local config = FS25_EnhancedVehicle.functionsConfig[name]
+  if config then
+    return lC:getConfigValue("global.functions", config.key)
+  else
+    return nil
   end
-  if name == "hydraulic" then
-    return(lC:getConfigValue("global.functions", "hydraulicIsEnabled"))
-  end
-  if name == "snap" then
-    return(lC:getConfigValue("global.functions", "snapIsEnabled"))
-  end
-  if name == "park" then
-    return(lC:getConfigValue("global.functions", "parkingBrakeIsEnabled"))
-  end
-  if name == "odometer" then
-    return(lC:getConfigValue("global.functions", "odoMeterIsEnabled"))
-  end
-
-  return(nil)
 end
 
 -- #############################################################################
@@ -281,11 +265,11 @@ function FS25_EnhancedVehicle:activateConfig()
   -- here we will "move" our config from the libConfig internal storage to the variables we actually use
 
   -- functions
-  FS25_EnhancedVehicle.functionDiffIsEnabled         = lC:getConfigValue("global.functions", "diffIsEnabled")
-  FS25_EnhancedVehicle.functionHydraulicIsEnabled    = lC:getConfigValue("global.functions", "hydraulicIsEnabled")
-  FS25_EnhancedVehicle.functionSnapIsEnabled         = lC:getConfigValue("global.functions", "snapIsEnabled")
-  FS25_EnhancedVehicle.functionParkingBrakeIsEnabled = lC:getConfigValue("global.functions", "parkingBrakeIsEnabled")
-  FS25_EnhancedVehicle.functionOdoMeterIsEnabled     = lC:getConfigValue("global.functions", "odoMeterIsEnabled")
+  FS25_EnhancedVehicle.functionDiffIsEnabled         = FS25_EnhancedVehicle:functionStatus("diffIsEnabled")
+  FS25_EnhancedVehicle.functionHydraulicIsEnabled    = FS25_EnhancedVehicle:functionStatus("hydraulicIsEnabled")
+  FS25_EnhancedVehicle.functionSnapIsEnabled         = FS25_EnhancedVehicle:functionStatus("snapIsEnabled")
+  FS25_EnhancedVehicle.functionParkingBrakeIsEnabled = FS25_EnhancedVehicle:functionStatus("parkingBrakeIsEnabled")
+  FS25_EnhancedVehicle.functionOdoMeterIsEnabled     = FS25_EnhancedVehicle:functionStatus("odoMeterIsEnabled")
 
   -- globals
   FS25_EnhancedVehicle.showKeysInHelpMenu  = lC:getConfigValue("global.misc", "showKeysInHelpMenu")
@@ -346,12 +330,10 @@ function FS25_EnhancedVehicle:resetConfig(disable)
   lC:clearConfig()
 
   -- functions
-  lC:addConfigValue("global.functions", "diffIsEnabled",         "bool", true)
-  lC:addConfigValue("global.functions", "hydraulicIsEnabled",    "bool", true)
-  lC:addConfigValue("global.functions", "snapIsEnabled",         "bool", true)
-  lC:addConfigValue("global.functions", "parkingBrakeIsEnabled", "bool", true)
-  lC:addConfigValue("global.functions", "odoMeterIsEnabled",     "bool", true)
-
+  for _, config in pairs(FS25_EnhancedVehicle.functionsConfig) do
+    lC:addConfigValue("global.functions", config.key, "bool", config.default)
+  end
+  
   -- globals
   lC:addConfigValue("global.misc", "showKeysInHelpMenu", "bool",   true)
   lC:addConfigValue("global.misc", "soundIsOn", "bool",            true)
@@ -1424,10 +1406,7 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
     if actionName == "FS25_EnhancedVehicle_ODO_MODE" then
       if g_currentMission.time < FS25_EnhancedVehicle.nextActionTime + 1000 then
         -- switch odo mode (odo <-> trip)
-        self.vData.want[16] = self.vData.want[16] + 1
-        if self.vData.want[16] > 1 then
-          self.vData.want[16] = 0
-        end
+        self.vData.want[16] = (self.vData.want[16] + 1) % 2
         if self.isClient and not self.isServer then
           self.vData.is[16] = self.vData.want[16]
         end
@@ -1708,7 +1687,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
         if snapToAngle == 0 or snapToAngle == 1 or snapToAngle < 0 or snapToAngle >= 360 then
           snapToAngle = self.vData.rot
         end
-        self.vData.want[4] = Round(closestAngle(self.vData.rot, snapToAngle), 0)
+        self.vData.want[4] = Round(ClosestAngle(self.vData.rot, snapToAngle), 0)
         if (self.vData.want[4] ~= self.vData.want[4]) then
           self.vData.want[4] = 0
         end
@@ -1737,7 +1716,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
 
           -- when facing "backwards" -> flip grid
           if diffdeg < -90 or diffdeg > 90 then
-            rot2 = AngleFix(rot2 + 180)
+            rot2 = NormalizeAngle(rot2 + 180)
           end
           FS25_EnhancedVehicle:updateTrack(self, true, rot2, false, 0, true, 0, 0)
           self.vData.want[4] = rot2
@@ -2073,7 +2052,7 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
 
       -- if cabin is rotated -> angle should rotate also
       if self.spec_drivable.reverserDirection < 0 then
-        _rot = AngleFix(_rot + 180)
+        _rot = NormalizeAngle(_rot + 180)
       end
       _rot = Round(_rot, 1)
 
@@ -2082,7 +2061,7 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
       if snapToAngle <= 1 or snapToAngle >= 360 then
         snapToAngle = _rot
       end
-      _rot = Round(closestAngle(_rot, snapToAngle), 0)
+      _rot = Round(ClosestAngle(_rot, snapToAngle), 0)
     else -- use provided angle
       _rot = updateAngleValue
     end
@@ -2403,7 +2382,15 @@ end
 
 -- #############################################################################
 
-function closestAngle(n,m)
+function EnsureBoolean(param)
+  if type(param) ~= "boolean" then
+    error("Expected boolean, got " .. type(param))
+  end
+end
+
+-- #############################################################################
+
+function ClosestAngle(n,m)
   local q = math.floor(n/m)
   local n1 = m*q
   local n2 = m*(q+1)
@@ -2433,15 +2420,8 @@ end
 -- #############################################################################
 -- # make sure an angle is >= 0 and < 360
 
-function AngleFix(a)
-  while a < 0 do
-    a = a + 360
-  end
-  while a >= 360 do
-    a = a - 360
-  end
-
-  return a
+function NormalizeAngle(a)
+  return (a % 360 + 360) % 360
 end
 
 -- #############################################################################

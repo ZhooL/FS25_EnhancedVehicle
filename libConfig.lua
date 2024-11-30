@@ -8,59 +8,47 @@
 
 -- #############################################################################
 
-local myName = "libConfig"
-
-libConfig = {}
-libConfig.__index = libConfig
-
-setmetatable(libConfig, {
-  __call = function (cls, ...)
-  local self = setmetatable({}, cls)
-
-  self.debug = 0
-  self:new(...)
-
-  return self
-  end,
-})
+LibConfig = {
+  myName = "libConfig",
+  logger = LibUtils.Logger,
+  configSetName = nil
+}
+LibConfig.__index = LibConfig
 
 -- #############################################################################
 
-function libConfig:new(myName, configVersionCurrent, configVersionOld)
-  if self.debug > 0 then print("-> libConfig: new()") end
-
-  self.myName = myName
-  self.configVersionCurrent = configVersionCurrent
-  self.configVersionOld     = configVersionOld
+function LibConfig:new(configSetName, configVersionCurrent, configVersionOld, logLevel)
+  local logger = LibUtils.Logger:new(logLevel or LibUtils.Logger.LEVEL.OFF)
+  local instance = setmetatable({}, self)
+  instance.logger = logger
+  logger.info(LibConfig.myName .. ": new()")
 
   -- some stuff we need
-  self.modDirectory      = g_currentModDirectory
-  self.settingsDirectory = getUserProfileAppPath() .. "modSettings/"
-  self.confDirectory     = self.settingsDirectory .. self.myName .. "/"
+  instance.configSetName     = configSetName
+  instance.modDirectory      = g_currentModDirectory
+  instance.settingsDirectory = getUserProfileAppPath() .. "modSettings/"
+  instance.confDirectory     = instance.settingsDirectory .. instance.configSetName .. "/"
+  instance.confFileOld       = instance.confDirectory .. instance.configSetName .. "_v" .. configVersionOld .. ".xml"
+  instance.confFileCurrent   = instance.confDirectory .. instance.configSetName .. "_v" .. configVersionCurrent .. ".xml"
 
   -- for storing all the data
+  instance.dataDefault = {}
+  instance.dataCurrent = {}
+  return instance
+end
+
+-- #############################################################################
+
+function LibConfig:clearConfig()
   self.dataDefault = {}
   self.dataCurrent = {}
 end
 
 -- #############################################################################
 
-function libConfig:setDebug(dbg)
-  self.debug = dbg or 0
-end
-
--- #############################################################################
-
-function libConfig:clearConfig()
-  self.dataDefault = {}
-  self.dataCurrent = {}
-end
-
--- #############################################################################
-
-function libConfig:addConfigValue(section, name, typ, value, newLine)
-  if self.debug > 0 then print("-> "..myName.." ("..self.myName..") addConfigValue()") end
-  if self.debug > 1 then print("--> section: "..section..", name: "..name..", typ: "..typ..", value: "..tostring(value)) end
+function LibConfig:addConfigValue(section, name, typ, value, newLine)
+  self.logger.debug("-> "..self.myName.." ("..self.configSetName..") addConfigValue()")
+  self.logger.debug("--> section: "..section..", name: "..name..", typ: "..typ..", value: "..tostring(value))
 
   -- create empty table node
   local newData = {}
@@ -74,19 +62,19 @@ function libConfig:addConfigValue(section, name, typ, value, newLine)
   table.insert(self.dataDefault, newData)
   table.insert(self.dataCurrent, newData)
 
-  if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
+  self.logger.trace(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3))
 end
 
 -- #############################################################################
 
-function libConfig:getConfigValue(section, name)
-  if self.debug > 0 then print("-> "..myName.." ("..self.myName..") getConfigValue()") end
-  if self.debug > 1 then print("--> section: "..section..", name: "..name) end
+function LibConfig:getConfigValue(section, name)
+  self.logger.info("-> "..self.myName.." ("..self.configSetName..") getConfigValue()")
+  self.logger.debug("--> section: "..section..", name: "..name)
 
   -- search through data
   for _, data in pairs(self.dataCurrent) do
     if data.section == section and data.name == name then
-      if self.debug > 1 then print("---> typ: "..data.typ..", value: "..tostring(data.value)) end
+      self.logger.debug("---> typ: "..data.typ..", value: "..tostring(data.value))
       return(data.value)
     end
   end
@@ -96,9 +84,9 @@ end
 
 -- #############################################################################
 
-function libConfig:setConfigValue(section, name, value)
-  if self.debug > 0 then print("-> "..myName.." ("..self.myName..") setConfigValue()") end
-  if self.debug > 1 then print("--> section: "..section..", name: "..name..", value: "..tostring(value)) end
+function LibConfig:setConfigValue(section, name, value)
+  self.logger.info("-> "..self.myName.." ("..self.configSetName..") setConfigValue()")
+  self.logger.debug("--> section: "..section..", name: "..name..", value: "..tostring(value))
 
   -- search through data and change value
   for _, data in pairs(self.dataCurrent) do
@@ -110,32 +98,31 @@ function libConfig:setConfigValue(section, name, value)
   -- save changes
   self:writeConfig()
 
-  if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
+  self.logger.trace(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3))
 end
 
 -- #############################################################################
 
-function libConfig:readConfig()
-  if self.debug > 0 then print("-> "..myName.." ("..self.myName..") readConfig()") end
+function LibConfig:readConfig()
+  self.logger.info("-> "..self.myName.." ("..self.configSetName..") readConfig()")
 
   -- skip on dedicated servers
   if g_dedicatedServerInfo ~= nil then
     return
   end
 
-  self.confFile = self.confDirectory .. self.myName .. "_v"..self.configVersionOld..".xml"
-  if self.debug > 1 then print("--> confFile: "..self.confFile) end
-  if not fileExists(self.confFile) then
-    if self.debug > 1 then print("---> not found. trying current version") end
-    self.confFile = self.confDirectory .. self.myName .. "_v"..self.configVersionCurrent..".xml"
-    if self.debug > 1 then print("--> confFile: "..self.confFile) end
-    if not fileExists(self.confFile) then
-      if self.debug > 1 then print("---> not found. that's bad. no config file at all") end
+  local confFile = self.confFileOld
+  self.logger.debug("--> trying old confFile", "confFile", confFile)
+  if not fileExists(confFile) then
+    self.logger.debug("---> not found. trying current version", "confFileCurrent", self.confFileCurrent)
+    confFile = self.confFileCurrent
+    if not fileExists(confFile) then
+      self.logger.debug("---> not found. that's bad. no config file at all")
       return
     end
   end
 
-  local xml = loadXMLFile(self.myName, self.confFile, self.myName)
+  local xml = loadXMLFile(self.configSetName, confFile, self.configSetName)
   local pos = {}
   -- sort our data by sections
   local sortedKeys = self:getKeysSortedByValue(self.dataCurrent, function(a, b) return a.section < b.section end)
@@ -146,7 +133,7 @@ function libConfig:readConfig()
     if pos[group] ==  nil then
       pos[group] = 0
     end
-    local groupNameTag = string.format("%s.%s(%d)", self.myName, group, pos[group])
+    local groupNameTag = string.format("%s.%s(%d)", self.configSetName, group, pos[group])
     if data.newLine then
       pos[group] = pos[group] + 1
     end
@@ -167,8 +154,8 @@ end
 
 -- #############################################################################
 
-function libConfig:writeConfig()
-  if self.debug > 0 then print("-> "..myName.." ("..self.myName..") writeConfig()") end
+function LibConfig:writeConfig()
+  self.logger.info("-> "..self.myName.." ("..self.configSetName..") writeConfig()")
 
   -- skip on dedicated servers
   if g_dedicatedServerInfo ~= nil then
@@ -176,22 +163,20 @@ function libConfig:writeConfig()
   end
 
   -- if old version exists -> delete it
-  self.confFile = self.confDirectory .. self.myName .. "_v"..self.configVersionOld..".xml"
-  if self.debug > 1 then print("--> confFile: "..self.confFile) end
-  if fileExists(self.confFile) then
-    if self.debug > 1 then print("---> found. deleting") end
+  self.logger.info("--> trying to delete old confFile", "confFileOld", self.confFileOld)
+  if fileExists(self.confFileOld) then
+    self.logger.info("---> found. deleting")
     -- TODO
   end
 
   -- new file
-  self.confFile = self.confDirectory .. self.myName .. "_v"..self.configVersionCurrent..".xml"
-  if self.debug > 1 then print("--> confFile: "..self.confFile) end
+  self.logger.info("--> writing to current confFile", "confFileCurrent", self.confFileCurrent, "confDirectory", self.confDirectory, "settingsDirectory", self.settingsDirectory)
 
   -- create folders
   createFolder(self.settingsDirectory)
   createFolder(self.confDirectory);
 
-  local xml = createXMLFile(self.myName, self.confFile, self.myName)
+  local xml = createXMLFile(self.confDirectory, self.confFileCurrent, self.confDirectory)
   local pos = {}
   -- sort our data by sections and name (inside a section)
   local sortedKeys = self:getKeysSortedByValue(self.dataCurrent, function(a, b) return a.section..a.name < b.section..b.name end)
@@ -202,7 +187,7 @@ function libConfig:writeConfig()
     if pos[group] ==  nil then
       pos[group] = 0
     end
-    local groupNameTag = string.format("%s.%s(%d)", self.myName, group, pos[group])
+    local groupNameTag = string.format("%s.%s(%d)", self.configSetName, group, pos[group])
     if data.newLine then
       pos[group] = pos[group] + 1
     end
@@ -223,12 +208,12 @@ function libConfig:writeConfig()
   -- write file to disk
   saveXMLFile(xml)
 
-  if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
+  self.logger.trace(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3))
 end
 
 -- #############################################################################
 
-function libConfig:getKeysSortedByValue(tbl, sortFunction)
+function LibConfig:getKeysSortedByValue(tbl, sortFunction)
   local keys = {}
   for key in pairs(tbl) do
     table.insert(keys, key)
@@ -243,7 +228,7 @@ end
 
 -- #############################################################################
 
-function libConfig:splitter(str, pat, limit)
+function LibConfig:splitter(str, pat, limit)
   local t = {}
   local fpat = "(.-)" .. pat
   local last_end = 1

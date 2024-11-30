@@ -8,7 +8,8 @@
 
 -- #############################################################################
 
-debug = 0 -- 0=0ff, 1=some, 2=everything, 3=madness
+-- TODO: remove this after migration to EVLog
+debug = 1
 
 local directory = g_currentModDirectory
 local modName = g_currentModName
@@ -20,13 +21,18 @@ source(Utils.getFilename("ui/FS25_EnhancedVehicle_HUD.lua", directory))
 
 -- include our libUtils
 source(Utils.getFilename("libUtils.lua", g_currentModDirectory))
-lU = libUtils()
-lU:setDebug(0)
+
+-- our global libUtils instance
+lU = LibUtils:new(LibUtils.Logger.LEVEL.OFF)
+
+-- our global logger
+EVLog = lU.Logger:new(LibUtils.Logger.LEVEL.INFO)
 
 -- include our new libConfig XML management
 source(Utils.getFilename("libConfig.lua", g_currentModDirectory))
-lC = libConfig("FS25_EnhancedVehicle", 1, 0)
-lC:setDebug(0)
+
+-- our global libConfig instance
+lC = LibConfig:new("FS25_EnhancedVehicle", 1, 0, LibUtils.Logger.LEVEL.OFF)
 
 local EnhancedVehicle
 
@@ -37,7 +43,7 @@ end
 -- #############################################################################
 
 function EV_init()
-  if debug > 1 then print("EV_init()") end
+  EVLog.info("EV_init()")
   
   -- hook into early load
   Mission00.load = Utils.prependedFunction(Mission00.load, EV_load)
@@ -54,7 +60,7 @@ end
 -- #############################################################################
 
 function EV_load(mission)
-  if debug > 1 then print("EV_load()") end
+  EVLog.info("EV_load()")
   
   -- create our EV class
   assert(g_EnhancedVehicle == nil)
@@ -69,7 +75,7 @@ end
 -- #############################################################################
 
 function EV_unload()
-  if debug > 1 then print("EV_unload()") end
+  EVLog.info("EV_unload()")
 
   if not isEnabled() then
     return
@@ -85,7 +91,7 @@ end
 -- #############################################################################
 
 function EV_loadedMission(mission)
-  if debug > 1 then print("EV_load()") end
+  EVLog.info("EV_load()")
 
   if not isEnabled() then
     return
@@ -101,8 +107,8 @@ end
 -- #############################################################################
 
 function EV_validateTypes(types)
-  if debug > 1 then print("EV_validateTypes()") end
-    
+  EVLog.info("EV_validateTypes()")
+
   -- attach only to vehicles
   if (types.typeName == 'vehicle') then
     FS25_EnhancedVehicle.installSpecializations(g_vehicleTypeManager, g_specializationManager, directory, modName)
