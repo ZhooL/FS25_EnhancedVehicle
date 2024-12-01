@@ -23,16 +23,16 @@ source(Utils.getFilename("ui/FS25_EnhancedVehicle_HUD.lua", directory))
 source(Utils.getFilename("libUtils.lua", g_currentModDirectory))
 
 -- our global libUtils instance
-lU = LibUtils:new(LibUtils.Logger.LEVEL.OFF)
+lU = LibUtils:new(LibUtils.Logger:new(LibUtils.Logger.LEVEL.OFF))
 
 -- our global logger
-EVLog = lU.Logger:new(LibUtils.Logger.LEVEL.INFO)
+EVLog = LibUtils.Logger:new(LibUtils.Logger.LEVEL.INFO)
 
 -- include our new libConfig XML management
 source(Utils.getFilename("libConfig.lua", g_currentModDirectory))
 
 -- our global libConfig instance
-lC = LibConfig:new("FS25_EnhancedVehicle", 1, 0, LibUtils.Logger.LEVEL.OFF)
+lC = LibConfig:new("FS25_EnhancedVehicle", 1, 0, LibUtils.Logger:new(LibUtils.Logger.LEVEL.OFF))
 
 local EnhancedVehicle
 
@@ -43,7 +43,7 @@ end
 -- #############################################################################
 
 function EV_init()
-  EVLog.info("EV_init()")
+  EVLog:info("EV_init()")
   
   -- hook into early load
   Mission00.load = Utils.prependedFunction(Mission00.load, EV_load)
@@ -60,7 +60,7 @@ end
 -- #############################################################################
 
 function EV_load(mission)
-  EVLog.info("EV_load()")
+  EVLog:info("EV_load()")
   
   -- create our EV class
   assert(g_EnhancedVehicle == nil)
@@ -75,7 +75,7 @@ end
 -- #############################################################################
 
 function EV_unload()
-  EVLog.info("EV_unload()")
+  EVLog:info("EV_unload()")
 
   if not isEnabled() then
     return
@@ -91,7 +91,7 @@ end
 -- #############################################################################
 
 function EV_loadedMission(mission)
-  EVLog.info("EV_load()")
+  EVLog:info("EV_load()")
 
   if not isEnabled() then
     return
@@ -107,7 +107,7 @@ end
 -- #############################################################################
 
 function EV_validateTypes(types)
-  EVLog.info("EV_validateTypes()")
+  EVLog:info("EV_validateTypes()")
 
   -- attach only to vehicles
   if (types.typeName == 'vehicle') then

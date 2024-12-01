@@ -16,11 +16,10 @@ LibUtils.__index = LibUtils
 
 -- #############################################################################
 
-function LibUtils:new(logLevel)
-  local logger = LibUtils.Logger:new(logLevel or LibUtils.Logger.LEVEL.OFF)
+function LibUtils:new(logger)
+  logger.info(LibUtils.myName .. ": new()")
   local instance = setmetatable({}, self)
   instance.logger = logger
-  logger.info(LibUtils.myName .. ": new()")
   return instance
 end
 
@@ -41,10 +40,9 @@ LibUtils.Logger = {
     TRACE = {intValue = 3, name = "TRACE"}
   },
 
-  level = LibUtils.LEVEL.OFF,
+  level = LibUtils.Logger.LEVEL.OFF,
 
   new = function(self, level)
-    self.logger.info("Logger: new()")
     local instance = setmetatable({}, self)
     instance.level = level
     return instance

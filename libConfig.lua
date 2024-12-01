@@ -17,11 +17,10 @@ LibConfig.__index = LibConfig
 
 -- #############################################################################
 
-function LibConfig:new(configSetName, configVersionCurrent, configVersionOld, logLevel)
-  local logger = LibUtils.Logger:new(logLevel or LibUtils.Logger.LEVEL.OFF)
+function LibConfig:new(configSetName, configVersionCurrent, configVersionOld, logger)
+  logger.info(LibConfig.myName .. ": new()")
   local instance = setmetatable({}, self)
   instance.logger = logger
-  logger.info(LibConfig.myName .. ": new()")
 
   -- some stuff we need
   instance.configSetName     = configSetName
