@@ -38,7 +38,8 @@
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: front hydraulic up/down"/>
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: front hydraulic on/off"/>
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: front hydraulic unfold/fold"/>
-    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: open config menu"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: global configuration"/>
+    <text name="input_FS25_EnhancedVehicle_MENU_HUD"        text="EV: track assistant settings"/>
     <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Apply/release parking brake"/>
     <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Toggle/reset mileage display mode"/>
 

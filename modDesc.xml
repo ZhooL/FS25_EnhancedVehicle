@@ -2,7 +2,7 @@
 <modDesc descVersion="92">
   <author>Majo76</author>
 
-  <version>1.1.2.0</version>
+  <version>1.2.0.0</version>
 
   <title>
     <de>EnhancedVehicle</de>
@@ -22,6 +22,7 @@
 
   <actions>
     <action name="FS25_EnhancedVehicle_MENU"            />
+    <action name="FS25_EnhancedVehicle_MENU_HUD"        />
     <action name="FS25_EnhancedVehicle_PARK"            />
     <action name="FS25_EnhancedVehicle_SNAP_ONOFF"      />
     <action name="FS25_EnhancedVehicle_SNAP_REVERSE"    />
@@ -56,6 +57,9 @@
     <actionBinding action="FS25_EnhancedVehicle_MENU">
       <binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl KEY_KP_divide" axisComponent="+" inputComponent="+" index="1"/>
       <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_KP_divide" axisComponent="+" inputComponent="+" index="1"/>
+    </actionBinding>
+    <actionBinding action="FS25_EnhancedVehicle_MENU_HUD">
+      <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_end" axisComponent="+" inputComponent="+" index="1"/>
     </actionBinding>
     <actionBinding action="FS25_EnhancedVehicle_PARK">
       <binding device="KB_MOUSE_DEFAULT" input="KEY_KP_enter" axisComponent="+" inputComponent="+" index="1"/>

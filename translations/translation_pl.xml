@@ -39,6 +39,7 @@
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Przedni hydrauliczny wł/wył"/>
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: front hydraulic unfold/fold"/>
     <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Otwórz menu konfiguracyjne"/>
+    <text name="input_FS25_EnhancedVehicle_MENU_HUD"        text="EV: track assistant settings"/>
     <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Zaciągnij/zwolnij hamulec postojowy"/>
     <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Przełącz/resetuj tryb wyświetlania przebiegu"/>
 

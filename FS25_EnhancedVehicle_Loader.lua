@@ -15,7 +15,8 @@ local modName = g_currentModName
 
 source(Utils.getFilename("FS25_EnhancedVehicle.lua", directory))
 source(Utils.getFilename("FS25_EnhancedVehicle_Event.lua", directory))
-source(Utils.getFilename("ui/FS25_EnhancedVehicle_UI.lua", directory))
+source(Utils.getFilename("ui/FS25_EnhancedVehicle_DialogSettings.lua", directory))
+source(Utils.getFilename("ui/FS25_EnhancedVehicle_DialogHUD.lua", directory))
 source(Utils.getFilename("ui/FS25_EnhancedVehicle_HUD.lua", directory))
 
 -- include our libUtils

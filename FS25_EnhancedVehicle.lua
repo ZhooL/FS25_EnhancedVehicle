@@ -58,7 +58,8 @@ function FS25_EnhancedVehicle:new(mission, modDirectory, modName, i18n, gui, inp
   FS25_EnhancedVehicle.fS = g_currentMission.hud.speedMeter:scalePixelToScreenHeight(12)
   FS25_EnhancedVehicle.sections = { 'fuel', 'dmg', 'misc', 'rpm', 'temp', 'diff', 'track', 'park', 'odo' }
   FS25_EnhancedVehicle.actions = {}
-  FS25_EnhancedVehicle.actions.global =    { 'FS25_EnhancedVehicle_MENU' }
+  FS25_EnhancedVehicle.actions.global =    { 'FS25_EnhancedVehicle_MENU',
+                                             'FS25_EnhancedVehicle_MENU_HUD' }
   FS25_EnhancedVehicle.actions.park =      { 'FS25_EnhancedVehicle_PARK' }
   FS25_EnhancedVehicle.actions.odo =       { 'FS25_EnhancedVehicle_ODO_MODE' }
   FS25_EnhancedVehicle.actions.snap =      { 'FS25_EnhancedVehicle_SNAP_ONOFF',
@@ -137,8 +138,9 @@ end
 function FS25_EnhancedVehicle:delete()
   if debug > 1 then print("-> " .. myName .. ": delete ") end
 
-  -- delete our UI
-  FS25_EnhancedVehicle.ui_menu:delete()
+  -- delete our dialogs
+  FS25_EnhancedVehicle.ui_DialogSettings:delete()
+  FS25_EnhancedVehicle.ui_DialogHUD:delete()
 
   -- delete our HUD
   FS25_EnhancedVehicle.ui_hud:delete()
@@ -149,9 +151,13 @@ end
 function FS25_EnhancedVehicle:onMissionLoaded(mission)
   if debug > 1 then print("-> " .. myName .. ": onMissionLoaded ") end
 
-  -- create configuration dialog
-  FS25_EnhancedVehicle.ui_menu = FS25_EnhancedVehicle_UI.new()
-  g_gui:loadGui(self.modDirectory.."ui/FS25_EnhancedVehicle_UI.xml", "FS25_EnhancedVehicle_UI", FS25_EnhancedVehicle.ui_menu)
+  -- create settings dialog
+  FS25_EnhancedVehicle.ui_DialogSettings = FS25_EnhancedVehicle_DialogSettings.new()
+  g_gui:loadGui(self.modDirectory.."ui/FS25_EnhancedVehicle_DialogSettings.xml", "FS25_EnhancedVehicle_DialogSettings", FS25_EnhancedVehicle.ui_DialogSettings)
+
+  -- create HUD configuration dialog
+  FS25_EnhancedVehicle.ui_DialogHUD = FS25_EnhancedVehicle_DialogHUD.new()
+  g_gui:loadGui(self.modDirectory.."ui/FS25_EnhancedVehicle_DialogHUD.xml", "FS25_EnhancedVehicle_DialogHUD", FS25_EnhancedVehicle.ui_DialogHUD)
 
   -- create HUD
   FS25_EnhancedVehicle.ui_hud = FS25_EnhancedVehicle_HUD:new(mission.hud.speedMeter, mission.hud.gameInfoDisplay, self.modDirectory)
@@ -1370,6 +1376,7 @@ function FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
   -- help menu priorization
   if g_inputBinding ~= nil and g_inputBinding.events ~= nil and g_inputBinding.events[eventName] ~= nil then
     if actionName == "FS25_EnhancedVehicle_MENU" or
+       actionName == "FS25_EnhancedVehicle_MENU_HUD" or
        actionName == "FS25_EnhancedVehicle_PARK" or
        actionName == "FS25_EnhancedVehicle_SNAP_ONOFF" or
        actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
@@ -1474,10 +1481,10 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if self.spec_motorized and self.spec_motorized:getIsOperating() then
       g_currentMission:showBlinkingWarning(g_i18n:getText("global_FS25_EnhancedVehicle_brakeBlocks"), 1500)
     end
-  elseif actionName == "FS25_EnhancedVehicle_MENU" then
-------------
---    print(DebugUtil.printTableRecursively(self, 0, 0, 2))
-------------
+  elseif actionName == "FS25_EnhancedVehicle_MENU_HUD" then
+    ------------
+    --    print(DebugUtil.printTableRecursively(self, 0, 0, 2))
+    ------------
 
     -- open configuration dialog
     if not self.isClient then
@@ -1486,8 +1493,24 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
 
     if not g_currentMission.isSynchronizingWithPlayers then
       if not g_gui:getIsGuiVisible() then
-        FS25_EnhancedVehicle.ui_menu:setVehicle(self)
-        g_gui:showDialog("FS25_EnhancedVehicle_UI")
+        FS25_EnhancedVehicle.ui_DialogHUD:setVehicle(self)
+        g_gui:showDialog("FS25_EnhancedVehicle_DialogHUD")
+      end
+    end
+  elseif actionName == "FS25_EnhancedVehicle_MENU" then
+    ------------
+    --    print(DebugUtil.printTableRecursively(self, 0, 0, 2))
+    ------------
+
+    -- open configuration dialog
+    if not self.isClient then
+      return
+    end
+
+    if not g_currentMission.isSynchronizingWithPlayers then
+      if not g_gui:getIsGuiVisible() then
+        FS25_EnhancedVehicle.ui_DialogSettings:setVehicle(self)
+        g_gui:showDialog("FS25_EnhancedVehicle_DialogSettings")
       end
     end
   elseif FS25_EnhancedVehicle.functionDiffIsEnabled and actionName == "FS25_EnhancedVehicle_FD" then

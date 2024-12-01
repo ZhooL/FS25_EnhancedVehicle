@@ -1,25 +1,25 @@
 --
--- Mod: FS25_EnhancedVehicle_UI
+-- Mod: FS25_EnhancedVehicle_DialogSettings
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 27.11.2024
--- @Version: 1.1.0.0
+-- @Date: 01.12.2024
+-- @Version: 1.2.0.0
 
-local myName = "FS25_EnhancedVehicle_UI"
+local myName = "FS25_EnhancedVehicle_DialogSettings"
 
-FS25_EnhancedVehicle_UI = {}
-local FS25_EnhancedVehicle_UI_mt = Class(FS25_EnhancedVehicle_UI, ScreenElement)
+FS25_EnhancedVehicle_DialogSettings = {}
+local FS25_EnhancedVehicle_DialogSettings_mt = Class(FS25_EnhancedVehicle_DialogSettings, ScreenElement)
 
 local EV_elements_global = { 'snap', 'diff', 'hydraulic', 'parkingBrake', 'odoMeter' }
 local EV_elements_HUD = { 'fuel', 'dmg', 'misc', 'rpm', 'temp', 'diff', 'track', 'park', 'odo' }
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI.new(target, custom_mt)
+function FS25_EnhancedVehicle_DialogSettings.new(target, custom_mt)
   if debug > 1 then print("-> " .. myName .. ": new ") end
 
-  local self = DialogElement.new(target, custom_mt or FS25_EnhancedVehicle_UI_mt)
+  local self = DialogElement.new(target, custom_mt or FS25_EnhancedVehicle_DialogSettings_mt)
 
   self.vehicle = nil
 
@@ -28,13 +28,13 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:delete()
+function FS25_EnhancedVehicle_DialogSettings:delete()
   if debug > 1 then print("-> " .. myName .. ": delete ") end
 end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:setVehicle(vehicle)
+function FS25_EnhancedVehicle_DialogSettings:setVehicle(vehicle)
   if debug > 1 then print("-> " .. myName .. ": setVehicle ") end
 
   self.vehicle = vehicle
@@ -42,10 +42,10 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onOpen()
+function FS25_EnhancedVehicle_DialogSettings:onOpen()
   if debug > 1 then print("-> " .. myName .. ": onOpen ") end
 
-  FS25_EnhancedVehicle_UI:superClass().onOpen(self)
+  FS25_EnhancedVehicle_DialogSettings:superClass().onOpen(self)
 
   local modName = "FS25_EnhancedVehicle"
 
@@ -164,7 +164,7 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:updateValues()
+function FS25_EnhancedVehicle_DialogSettings:updateValues()
   -- global elements
   for _, v in pairs(EV_elements_global) do
     v3 = v.."Setting"
@@ -219,7 +219,7 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onClickOk()
+function FS25_EnhancedVehicle_DialogSettings:onClickOk()
   if debug > 1 then print("-> " .. myName .. ": onClickOk ") end
 
   -- jump out if no vehicle is present
@@ -300,21 +300,21 @@ function FS25_EnhancedVehicle_UI:onClickOk()
   FS25_EnhancedVehicle.ui_hud:storeScaledValues(true)
 
   -- close screen
-  g_gui:closeDialogByName("FS25_EnhancedVehicle_UI")
+  g_gui:closeDialogByName("FS25_EnhancedVehicle_DialogSettings")
 end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onClickBack()
+function FS25_EnhancedVehicle_DialogSettings:onClickBack()
   if debug > 1 then print("-> " .. myName .. ": onClickBack ") end
 
   -- close screen
-  g_gui:closeDialogByName("FS25_EnhancedVehicle_UI")
+  g_gui:closeDialogByName("FS25_EnhancedVehicle_DialogSettings")
 end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onClickResetConfig()
+function FS25_EnhancedVehicle_DialogSettings:onClickResetConfig()
   if debug > 1 then print("-> " .. myName .. ": onClickResetConfig ") end
 
   FS25_EnhancedVehicle:resetConfig()
@@ -326,7 +326,7 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onClickReloadConfig(p1)
+function FS25_EnhancedVehicle_DialogSettings:onClickReloadConfig(p1)
   if debug > 1 then print("-> " .. myName .. ": onClickReloadConfig ") end
 
   lC:readConfig()
@@ -337,7 +337,7 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle_UI:onTextChanged_SnapAngle(_, text)
+function FS25_EnhancedVehicle_DialogSettings:onTextChanged_SnapAngle(_, text)
   local n = tonumber(text)
   if n ~= nil then
     if n < 0 then n = 10 end

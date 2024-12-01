@@ -39,6 +39,7 @@
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Hydraulique avant on/off"/>
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: Hydraulique avant déplier/plier"/>
     <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Ouvrir menu de configuration"/>
+    <text name="input_FS25_EnhancedVehicle_MENU_HUD"        text="EV: track assistant settings"/>
     <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Appliquer/Relacher le frein de parking"/>
     <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Affichage/reset du compteur kilométrique"/>
 

@@ -39,6 +39,7 @@
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: 前液压 开启/关闭"/>
     <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: front hydraulic unfold/fold"/>
     <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: 切换/重置里程显示模式"/>
+    <text name="input_FS25_EnhancedVehicle_MENU_HUD"        text="EV: track assistant settings"/>
     <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: 应用/释放驻车制动"/>
     <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: 切换/重置里程显示模式"/>
 

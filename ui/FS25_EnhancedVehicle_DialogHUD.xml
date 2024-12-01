@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+  <GuiElement profile="newLayer" />
+  <GuiElement profile="fs25_dialogBg" id="dialogElement" size="1000px 500px">
+    <GuiElement profile="fs25_dialogContentContainer">
+      <Text profile="fs25_dialogTitle" id="guiTitle" text="lala" position="0px -20px"/>
+    </GuiElement>
+
+    <!-- buttons -->
+    <BoxLayout profile="fs25_dialogButtonBox">
+      <Button profile="fs25_EVRedButton" onClick="onClickResetConfig" id="resetConfigButton"/>
+      <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
+
+      <Button profile="buttonBlock" onClick="onClickReloadConfig" id="reloadConfigButton"/>
+      <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
+
+      <Button profile="buttonBack" id="noButton" text="$l10n_button_back" onClick="onClickBack"/>
+      <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
+      <Button profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
+    </BoxLayout>
+  </GuiElement>
+
+  <GUIProfiles>
+    <Profile name="fs25_EVSettingsMultiTextOptionWrapper" extends="baseReference" with="anchorTopStretchingX">
+      <width  value="870px"/>
+      <height value="50px"/>
+    </Profile>
+    <Profile name="fs25_EVMultiTextTitle" extends="fs25_textDefault" with="anchorMiddleLeft">
+      <width    value="570px"/>
+      <textBold value="false"/>
+      <textSize value="18px"/>
+    </Profile>
+    <Profile name="fs25_EVSettingsMultiTextOption"         extends="fs25_settingsMultiTextOption" with="anchorMiddleRight"/>
+    <Profile name="fs25_EVSettingsBinaryOption"            extends="fs25_settingsBinaryOption"    with="anchorMiddleRight"/>
+    <Profile name="fs25_EVSettingsTextInput"               extends="fs25_settingsTextInput"       with="anchorMiddleRight"/>
+    <Profile name="fs25_EVSettingsMultiTextOptionTooltip"  extends="fs25_multiTextOptionTooltip"/>
+    <Profile name="fs25_EVRedButton"                       extends="buttonDelete">
+      <focusOnHighlight     value="true"/>
+      <textColor            value="$preset_colorDarkRed"/>
+      <textHighlightedColor value="$preset_colorRed"/>
+    </Profile>
+  </GUIProfiles>
+</GUI>
