@@ -4,7 +4,7 @@
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
 -- @Date: 01.12.2024
--- @Version: 1.1.2.0
+-- @Version: 1.1.2.1
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -144,8 +144,6 @@ function FS25_EnhancedVehicle_HUD:new(speedMeter, gameInfoDisplay, modDirectory)
 
   -- hook into some original HUD functions
   g_currentMission.hud.sideNotifications.markProgressBarForDrawing = Utils.appendedFunction(g_currentMission.hud.sideNotifications.markProgressBarForDrawing, FS25_EnhancedVehicle_HUD.markProgressBarForDrawing)
-
---  g_currentMission.hud.drawControlledEntityHUD = Utils.appendedFunction(g_currentMission.hud.drawControlledEntityHUD, FS25_EnhancedVehicle_HUD.drawHUD)
 
   return self
 end
@@ -625,6 +623,9 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
 
   -- jump out if we're not ready
   if self.vehicle == nil or not self.speedMeter.isVehicleDrawSafe or g_dedicatedServerInfo ~= nil then return end
+
+  -- jump out if this vehicle does not have the EV spec (e.g. trains)
+  if self.vehicle["spec_FS25_EnhancedVehicle.EnhancedVehicle"] == nil then return end
 
   -- as soon as the game gauge appeared -> update our positions only once
   if self.isCalculated == false then

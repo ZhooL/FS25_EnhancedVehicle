@@ -4,7 +4,7 @@
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
 -- @Date: 01.12.2024
--- @Version: 1.1.2.0
+-- @Version: 1.1.2.2
 
 --[[
 CHANGELOG
@@ -2434,6 +2434,7 @@ end
 -- #############################################################################
 
 function ClosestAngle(n,m)
+  if m == 0 then return 0 end
   local q = math.floor(n/m)
   local n1 = m*q
   local n2 = m*(q+1)

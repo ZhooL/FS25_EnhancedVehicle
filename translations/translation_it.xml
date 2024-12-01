@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>Markus33-ITA</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Fissa la direzione di marcia/corsia corrente"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Inverti direzione marcia/corsia (180°)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Switch operational mode (snap direction/track)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Incrementa la direzione marcia/corsia di 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Decrementa la direzione marcia/corsia di 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Incrementa la direzione marcia/corsia di 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Decrementa la direzione marcia/corsia di 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Incrementa la direzione marcia/corsia di 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Decrementa la direzione di marcia/corsia di 90 °"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Ri)calcolare la larghezza di lavoro"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Riallineare le corsie"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Cambia la modalità di visualizzazione delle linee"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Aumenta il numero di corsie di svolta"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Riduci il numero di corsie di svolta"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Sposta corsia a destra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Sposta la corsia a sinistra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Incrementa la larghezza della corsia"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Decrementa la larghezza della corsia"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Sposta la linea di offset a destra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Sposta la linea di offset a sinistra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Sposta il veicolo di una corsia a destra (senza svoltare)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Sposta il veicolo di una corsia a sinistra (senza svoltare)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Cambia modalità capezzagna"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Incrementa la distanza della capezzagna dal bordo del campo"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Decrementa la distanza della capezzagna dal bordo del campo"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Bloccaggio differenziale assale anteriore ON/OFF"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Bloccaggio differenziale assale posteriore ON/OFF"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Entrambi i blocchi differenziali ON/OFF"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Cambia la modalità di trazione integrale"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: Idraulica posteriore Su/Giù"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: apertura/chiusura idraulica posteriore"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: ON/OFF idraulica posteriore"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: Idraulica anteriore Su/Giù"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Idraulica anteriore ON/OFF"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: apertura/chiusura idraulica anteriore"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Visualizzazione del menù di configurazione"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Freno di stazionamento ON/OFF"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Attiva/disattiva la modalità di visualizzazione del chilometraggio"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="Nessuna corsia"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="Nessuna larghezza"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="Nessun promontorio"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Danni | Verniciatura"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Carburante"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="ON"/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="OFF"/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Impostazioni globali"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="Impostazioni HUD"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Impostazioni dell'assistente di traccia"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Impostazioni capezzagna per"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Ripristina configurazione mod (Attenzione!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Ricarica la configurazione Mod (XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Assistente di corsia"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Attiva/disattiva la funzionalità globale dell'assistente di corsia"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Blocco Differenziale"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Attiva/disattiva la funzionalità globale dei bloccaggi differenziali"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Controllo idraulico migliorato"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Attiva/disattiva la funzionalità globale del controllo idraulico migliorato"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="Freno di stazionamento"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="Attiva/Disattiva la funzionalità globale del freno di stazionamento"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="Contachilometri"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Attiva/disattiva la funzionalità del contachilometri globale"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Blocco differenziale"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Attiva/disattiva il display HUD per i differenziali"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Rapporto sui danni"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Attiva/disattiva il display HUD per i valori di danno"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Visualizzazione del valore del carburante"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Attiva/disattiva il display HUD per i valori del carburante"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Display di allineamento dell'assistenza alla traccia"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Attiva/disattiva il display HUD per la direzione di guida dell'assistente di corsia"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: RPM"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Attiva/disattiva il display HUD per i giri del motore"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: visualizzazione della temperatura del motore"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Accende/spegne il display HUD per la temperatura del motore"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: altri valori (peso)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Attiva/disattiva il display HUD per gli altri valori (ad es. peso)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: Freno di stazionamento"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="On/Off Display HUD per freno di stazionamento"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: Display contachilometri"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Attiva/disattiva il display HUD per il contachilometri"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: modalità di visualizzazione dei danni"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Visualizzazione dei valori dei danni in '% non danneggiati' invece di '% danneggiati'"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% non danneggiato"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% danneggiato"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Angolo di bloccaggio"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="Specifica di quali gradi viene bloccato il senso di marcia (1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Numero di corsie visibili"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Questo è il numero di corsie visualizzate in totale (sinistra + destra del veicolo)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Mostra linee"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="Specifica quali tipi di linee vengono mostrate"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Tutte"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Nessuna"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="Solo tracce"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="Solo veicolo+larghezza di lavoro"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Nascondi automaticamente le linee"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Specifica se nascondere automaticamente le linee ausiliarie e guida"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Tempo di visualizzazione delle linee"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Imposta dopo quanti secondi, le linee ausiliarie e guida vengono automaticamente nascoste"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Modalità capezzagna"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Determina cosa dovrebbe succedere quando si raggiunge il promontorio"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Niente"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Gira automaticamente"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Disattiva il cruise control"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Distanza capezzagna"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="Specifica quanti metri prima della fine del campo inizia la capezzagna"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="Larghezza di lavoro"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="Prima della fine del campo"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="Dopo la fine del campo"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Distanza del suono dell'allarme"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="Specifica quanti metri prima che venga raggiunto il promontorio viene riprodotto un suono di allarme"/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="L'assistente di corsia non è attivato."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Nessun dispositivo trovato con una larghezza di lavoro. Using a default track layout."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="La larghezza di lavoro è stata ricalcolata."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Devi prima rilasciare il freno di stazionamento."/>
+
+  </texts>
+</l10n>
