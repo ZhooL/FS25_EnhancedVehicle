@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>us-ugursahin</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Mevcut yöne/hatta sabitle"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Sabitlenmiş yönü tersine çevir (180° geri dönüş)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Çalışma modunu değiştir (yön/hat sabitleme)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Sabitlenmiş yön derecesini 1° artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Sabitlenmiş yön derecesini 1° azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Sabitlenmiş yön derecesini 45° artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Sabitlenmiş yön derecesini 45° azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Sabitlenmiş yön derecesini 90° artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Sabitlenmiş yön derecesini 90° azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Çalışma genişliğini (yeniden) hesapla"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Hat düzenini (yeniden) hesapla"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Çizgilerin görüntülenme modunu değiştir"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Dönüşlerde atlanacak hat sayısını artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Dönüşlerde atlanacak hat sayısını azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Hatları sağa kaydır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Hatları sola kaydır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Hat genişliğini artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Hat genişliğini azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Ofset çizgisini sağa kaydır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Ofset çizgisini sola kaydır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Aracı bir hat sağa kaydır (geri dönüş yapmadan)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Aracı bir hat sola kaydır (geri dönüş yapmadan)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Headland modunu değiştir"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Headland mesafesini artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Headland mesafesini azalt"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Ön dingil diferansiyel kilidi aç/kapa"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Arka dingil diferansiyel kilidi aç/kapa"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Ön ve arka diferansiyeli kilidi aç/kapa"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Tekerlek çekiş modunu değiştir"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: Arka hidrolik yukarı/aşağı"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: Arka hidrolik aç/kapa"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: Arka hidrolik aç/katla"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: Ön hidrolik yukarı/aşağı"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Ön hidrolik aç/kapa"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: Ön hidrolik aç/katla"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Yapılandırma menüsünü aç"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: El frenini çek/indir"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Kilometre sayacı modunu değiştir/sıfırla"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="hat yok"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="genişlik yok"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="headland yok"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Hasar | Boya"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Yakıt"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="Açık"/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="Kapalı"/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Global Ayarlar"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="Arayüz Ayarları"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Sürüş Yardımcısı Ayarları"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Headland Ayarları"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Mod Yapılandırmasını Sıfırla (Dikkat!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Mod Yapılandırmasını Yeniden Yükle (XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Sürüş Yardımcısı"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Sürüş yardımcısı işlevini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Diferansiyel Kilidi"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Diferansiyel kilidi işlevini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Gelişmiş Hidrolik Kontrolü"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Gelişmiş hidrolik kontrolü işlevini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="El Freni"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="El Freni işlevini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="Kilometre Sayacı"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Kilometre sayacı işlevini açma/kapatma"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Diferansiyel Kilidi"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Diferansiyel kilidini gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Hasar Değerleri"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Hasar değerlerini gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Yakıt Değerleri"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Yakıt değerlerini gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Sürüş Yardımcısı"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Sürüş yardımcısı arayüz ekranını açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: RPM"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Motor devir hızını gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: Motor Sıcaklığı"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Motor sıcaklığını gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: Çeşitli değerler (Ağırlık)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Diğer değerler(ağırlık vs.) için arayüz elementlerini açma/kapatma "/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: El Freni"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="El frenini gösteren arayüz elementini açma/kapatma"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: Kilometre Sayacı"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Kilometre sayacını gösteren arayüz elementini açma/kapatma"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: Hasar değerleri gösterim türü"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Hasar değerlerini '%sağlamlık' ya da '%hasar' şeklinde gösterme"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% sağlamlık"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% hasar"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Açı Hassasiyeti"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="Sürüş yönünün kaç derece hassaslıkla sabitleneceğini belirler (1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Görünür hat sayısı"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Toplamda gösterilen hat sayısı (aracın solu + sağı)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Gösterilen Çizgiler"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="Hangi tür çizgilerin gösterileceğini belirler"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Hepsi"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Hiçbiri"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="Sadece hat çizgileri"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="Yalnızca araç ve çalışma genişliği çizgileri"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Çizgileri otomatik olarak gizleme"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Yardımcı ve hat çizgilerinin otomatik olarak gizlenip gizlenmeyeceğini belirtir"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Çizgilerin gizlenmesi için gereken süre"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Kaç saniye sonra yardımcı ve hat çizgilerinin otomatik olarak gizleneceğini belirtir"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Headland davranışı"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Headland'e ulaşıldığında ne yapılmalı?"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Hiçbir şey"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Otomatik olarak geri dönüş"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Sabitleyiciyi devre dışı bırak"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Headland mesafesi"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="Tarla bitimine kaç metre mesafeden geri dönülsün?"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="Çalışma genişliği"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="tarlanın bitiminden önce"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="tarla bitiminin ötesinden"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Uyarı sesi mesafesi"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="Uyarı sesinin headland'e ulaşmadan kaç metre önce çalınacağını belirler"/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="Sürüş yardımcısı etkin değil."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Çalışma genişliğine sahip bir alet bulunamadı. Varsayılan hat düzeni kullanılıyor."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="Çalışma genişliği yeniden hesaplandı."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Lütfen önce el frenini indirin."/>
+
+  </texts>
+</l10n>
