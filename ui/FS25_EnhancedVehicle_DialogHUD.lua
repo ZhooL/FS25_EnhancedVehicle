@@ -45,6 +45,15 @@ function FS25_EnhancedVehicle_DialogHUD:onOpen()
   FS25_EnhancedVehicle_DialogHUD:superClass().onOpen(self)
 
   self:updateValues()
+
+  g_currentMission.hud:setIsVisible(true)
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_DialogHUD:onDraw()
+  g_currentMission.hud:setIsVisible(true)
+  FS25_EnhancedVehicle.onDraw(self.vehicle, true)
 end
 
 -- #############################################################################
@@ -71,4 +80,14 @@ function FS25_EnhancedVehicle_DialogHUD:onClickBack()
 
   -- close screen
   g_gui:closeDialogByName("FS25_EnhancedVehicle_DialogHUD")
+end
+
+function FS25_EnhancedVehicle_DialogHUD:onClickTrackMoveLeft()
+  print("left")
+  FS25_EnhancedVehicle.onActionCall(self.vehicle, "FS25_EnhancedVehicle_SNAP_TRACKP", -1, 0, 0, 0)
+end
+
+function FS25_EnhancedVehicle_DialogHUD:onClickTrackMoveRight()
+  print("right")
+  FS25_EnhancedVehicle.onActionCall(self.vehicle, "FS25_EnhancedVehicle_SNAP_TRACKP", 1, 0, 0, 0)
 end

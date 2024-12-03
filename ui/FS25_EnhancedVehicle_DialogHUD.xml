@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate" onDraw="onDraw">
   <GuiElement profile="newLayer" />
   <GuiElement profile="fs25_dialogBg" id="dialogElement" size="1000px 500px">
-    <GuiElement profile="fs25_dialogContentContainer">
-      <Text profile="fs25_dialogTitle" id="guiTitle" text="lala" position="0px -20px"/>
+    <ThreePartBitmap profile="fs25_dialogBgMiddleSmall"/>
+    <ThreePartBitmap profile="fs25_dialogBgTopSmall"/>
+    <ThreePartBitmap profile="fs25_dialogBgBottom"/>
+
+    <GuiElement profile="fs25_dialogContentContainer" width="800px" height="400px">
+      <GuiElement profile="fs25_EVHUDOptionWrapper">
+        <Button profile="fs25_EVButtonLeft" name="ignore" id="minus" text="-" onClick="onClickTrackMoveLeft"/>
+        <Button profile="fs25_EVButtonRight" name="ignore" id="plus" text="+" onClick="onClickTrackMoveRight"/>
+      </GuiElement>
+
     </GuiElement>
 
     <!-- buttons -->
     <BoxLayout profile="fs25_dialogButtonBox">
-      <Button profile="fs25_EVRedButton" onClick="onClickResetConfig" id="resetConfigButton"/>
-      <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
-
-      <Button profile="buttonBlock" onClick="onClickReloadConfig" id="reloadConfigButton"/>
-      <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
-
       <Button profile="buttonBack" id="noButton" text="$l10n_button_back" onClick="onClickBack"/>
       <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
       <Button profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
@@ -21,8 +23,54 @@
   </GuiElement>
 
   <GUIProfiles>
-    <Profile name="fs25_EVSettingsMultiTextOptionWrapper" extends="baseReference" with="anchorTopStretchingX">
-      <width  value="870px"/>
+    <Profile name="fs25_EVButtonLeft" extends="emptyPanel" with="anchorMiddleLeft">
+      <size value="32px 32px"/>
+      <position value="0px 0px"/>
+      <focusOnHighlight value="true"/>
+<!--
+      <textResizeWidth value="200px"/>
+      <iconSize value="16px 16px"/>
+      <iconTextOffset value="-10px -1px"/>
+      <iconSliceId value="gui.pause"/>
+-->
+      <iconColor value="$preset_fs25_colorMainLight"/>
+      <iconFocusedColor value="$preset_fs25_colorMainDark"/>
+      <iconHighlightedColor value="$preset_fs25_colorMainLight"/>
+      <textSize value="14px"/>
+      <textBold value="true"/>
+      <textUpperCase value="true"/>
+      <textAlignment value="center"/>
+      <textColor value="$preset_fs25_colorMainLight"/>
+      <textDisabledColor value="$preset_colorDisabled"/>
+      <textFocusedColor value="$preset_fs25_colorMainDark"/>
+      <hasFrame value="true"/>
+      <frameThickness value="2dp 2dp 2dp 2dp"/>
+    </Profile>
+    <Profile name="fs25_EVButtonRight" extends="emptyPanel" with="anchorMiddleRight">
+      <size value="32px 32px"/>
+      <position value="0px 0px"/>
+      <focusOnHighlight value="true"/>
+<!--
+      <textResizeWidth value="200px"/>
+      <iconSize value="16px 16px"/>
+      <iconTextOffset value="-10px -1px"/>
+      <iconSliceId value="gui.pause"/>
+-->
+      <iconColor value="$preset_fs25_colorMainLight"/>
+      <iconFocusedColor value="$preset_fs25_colorMainDark"/>
+      <iconHighlightedColor value="$preset_fs25_colorMainLight"/>
+      <textSize value="14px"/>
+      <textBold value="true"/>
+      <textUpperCase value="true"/>
+      <textAlignment value="center"/>
+      <textColor value="$preset_fs25_colorMainLight"/>
+      <textDisabledColor value="$preset_colorDisabled"/>
+      <textFocusedColor value="$preset_fs25_colorMainDark"/>
+      <hasFrame value="true"/>
+      <frameThickness value="2dp 2dp 2dp 2dp"/>
+    </Profile>
+    <Profile name="fs25_EVHUDOptionWrapper" extends="baseReference" with="anchorTopStretchingX">
+      <width  value="400px"/>
       <height value="50px"/>
     </Profile>
     <Profile name="fs25_EVMultiTextTitle" extends="fs25_textDefault" with="anchorMiddleLeft">

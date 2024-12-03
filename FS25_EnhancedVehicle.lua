@@ -1001,11 +1001,11 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle:onDraw()
+function FS25_EnhancedVehicle:onDraw(override)
   if debug > 2 then print("-> " .. myName .. ": onDraw, S: " .. tostring(self.isServer) .. ", C: " .. tostring(self.isClient) .. mySelf(self)) end
 
   -- only on client side and GUI is visible
-  if self.isClient and not g_gui:getIsGuiVisible() and self:getIsControlled() then
+  if (self.isClient and not g_gui:getIsGuiVisible() and self:getIsControlled()) or (self.isClient and self:getIsControlled() and override) then
     -- update current track
     local dx, dz = 0, 0
     if FS25_EnhancedVehicle.functionSnapIsEnabled and self.vData.track.isCalculated then
