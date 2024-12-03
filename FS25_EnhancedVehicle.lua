@@ -3,11 +3,15 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 01.12.2024
+-- @Date: 02.12.2024
 -- @Version: 1.1.2.2
 
 --[[
 CHANGELOG
+
+2024-12-02 - V1.1.2.2
++ several bugfixes, code optimizations and translations additions/updates
+- revert NormalizeAngle code change
 
 2024-11-30 - V1.1.1.0
 + added new feature: front/rear hydraulic unfold/fold on keypress
@@ -2465,7 +2469,14 @@ end
 -- # make sure an angle is >= 0 and < 360
 
 function NormalizeAngle(a)
-  return (a % 360 + 360) % 360
+  while a < 0 do
+    a = a + 360
+  end
+  while a >= 360 do
+    a = a - 360
+  end
+
+  return a
 end
 
 -- #############################################################################
