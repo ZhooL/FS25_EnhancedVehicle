@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>Michaelbjerg21978</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Lås aktuelle retning/spor"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Omvend lås/spor retning (180° drej rundt)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Skift operationel mode (låse retning/spor)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Forøg lås/spor retning med 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Formindsk lås/spor retning med 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Forøg lås/spor retning med 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Formindsk lås/spor retning med 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Forøg lås/spor retning med 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Formindsk lås/spor retning med 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Gen)indlæs arbejds bredde"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Gen)indlæs spor layout"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Ændre display mode af linier"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Flere antal af spor der hoppes over"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Færre antal af spor der hoppes over"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Flyt spor til højre"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Flyt spor til venstre"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Større bredde af spor"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Mindre bredde af spor"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Flyt centerforskydnings linie til højre"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Flyt centerforskydnings linie til venstre"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Flyt maskine et spor til højre (ingen sving)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Flyt maskine et spor til venstre (ingen sving)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Ændre forager mode"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Mere forager distance til kanten af marken"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Mindre forager distance til kanten af marken"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Differentiale lås front aksel til/fra"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Differentiale lås bag aksel til/fra"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Begge differentiale låse til/fra"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Ændre hjul træk (2/4WD)"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: bag hydraulik op/ned"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: bag hydraulik til/fra"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: bag hydraulik udfold/fold"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: front hydraulik op/ned"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: front hydraulik til/fra"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: front hydraulik udfold/fold"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: åben config menu"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Træk/slip parkerings bremse"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Skift/nulstil kilometer display mode"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="ingen spor"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="ingen bredde"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="ingen forager"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Skade | Maling"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Brændstof"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="Til"/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="Fra"/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Global Indstillinger"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="HUD Indstillinger"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Spor Assistent Indstillinger"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Forager Indstillinger for"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Nulstil Mod konfiguration (Advarsel!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Genindlæs Mod konfiguration (XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Spor Assistent"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Tænd/sluk global spor assistent funktioner"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Differentiale lås"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Tænd/sluk global differentiale lås funktioner"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Forbedret hydraulik kontrol"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Tænd/sluk global forbedret hydraulik kontrol funktioner"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="Parkerings bremse"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="Tænd/sluk global parkerings bremse funktioner"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="KilometerTæller"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Tænd/sluk global kilometer tæller funktioner"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Differentiale lås"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Tænd/sluk HUD display for differentiale lås"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Skade værdier"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Tænd/sluk HUD display for skade værdier"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Brændstof værdier"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Tænd/sluk HUD display for brændstof værdier"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Spor assistant"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Tænd/sluk HUD display for spor assistent"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: OMDR"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Tænd/sluk HUD display for OMDR tæller"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: Motor temperatur"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Tænd/sluk HUD display for motor temperatur"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: Andre værdier (Vægt)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Tænd/sluk HUD display for andre værdier (vægt)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: Parkerings bremse"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="Tænd/sluk HUD display for parkerings bremse"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: KilometerTæller display"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Tænd/sluk HUD display for kilometer tæller"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: Skade værdi mode"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Vis skade værdi i '% tilbage' istedet for '% skadet'"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% tilbage"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% skadet"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Lås til linie"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="Bestemmer i hvilke grader køre retningen er sat (1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Antal af synlige spor"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Hvor mange spor er vist i total (venstre + højre af køretøj)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Vis linier"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="Bestem hvilken type af linier der vises"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Alle"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Ingen"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="kun Spor"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="kun Masine+redskab bredde"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Skjul linier automatisk"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Angiver, om hjælpe- og sporlinjer automatisk skal skjules"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Tid indtil linier er skjult"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Efter hvor mange sekunder hjælpe og spor linier automatisk skjules"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Forager mode"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Hvad skal ske hvis forager er nået"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Ingenting"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Drej rundt automatisk"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Deaktiver cruise kontrol"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Forager distance"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="Drej rundt hvor mange metre før kant af mark"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="Arbejds bredde"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="før kant af mark"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="efter kant af mar"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Alarm lyd distance"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="Bestem hvor mange metre før forager er nået en alarm lyd vil lyde"/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="Spor Assistent er ikke aktiveret."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Fandt ikke et redskab med en arbejdsbredde. Bruger et standard spor layout."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="Arbejdsbredden blev opdateret."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Slip parkerings bremse først."/>
+
+  </texts>
+</l10n>

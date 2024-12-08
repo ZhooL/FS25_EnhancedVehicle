@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>RickDeckard</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Jelenlegi haladási irány/sáv rögzítése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Haladási irány/sáv fordított rögzítése (180°-os megfordulás)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Működés mód váltása (haladási irány/sáv rögzítése)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 1°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 1°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 45°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 45°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 90°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 90°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Működési szélesség (újra)számolása"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Sáv elrendezés (újra)számolása"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Vonalak megjelenítési módjának módosítása"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Forduló sávok számának növelése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Forduló sávok számának csökkentése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Sávok eltolása jobbra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Sávok eltolása balra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Sávok szélességének növelése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Sávok szélességének csökkentése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Oldaleltolás mozgatása jobbra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Oldaleltolás mozgatása balra"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Jármű átirányítása egy sávval jobbra (nincs megfordulás)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Jármű átirányítása egy sávval balra (nincs megfordulás)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Forgó mód módosítása"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Forgó termőföld végétől való távolságának növelése"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Forgó termőföld végétől való távolságának csökkentése"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Első tengely differenciálzár be/ki"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Hátsó tengely differenciálzár be/ki"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Mindkét differenciálzár be/ki"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Kerékhajtási mód módosítása"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: Hátsó hidraulika fel/le"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: Hátsó hidraulika be/ki"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: Hátsó hidraulika kinyitása/becsukása"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: Első hidraulika fel/le"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Első hidraulika be/ki"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: Első hidraulika kinyitása/becsukása"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Konfigurálási menü megnyitása"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Rögzítőfék behúzása/kiengedése"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Kilóméterszámláló mód kapcsolása/visszaállítása"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="nincs sáv"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="nincs szélesség"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="nincs forgó"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Sérülés | Festés"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Üzemanyag"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="Igen"/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="Ki"/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Globális beállítások"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="HUD beállítások"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Sáv segítő beállítások"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Forgó beállítások a következőhöz"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Mod konfiguráció visszaállítása (Figyelem!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Mod konfiguráció újra betöltése (XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Sáv segítő"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Globális sáv segítő funkció be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Differenciálzár"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Globális differenciálzár funkció be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Továbbfejlesztett hidraulikus vezérlés"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Globális továbbfejlesztett hidraulikus vezérlés funkció be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="Rögzítőfék"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="Globális rögzítőfék funkció be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="Kilométerszámláló"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Globális kilométerszámláló funkció be-/kikapcsolása"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Differenciálzár"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Differenciálzár HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Sérülési értékek"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Sérülési értékek HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Üzemanyag szintek"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Üzemanyag szintek HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Sáv segítő"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Sáv segítő HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: Fordulatszám"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Fordulatszám HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: Motorhőmérséklet"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Motorhőmérséklet HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: Egyéb értékek (Súly)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Egyéb értékek (például súly) HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: Rögzítőfék"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="Rögzítőfék HUD-on való megjelenítésének be-/kikapcsolása"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: Kilóméterszámláló"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Kilóméterszámláló HUD-on való megjelenítésének be-/kikapcsolása"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: Sérülés értékek mód"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Sérülés értékek megjelítése '% maradt' módban a '% sérült' mód helyett"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% maradt"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% sérült"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Szög rögzítése"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="A vezetési irány rögzítése hány fokos lépésekkel történjen (1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Látható sávok száma"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Hány sáv kerüljön megjelenítésre összesen (a járműtől balra és jobbra)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Vonalak megjelenítése"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="A megjelenített vonaltípusok megadása"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Összes"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Egyik sem"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="Csak sávok"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="Csak jármű + működési szélesség"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Vonalak automatikus elrejtése"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Segéd és sáv vonalak automatikus elrejtésének beállítása"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Vonalak elrejtéséig tartó idő"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Hány másodperc múlva történjen a segéd és sáv vonalak automatikus elrejtése"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Forgó mód"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Mi történjen a forgó elérésekor"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Semmi"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Automatikus megfordulás"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Tempomat kikapcsolása"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Forgó távolság"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="A termőföld vége előtt hány méterrel történjen a megfordulás"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="működési szélesség"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="a termőföld vége előtt"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="a termőföld vége után"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Figyelmeztető hang távolság"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="A forgó elérése előtt hány méterrel szólaljon meg a figyelmeztető hang"/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="Sáv segítő nincs engedélyezve."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Nem található működési szélességgel rendelkező eszköz. Alapértelmezett sáv elrendezés használata."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="A működési szélesség újra lett számolva."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Kérlek először engedd ki a rögzítőféket."/>
+
+  </texts>
+</l10n>

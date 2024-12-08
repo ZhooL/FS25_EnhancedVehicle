@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 01.12.2024
--- @Version: 1.1.2.1
+-- @Date: 07.12.2024
+-- @Version: 1.1.3.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -868,7 +868,7 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
   end
 
   local deltaY = 0
-  if g_currentMission.hud.sideNotifications ~= nil then
+  if g_currentMission.hud.sideNotifications ~= nil and FS25_EnhancedVehicle.hud.dmg.offsetX == 0 and FS25_EnhancedVehicle.hud.dmg.offsetY == 0 and FS25_EnhancedVehicle.hud.fuel.offsetX == 0 and FS25_EnhancedVehicle.hud.fuel.offsetY == 0 then
     -- move our elements down if game displays side notifications
     if #g_currentMission.hud.sideNotifications.notificationQueue > 0 then
       deltaY = deltaY + (g_currentMission.hud.sideNotifications.bgScale.height + g_currentMission.hud.sideNotifications.notificationOffsetY) * #g_currentMission.hud.sideNotifications.notificationQueue
@@ -925,9 +925,14 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
     -- calculate position of text
     local x = self.dmgText.posX
     local y = self.dmgText.posY - deltaY
-
-    -- move further down for more elements
-    deltaY = deltaY + _h + self.dmgText.textMarginHeight * 2 + self.marginElement
+    if FS25_EnhancedVehicle.hud.dmg.offsetX ~= 0 or FS25_EnhancedVehicle.hud.dmg.offsetY ~= 0 then
+      local offX, offY = self.speedMeter:scalePixelToScreenVector({ FS25_EnhancedVehicle.hud.dmg.offsetX, FS25_EnhancedVehicle.hud.dmg.offsetY })
+      x = x + offX
+      y = y + offY
+    else
+      -- move further down for more elements
+      deltaY = deltaY + _h + self.dmgText.textMarginHeight * 2 + self.marginElement
+    end
 
     self.dmgBox.topleft:setPosition(     x - _w - self.dmgText.textMarginWidth * 2, y - self.dmgText.boxMarginHeight)
     self.dmgBox.topright:setPosition(    x - self.dmgText.boxMarginWidth,           y - self.dmgText.boxMarginHeight)
@@ -1030,6 +1035,11 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
     -- calculate position of text
     local x = self.fuelText.posX
     local y = self.fuelText.posY - deltaY
+    if FS25_EnhancedVehicle.hud.fuel.offsetX ~= 0 or FS25_EnhancedVehicle.hud.fuel.offsetY ~= 0 then
+      local offX, offY = self.speedMeter:scalePixelToScreenVector({ FS25_EnhancedVehicle.hud.fuel.offsetX, FS25_EnhancedVehicle.hud.fuel.offsetY })
+      x = x + offX
+      y = y + offY
+    end
 
     self.fuelBox.topleft:setPosition(     x - _w - self.fuelText.textMarginWidth * 2, y - self.fuelText.boxMarginHeight)
     self.fuelBox.topright:setPosition(    x - self.fuelText.boxMarginWidth,           y - self.fuelText.boxMarginHeight)
