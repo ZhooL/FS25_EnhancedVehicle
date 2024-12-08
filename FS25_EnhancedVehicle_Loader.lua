@@ -8,7 +8,7 @@
 
 -- #############################################################################
 
-debug = 0 -- 0=0ff, 1=some, 2=everything, 3=madness
+debug = 2 -- 0=0ff, 1=some, 2=everything, 3=madness
 
 local directory = g_currentModDirectory
 local modName = g_currentModName

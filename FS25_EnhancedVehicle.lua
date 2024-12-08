@@ -166,19 +166,20 @@ function FS25_EnhancedVehicle:onMissionLoaded(mission)
   FS25_EnhancedVehicle.ui_DialogSettings = FS25_EnhancedVehicle_DialogSettings.new()
   g_gui:loadGui(self.modDirectory.."ui/FS25_EnhancedVehicle_DialogSettings.xml", "FS25_EnhancedVehicle_DialogSettings", FS25_EnhancedVehicle.ui_DialogSettings)
 
-  -- create HUD configuration dialog
-  FS25_EnhancedVehicle.ui_DialogHUD = FS25_EnhancedVehicle_DialogHUD.new()
-  g_gui:loadGui(self.modDirectory.."ui/FS25_EnhancedVehicle_DialogHUD.xml", "FS25_EnhancedVehicle_DialogHUD", FS25_EnhancedVehicle.ui_DialogHUD)
-
   -- create HUD
   FS25_EnhancedVehicle.ui_hud = FS25_EnhancedVehicle_HUD:new(mission.hud.speedMeter, mission.hud.gameInfoDisplay, self.modDirectory)
   FS25_EnhancedVehicle.ui_hud:load()
 
+  -- create Dialog HUD
+  FS25_EnhancedVehicle.ui_DialogHUD = FS25_EnhancedVehicle_DialogHUD:new(mission.hud.speedMeter, g_inputBinding, self.modDirectory)
+  FS25_EnhancedVehicle.ui_DialogHUD:load()
+  
   -- hook into function, which is called only if the HUD is really visible for a vehicle
   mission.hud.drawControlledEntityHUD = Utils.appendedFunction(mission.hud.drawControlledEntityHUD,
     function(self)
       if self.isVisible then
         FS25_EnhancedVehicle.ui_hud:drawHUD()
+        FS25_EnhancedVehicle.ui_DialogHUD:drawHUD()
       end
     end)
 
@@ -186,6 +187,7 @@ function FS25_EnhancedVehicle:onMissionLoaded(mission)
   mission.hud.setControlledVehicle = Utils.appendedFunction(mission.hud.setControlledVehicle,
     function(self, vehicle)
       FS25_EnhancedVehicle.ui_hud:setVehicle(vehicle)
+      FS25_EnhancedVehicle.ui_DialogHUD:setVehicle(vehicle)
     end)
 end
 
@@ -1505,7 +1507,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if not g_currentMission.isSynchronizingWithPlayers then
       if not g_gui:getIsGuiVisible() then
         FS25_EnhancedVehicle.ui_DialogHUD:setVehicle(self)
-        g_gui:showDialog("FS25_EnhancedVehicle_DialogHUD")
+        FS25_EnhancedVehicle.ui_DialogHUD:toggleMouseCursor()
       end
     end
   elseif actionName == "FS25_EnhancedVehicle_MENU" then
