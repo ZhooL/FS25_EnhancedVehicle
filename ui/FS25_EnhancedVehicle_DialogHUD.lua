@@ -14,11 +14,11 @@ FS25_EnhancedVehicle_DialogHUD.INPUT_CONTEXT_NAME = "FS25_EnhancedVehicle_Dialog
 local FS25_EnhancedVehicle_DialogHUD_mt = Class(FS25_EnhancedVehicle_DialogHUD, HUDDisplayElement)
 
 FS25_EnhancedVehicle_DialogHUD.SIZE = {
-  DIALOGHUD = { 300, 122 },
+  DIALOGHUD = { 300, 400 },
 }
 
 FS25_EnhancedVehicle_DialogHUD.UV = {
-  DIALOGHUD     =     {   0, 128, 300, 122 },
+  DIALOGHUD     =     {   0, 129, 150, 200 },
 }
 
 FS25_EnhancedVehicle_DialogHUD.POSITION = {
