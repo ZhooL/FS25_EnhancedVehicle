@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 07.12.2024
--- @Version: 1.1.3.0
+-- @Date: 08.12.2024
+-- @Version: 1.1.4.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -437,6 +437,10 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
       g_currentMission.hud.fillLevelsDisplay.y = boxPosY + self.trackBox:getHeight() + self.marginElement
     else
       g_currentMission.hud.fillLevelsDisplay.y = boxPosY2 + self.marginElement / 2
+      if (FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY ~= 0) then
+        local offY = self.speedMeter:scalePixelToScreenHeight(FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY)
+        g_currentMission.hud.fillLevelsDisplay.y = g_currentMission.hud.fillLevelsDisplay.y + offY
+      end
     end
 
     -- snap text
@@ -934,17 +938,30 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
       deltaY = deltaY + _h + self.dmgText.textMarginHeight * 2 + self.marginElement
     end
 
-    self.dmgBox.topleft:setPosition(     x - _w - self.dmgText.textMarginWidth * 2, y - self.dmgText.boxMarginHeight)
-    self.dmgBox.topright:setPosition(    x - self.dmgText.boxMarginWidth,           y - self.dmgText.boxMarginHeight)
-    self.dmgBox.bottomleft:setPosition(  x - _w - self.dmgText.textMarginWidth * 2, y - _h - self.dmgText.textMarginHeight * 2)
-    self.dmgBox.bottomright:setPosition( x - self.dmgText.boxMarginWidth,           y - _h - self.dmgText.textMarginHeight * 2)
-    self.dmgBox.left:setPosition(        x - _w - self.dmgText.textMarginWidth * 2, y - _h - self.dmgText.textMarginHeight * 2 + self.dmgText.boxMarginHeight)
-    self.dmgBox.right:setPosition(       x - self.dmgText.boxMarginWidth,           y - _h - self.dmgText.textMarginHeight * 2 + self.dmgText.boxMarginHeight)
-    self.dmgBox.scale:setPosition(       x - _w - self.dmgText.textMarginWidth * 2 + self.dmgText.boxMarginWidth, y - _h - self.dmgText.textMarginHeight * 2)
+    local textMarginWidth  = self.dmgText.textMarginWidth
+    local textMarginHeight = self.dmgText.textMarginHeight
+    local boxMarginWidth   = self.dmgText.boxMarginWidth
+    local boxMarginHeight  = self.dmgText.boxMarginHeight
 
-    self.dmgBox.left:setDimension(  self.dmgText.boxMarginWidth, _h + self.dmgText.textMarginHeight * 2 - self.dmgText.boxMarginHeight * 2)
-    self.dmgBox.right:setDimension( self.dmgText.boxMarginWidth, _h + self.dmgText.textMarginHeight * 2 - self.dmgText.boxMarginHeight * 2)
-    self.dmgBox.scale:setDimension( _w - (self.dmgText.boxMarginWidth - self.dmgText.textMarginWidth) * 2, _h + self.dmgText.textMarginHeight * 2)
+    local leftX   = x - _w - textMarginWidth * 2
+    local rightX  = x - boxMarginWidth
+    local topY    = y - boxMarginHeight
+    local bottomY = y - _h - textMarginHeight * 2
+
+    -- Set positions
+    self.dmgBox.topleft:setPosition(leftX, topY)
+    self.dmgBox.topright:setPosition(rightX, topY)
+    self.dmgBox.bottomleft:setPosition(leftX, bottomY)
+    self.dmgBox.bottomright:setPosition(rightX, bottomY)
+    self.dmgBox.left:setPosition(leftX, bottomY + boxMarginHeight)
+    self.dmgBox.right:setPosition(rightX, bottomY + boxMarginHeight)
+    self.dmgBox.scale:setPosition(leftX + boxMarginWidth, bottomY)
+
+    -- Set dimensions
+    local sideHeight = _h + textMarginHeight * 2 - boxMarginHeight * 2
+    self.dmgBox.left:setDimension(boxMarginWidth, sideHeight)
+    self.dmgBox.right:setDimension(boxMarginWidth, sideHeight)
+    self.dmgBox.scale:setDimension(_w - (boxMarginWidth - textMarginWidth) * 2, _h + textMarginHeight * 2)
 
     for _, txt in pairs(dmg_txt) do
       if txt[2] == 0 then

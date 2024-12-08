@@ -3,11 +3,15 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 07.12.2024
--- @Version: 1.1.3.1
+-- @Date: 08.12.2024
+-- @Version: 1.1.4.0
 
 --[[
 CHANGELOG
+
+2024-12-08 - V1.1.4.0
++ added XML config option "moveFillLevelsDisplayDeltaY" to move the inGame FillLevelsDisplay by x pixels
+* minor code optimizations
 
 2024-12-07 - V1.1.3.1
 * forgot to update the modDesc version *doh*
@@ -348,7 +352,8 @@ function FS25_EnhancedVehicle:activateConfig()
     FS25_EnhancedVehicle.hud[section].offsetX  = lC:getConfigValue("hud."..section, "offsetX")
     FS25_EnhancedVehicle.hud[section].offsetY  = lC:getConfigValue("hud."..section, "offsetY")
   end
-  FS25_EnhancedVehicle.hud.dmg.showAmountLeft = lC:getConfigValue("hud.dmg", "showAmountLeft")
+  FS25_EnhancedVehicle.hud.dmg.showAmountLeft                = lC:getConfigValue("hud.dmg",   "showAmountLeft")
+  FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY = lC:getConfigValue("hud.track", "moveFillLevelsDisplayDeltaY")
 
   FS25_EnhancedVehicle.hud.colorActive   = { lC:getConfigValue("hud.colorActive",   "red"), lC:getConfigValue("hud.colorActive",   "green"), lC:getConfigValue("hud.colorActive",   "blue"), 1 }
   FS25_EnhancedVehicle.hud.colorInactive = { lC:getConfigValue("hud.colorInactive", "red"), lC:getConfigValue("hud.colorInactive", "green"), lC:getConfigValue("hud.colorInactive", "blue"), 1 }
@@ -423,9 +428,10 @@ function FS25_EnhancedVehicle:resetConfig(disable)
   lC:addConfigValue("hud.dmg", "offsetY",        "int",  0)
 
   -- track
-  lC:addConfigValue("hud.track", "enabled", "bool", true)
-  lC:addConfigValue("hud.track", "offsetX", "int",  0)
-  lC:addConfigValue("hud.track", "offsetY", "int",  0)
+  lC:addConfigValue("hud.track", "enabled",                     "bool", true)
+  lC:addConfigValue("hud.track", "offsetX",                     "int",  0)
+  lC:addConfigValue("hud.track", "offsetY",                     "int",  0)
+  lC:addConfigValue("hud.track", "moveFillLevelsDisplayDeltaY", "int",  0)
 
   -- misc
   lC:addConfigValue("hud.misc", "enabled", "bool", true)
