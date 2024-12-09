@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>NozemOil1982</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Snap huidige richting/track"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Omgekeerde snap-/trackrichting (180° draaien)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Operationele modus wisselen (snaprichting/track)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Vergroot de snap-/trackrichting met 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Verlaag de snap-/trackrichting met 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Vergroot de snap-/trackrichting met 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Verlaag de snap-/trackrichting met 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Vergroot de snap-/trackrichting met 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Verlaag de snap-/trackrichting met 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Her)bereken de werkbreedte"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Her)bereken de baanindeling"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Wijzig de weergavemodus van lijnen"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Verhoog het aantal omkeer banen"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Verlaag het aantal omkeer banen"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Verplaats baan naar rechts"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Verplaats baan naar links"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Vergroot de breedte van de sporen"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Verklein de breedte van de sporen"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Verplaats de offsetlijn naar rechts"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Verplaats de offsetlijn naar links"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Verplaats het voertuig één spoor naar rechts (geen bocht)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Verplaats het voertuig één spoor naar links (geen bocht)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Wijzig de kopakkermodus"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Vergroot de afstand van de kopakker tot het einde van het veld"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Verklein de afstand van de kopakker tot het einde van het veld"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Differentieelslot vooras aan/uit"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Differentieelslot achteras aan/uit"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Beide differentieelsloten aan/uit"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Wijzig de wielaandrijving"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: Achterste werktuig omhoog/omlaag"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: Achterste werktuig aan/uit"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: Achterste werktuig uit-/in geklapt"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: Voorste werktuig omhoog/omlaag"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Voorste werktuig aan/uit"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: Voorste werktuig uit-/in geklapt"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Open het configuratiemenu"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Zet de parkeerrem aan/los"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Weergavemodus kilometerstand wisselen/resetten"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="Geen sporen"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="Geen breedte"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="Geen kopakkermodus"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Schade | Verf"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Brandstof"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="Aan"/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="Uit"/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Algemene instellingen"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="HUD-instellingen"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Baanassistent-instellingen"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Kopakkerinstellingen voor"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Reset Mod-configuratie (Let op!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Mod-configuratie opnieuw laden (XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Baan assistent"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Schakelt de baanassistent functie in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Differentieelslot"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Schakelt de differentieelslot functie in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Verbeterde hydraulische bediening"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Schakel de verbeterde hydraulische bedieningsfunctie in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="Parkeerrem"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="Schakelt de parkeerrem functie in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="Kilometerteller"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Schakelt de Kilometerteller functie in/uit"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Differentieelslot"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Schakelt de HUD-weergave voor differentieelslot in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Schadewaarden"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Schakelt de HUD-weergave voor schadewaarden in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Brandstofwaarden"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Schakelt de HUD-weergave voor brandstofwaarden in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Baan assistent"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Schakelt het HUD-display voor de baanassistent in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: RPM"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Schakelt de HUD-weergave voor het toerental in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: Motortemperatuur"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Schakelt de HUD-weergave voor de motortemperatuur in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: Overige waarden (gewicht)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Schakelt de HUD-weergave in/uit voor diverse waarden (bijv. gewicht)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: Parkeerrem"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="Schakelt de HUD-weergave voor de parkeerrem in/uit"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: Kilometertellerweergave"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Schakelt de HUD-weergave voor de kilometerteller in/uit"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: Modus voor schadewaarden"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Schadewaarden weergeven in '% over' in plaats van '% beschadigd'"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% over"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% Schade"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Klik tot punt"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="Bepaalt in welke graden de rijrichting wordt ingeschakeld (1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Aantal zichtbare banen"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Hoeveel banen worden er in totaal weergegeven (links + rechts van voertuig)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Laat lijnen zien"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="Specificeert welk soort lijnen worden weergegeven"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Alle"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Geen"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="Enkel baan"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="Alleen voertuig+werkbreedte"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Lijnen automatisch verbergen"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Specificeert of hulp- en voerlijnen automatisch moeten worden verborgen"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Tijd totdat lijnen verborgen zijn"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Na hoeveel seconden worden de hulp- en voerlijnen automatisch verborgen"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Kopakkermodus"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Wat moet er gebeuren als de kopakker wordt bereikt"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Niets"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Automatisch omdraaien"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Schakel cruisecontrol uit"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Kopakker afstand"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="Hoeveel meter voor einde veld omkeren"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="Werkbreedte"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="vóór het einde van het veld"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="achter het einde van het veld"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Alarmgeluid afstand"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="Specificeert hoeveel meter voordat de kopakker wordt bereikt een alarmgeluid wordt afgespeeld"/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="Trackassistent is niet ingeschakeld."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Geen apparaat gevonden met een werkbreedte. Een standaard tracklay-out gebruiken."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="De werkbreedte is opnieuw berekend."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Zet eerst de parkeerrem los."/>
+
+  </texts>
+</l10n>
