@@ -11,6 +11,7 @@ CHANGELOG
 
 2024-12-08 - V1.1.4.0
 + added XML config option "moveFillLevelsDisplayDeltaY" to move the inGame FillLevelsDisplay by x pixels
++ added translation: nl
 * minor code optimizations
 
 2024-12-07 - V1.1.3.1
