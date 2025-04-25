@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Disminuir Ángulo Pista en 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Aumentar Ángulo Pista en 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Disminuir Ángulo Pista en 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Aumentar Ángulo Pista en 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Disminuir Ángulo Pista en 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Aumentar Ángulo Pista en 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Disminuir Ángulo Pista en 0.25°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Re)Calcular Ancho Trabajo"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Re)Posiconar Cuadricula de Pistas"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Cambiar el modo de visualización de las líneas"/>

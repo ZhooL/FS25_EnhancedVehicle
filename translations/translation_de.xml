@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Fahrtrichtung/Fahrspur verringern um 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Fahrtrichtung/Fahrspur erhöhen um 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Fahrtrichtung/Fahrspur verringern um 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Fahrtrichtung/Fahrspur erhöhen um 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Fahrtrichtung/Fahrspur verringern um 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Fahrtrichtung/Fahrspur erhöhen um 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Fahrtrichtung/Fahrspur verringern um 0.25°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Arbeitsbreite neu berechnen"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Fahrspuren (neu) berechnen/ausrichten"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Anzeigemodus der Linien wechseln"/>

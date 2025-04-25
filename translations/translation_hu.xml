@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 1°-kal"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 45°-kal"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 45°-kal"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 90°-kal"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 90°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Haladási irány/sáv rögzítés szögének növelése 0.25°-kal"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Haladási irány/sáv rögzítés szögének csökkentése 0.25°-kal"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Működési szélesség (újra)számolása"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Sáv elrendezés (újra)számolása"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Vonalak megjelenítési módjának módosítása"/>

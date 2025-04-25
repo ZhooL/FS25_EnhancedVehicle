@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Sabitlenmiş yön derecesini 1° azalt"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Sabitlenmiş yön derecesini 45° artır"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Sabitlenmiş yön derecesini 45° azalt"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Sabitlenmiş yön derecesini 90° artır"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Sabitlenmiş yön derecesini 90° azalt"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Sabitlenmiş yön derecesini 0.25° artır"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Sabitlenmiş yön derecesini 0.25° azalt"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Çalışma genişliğini (yeniden) hesapla"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Hat düzenini (yeniden) hesapla"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Çizgilerin görüntülenme modunu değiştir"/>

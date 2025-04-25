@@ -41,7 +41,7 @@ end
 function libUtils:args_to_txt(...)
   local args = { ... }
   local txt = ""
-  local i, v
+  --local i, v
   for i, v in ipairs(args) do
     if i > 1 then
       txt = txt .. ", "

@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Diminuer l'angle des rangs de 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Augmenter l'angle des rangs de 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Diminuer l'angle des rangs de 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Augmenter l'angle des rangs de 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Diminuer l'angle des rangs de 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Augmenter l'angle des rangs de 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Diminuer l'angle des rangs de 0.25°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Re)calculer la largeur de travail"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Re)calculer les rangs"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Changer le mode d'affichage des lignes"/>

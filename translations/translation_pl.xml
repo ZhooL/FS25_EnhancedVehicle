@@ -10,8 +10,8 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Zmniejsz kierunek przyciągania/ścieżki o 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Zwiększ kierunek przyciągania/ścieżki o 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Zmniejsz kierunek przyciągania/ścieżki o 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Zwiększ kierunek przyciągania/ścieżki o 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Zmniejsz kierunek przyciągania/ścieżki o 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Zwiększ kierunek przyciągania/ścieżki o 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Zmniejsz kierunek przyciągania/ścieżki o 0.25°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Ponownie) oblicz szerokość roboczą"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Ponownie) oblicz wyświetlanie ścieżki"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Zmień tryb wyświetlania linii"/>
