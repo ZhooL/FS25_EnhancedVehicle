@@ -8,7 +8,7 @@ Dies ist eine Modifikation für den Landwirtschafts-Simulator 25. Sie fügt dem 
 
 **Hinweis: Die einzigen validen Downloadquellen sind meine Homepage (https://www.majo76.de) und dieses Github Repository (https://github.com/ZhooL/FS25_EnhancedVehicle). Alle anderen Downloadadressen sind nicht von mir validiert - also mit Vorsicht zu genießen.**
 
-*(c) 2018-2024 Majo76 (vormals ZhooL). Sei so nett und erwähne mich, wenn du diesen Mod oder den Quellcode (oder Teile davon) irgendwo verwendest. Es ist untersagt, dieses Mod zu monetarisieren.*
+*(c) 2018-2025 Majo76 (vormals ZhooL). Sei so nett und erwähne mich, wenn du diesen Mod oder den Quellcode (oder Teile davon) irgendwo verwendest. Es ist untersagt, dieses Mod zu monetarisieren.*
 Lizenz: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 ## Bekannte Probleme
@@ -83,7 +83,7 @@ This is a modification for Farming Simulator 25. It adds a "track assistant" ("G
 
 **Note: The only valid download sources are my homepage (https://www.majo76.de) and this Github repository (https://github.com/ZhooL/FS25_EnhancedVehicle). All other download addresses are not validated by me - so please use with caution.
 
-*(c) 2018-2024 by Majo76 (formerly ZhooL). Be so kind to credit me when using this mod or the source code (or parts of it) somewhere. Monetization of this mod is prohibited.*
+*(c) 2018-2025 by Majo76 (formerly ZhooL). Be so kind to credit me when using this mod or the source code (or parts of it) somewhere. Monetization of this mod is prohibited.*
 License: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 ## Known bugs
@@ -156,6 +156,7 @@ License: https://creativecommons.org/licenses/by-nc-sa/4.0/
 * Twitch: https://www.twitch.tv/Majo76_ (Freue mich über ein Follow / A follow is much appreciated)
 * Instagram: https://www.instagram.com/Majo76__/
 * Discord: https://d.majo76.de
+* BlueSky: https://bsky.app/profile/majo76.de
 * Twitter: https://www.twitter.com/Majo76_ (Es heißt Twitter! / The name is Twitter!)
 * HomePage: https://www.majo76.de
 * GitHub: https://github.com/ZhooL/FS25_EnhancedVehicle

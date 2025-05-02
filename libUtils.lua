@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 22.11.2021
--- @Version: 1.0.0.0
+-- @Date: 02.05.2025
+-- @Version: 1.0.0.1
 
 -- #############################################################################
 
@@ -41,7 +41,6 @@ end
 function libUtils:args_to_txt(...)
   local args = { ... }
   local txt = ""
-  local i, v
   for i, v in ipairs(args) do
     if i > 1 then
       txt = txt .. ", "

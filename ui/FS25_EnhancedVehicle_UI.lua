@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 27.11.2024
--- @Version: 1.1.0.0
+-- @Date: 02.05.2025
+-- @Version: 1.1.5.0
 
 local myName = "FS25_EnhancedVehicle_UI"
 
@@ -64,9 +64,9 @@ function FS25_EnhancedVehicle_UI:onOpen()
 
   -- global elements
   for _, v in pairs(EV_elements_global) do
-    v1 = v.."Title"
-    v2 = v.."TT"
-    v3 = v.."Setting"
+    local v1 = v.."Title"
+    local v2 = v.."TT"
+    local v3 = v.."Setting"
     self[v1]:setText(g_i18n.modEnvironments[modName]:getText("ui_FS25_EnhancedVehicle_"..v1))
     self[v2]:setText(g_i18n.modEnvironments[modName]:getText("ui_FS25_EnhancedVehicle_"..v2))
     self[v3]:setTexts({
@@ -140,9 +140,9 @@ function FS25_EnhancedVehicle_UI:onOpen()
 
   -- HUD elements
   for _, v in pairs(EV_elements_HUD) do
-    v1 = "HUD"..v.."Title"
-    v2 = "HUD"..v.."TT"
-    v3 = "HUD"..v.."Setting"
+    local v1 = "HUD"..v.."Title"
+    local v2 = "HUD"..v.."TT"
+    local v3 = "HUD"..v.."Setting"
     self[v1]:setText(g_i18n.modEnvironments[modName]:getText("ui_FS25_EnhancedVehicle_"..v1))
     self[v2]:setText(g_i18n.modEnvironments[modName]:getText("ui_FS25_EnhancedVehicle_"..v2))
     self[v3]:setTexts({
@@ -167,13 +167,13 @@ end
 function FS25_EnhancedVehicle_UI:updateValues()
   -- global elements
   for _, v in pairs(EV_elements_global) do
-    v3 = v.."Setting"
+    local v3 = v.."Setting"
     self[v3]:setState(lC:getConfigValue("global.functions", v.."IsEnabled") and 1 or 2)
   end
 
   -- HUD elements
   for _, v in pairs(EV_elements_HUD) do
-    v3 = "HUD"..v.."Setting"
+    local v3 = "HUD"..v.."Setting"
     self[v3]:setState(lC:getConfigValue("hud."..v, "enabled") and 1 or 2)
   end
 
@@ -229,14 +229,14 @@ function FS25_EnhancedVehicle_UI:onClickOk()
 
   -- global functions
   for _, v in pairs(EV_elements_global) do
-    v1 = v.."Setting"
+    local v1 = v.."Setting"
     state = self[v1]:getState() == 1
     lC:setConfigValue("global.functions", v.."IsEnabled", state)
   end
 
   -- HUD
   for _, v in pairs(EV_elements_HUD) do
-    v1 = "HUD"..v.."Setting"
+    local v1 = "HUD"..v.."Setting"
     state = self[v1]:getState() == 1
     lC:setConfigValue("hud."..v, "enabled", state)
   end

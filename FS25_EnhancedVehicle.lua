@@ -3,11 +3,16 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 08.12.2024
--- @Version: 1.1.4.0
+-- @Date: 02.05.2025
+-- @Version: 1.1.5.0
 
 --[[
 CHANGELOG
+
+2025-05-02 - V1.1.5.0
++ some code/performance optimizations here and there and fix for bug #59 (thanks to DeckerMMIV)
++ made rotation input-action repeatable similar to when setting width/offset of track (thanks to DeckerMMIV)
++ reordered the "showLines" sequence: hidden -> yellow -> yellow & red -> red -> hidden (thanks to DeckerMMIV)
 
 2024-12-08 - V1.1.4.0
 + added XML config option "moveFillLevelsDisplayDeltaY" to move the inGame FillLevelsDisplay by x pixels
@@ -48,6 +53,12 @@ local myName = "FS25_EnhancedVehicle"
 
 FS25_EnhancedVehicle = {}
 local FS25_EnhancedVehicle_mt = Class(FS25_EnhancedVehicle)
+
+local joints_front
+local joints_back
+local implements_front
+local implements_back
+local listOfObjects
 
 -- #############################################################################
 
@@ -108,6 +119,7 @@ function FS25_EnhancedVehicle:new(mission, modDirectory, modName, i18n, gui, inp
                                              'FS25_EnhancedVehicle_AJ_FRONT_FOLD' }
 
   -- for key press delay
+  FS25_EnhancedVehicle.startActionTime = 0
   FS25_EnhancedVehicle.nextActionTime  = 0
   FS25_EnhancedVehicle.deltaActionTime = 500
   FS25_EnhancedVehicle.minActionTime   = 31.25
@@ -407,7 +419,7 @@ function FS25_EnhancedVehicle:resetConfig(disable)
   -- track
   lC:addConfigValue("track",       "distanceAboveGround",          "float", 0.15)
   lC:addConfigValue("track",       "numberOfTracks",               "int",   5)
-  lC:addConfigValue("track",       "showLines",                    "int",   1)
+  lC:addConfigValue("track",       "showLines",                    "int",   2)
   lC:addConfigValue("track",       "hideLines",                    "bool",  false)
   lC:addConfigValue("track",       "hideLinesAfter",               "int",   5)
   lC:addConfigValue("track.color", "red",                          "float", 255/255)
@@ -990,21 +1002,18 @@ end
 -- #############################################################################
 
 function FS25_EnhancedVehicle:drawVisualizationLines(_step, _segments, _x, _y, _z, _dX, _dZ, _length, _colorR, _colorG, _colorB, _addY, _spikes, _spikeHeight)
-  _spikes = _spikes or false
-
-  -- our draw one line (recursive) function
-  if _step >= _segments then return end
-
-  p1 = { x = _x, y = _y, z = _z }
-  p2 = { x = p1.x + _dX * _length, y = p1.y, z = p1.z + _dZ * _length }
-  p2.y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, p2.x, 0, p2.z) + _addY
-  drawDebugLine(p1.x, p1.y, p1.z, _colorR, _colorG, _colorB, p2.x, p2.y, p2.z, _colorR, _colorG, _colorB)
-
-  if _spikes then
-    drawDebugLine(p2.x, p2.y, p2.z, _colorR, _colorG, _colorB, p2.x, p2.y + _spikeHeight, p2.z, _colorR, _colorG, _colorB)
+  local p1 = { x = _x, y = _y, z = _z }
+  local p2
+  -- For-loop instead of recursion
+  for i = _step, _segments do
+    p2 = { x = p1.x + _dX * _length, y = p1.y, z = p1.z + _dZ * _length }
+    p2.y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, p2.x, 0, p2.z) + _addY
+    drawDebugLine(p1.x, p1.y, p1.z, _colorR, _colorG, _colorB, p2.x, p2.y, p2.z, _colorR, _colorG, _colorB)
+    if _spikes then
+      drawDebugLine(p2.x, p2.y, p2.z, _colorR, _colorG, _colorB, p2.x, p2.y + _spikeHeight, p2.z, _colorR, _colorG, _colorB)
+    end
+    p1 = p2
   end
-
-  FS25_EnhancedVehicle:drawVisualizationLines(_step + 1, _segments, p2.x, p2.y, p2.z, _dX, _dZ, _length, _colorR, _colorG, _colorB, _addY, _spikes, _spikeHeight)
 end
 
 -- #############################################################################
@@ -1136,6 +1145,7 @@ function FS25_EnhancedVehicle:onDraw()
         -- with current track orientation
         local dotLR = dx * -self.vData.track.origin.dZ + dz * self.vData.track.origin.dX
         local dotFB = dx * -self.vData.track.origin.dX - dz * self.vData.track.origin.dZ
+        local dir = 1
         if math.abs(dotFB - self.vData.track.dotFBPrev) > 0.001 then
           if dotFB > self.vData.track.dotFBPrev then
             dir = -1
@@ -1154,10 +1164,10 @@ function FS25_EnhancedVehicle:onDraw()
         if self.vData.track.drivingDir == 0 then self.vData.track.drivingDir = 1 else self.vData.track.drivingDir = -1 end
 
         -- prepare for rendering
-        trackFB = dir * 1.5 + self.vData.track.trackFB
-        trackLRMiddle = Round(self.vData.track.trackLR, 0)
-        trackLRLanes  = trackLRMiddle - math.floor(1 - FS25_EnhancedVehicle.track.numberOfTracks / 2) + 0.5
-        trackLRText   = Round(self.vData.track.originalTrackLR , 0) - math.floor(1 - FS25_EnhancedVehicle.track.numberOfTracks / 2)
+        local trackFB = dir * 1.5 + self.vData.track.trackFB
+        local trackLRMiddle = Round(self.vData.track.trackLR, 0)
+        local trackLRLanes  = trackLRMiddle - math.floor(1 - FS25_EnhancedVehicle.track.numberOfTracks / 2) + 0.5
+        local trackLRText   = Round(self.vData.track.originalTrackLR , 0) - math.floor(1 - FS25_EnhancedVehicle.track.numberOfTracks / 2)
 
         -- draw middle line
         local startX = self.vData.track.origin.px + (-self.vData.track.origin.dZ * (trackLRMiddle * self.vData.track.workWidth)) - ( self.vData.track.origin.dX * (trackFB * self.vData.track.workWidth))
@@ -1198,15 +1208,14 @@ function FS25_EnhancedVehicle:onDraw()
         -- prepare for track numbers
         local activeCamera = self:getActiveCamera()
         local rx, ry, rz = getWorldRotation(activeCamera.cameraNode)
-        setTextColor(FS25_EnhancedVehicle.track.color[1], FS25_EnhancedVehicle.track.color[2], FS25_EnhancedVehicle.track.color[3], 1)
         setTextAlignment(RenderText.ALIGN_CENTER)
 
         -- draw lines
         local _s = math.floor(1 - FS25_EnhancedVehicle.track.numberOfTracks / 2)
         for i = _s, (_s + FS25_EnhancedVehicle.track.numberOfTracks), 1 do
           trackFB = dir * 0.5 + self.vData.track.trackFB
-          trackTextFB = trackFB
-          segments = 10
+          local trackTextFB = trackFB
+          local segments = 10
 
           -- middle segment of tracks -> draw longer lines
           if i == 0 or i == 1 then
@@ -1220,9 +1229,9 @@ function FS25_EnhancedVehicle:onDraw()
           end
 
           -- start coordinates of line
-          local startX = self.vData.track.origin.px + (-self.vData.track.origin.dZ * (trackLRLanes * self.vData.track.workWidth)) - ( self.vData.track.origin.dX * (trackFB * self.vData.track.workWidth))
-          local startZ = self.vData.track.origin.pz + ( self.vData.track.origin.dX * (trackLRLanes * self.vData.track.workWidth)) - ( self.vData.track.origin.dZ * (trackFB * self.vData.track.workWidth))
-          local startY = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, startX, 0, startZ) + FS25_EnhancedVehicle.track.distanceAboveGround
+          startX = self.vData.track.origin.px + (-self.vData.track.origin.dZ * (trackLRLanes * self.vData.track.workWidth)) - ( self.vData.track.origin.dX * (trackFB * self.vData.track.workWidth))
+          startZ = self.vData.track.origin.pz + ( self.vData.track.origin.dX * (trackLRLanes * self.vData.track.workWidth)) - ( self.vData.track.origin.dZ * (trackFB * self.vData.track.workWidth))
+          startY = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, startX, 0, startZ) + FS25_EnhancedVehicle.track.distanceAboveGround
 
           -- draw the line
           FS25_EnhancedVehicle:drawVisualizationLines(1,
@@ -1245,8 +1254,6 @@ function FS25_EnhancedVehicle:onDraw()
 
           -- render track number
           if i < _s + FS25_EnhancedVehicle.track.numberOfTracks then
-            setTextBold(false)
-            setTextColor(FS25_EnhancedVehicle.track.color[1], FS25_EnhancedVehicle.track.color[2], FS25_EnhancedVehicle.track.color[3], 1)
             local _curTrack = math.floor(trackLRText)
             if Round(self.vData.track.originalTrackLR, 0) + self.vData.track.deltaTrack == _curTrack then
               setTextBold(true)
@@ -1255,6 +1262,9 @@ function FS25_EnhancedVehicle:onDraw()
               else
                 setTextColor(1, 1, 1, 1)
               end
+            else
+              setTextBold(false)
+              setTextColor(FS25_EnhancedVehicle.track.color[1], FS25_EnhancedVehicle.track.color[2], FS25_EnhancedVehicle.track.color[3], 1)
             end
             renderText3D(textX, textY, textZ, rx, ry, rz, FS25_EnhancedVehicle.fS * Between(self.vData.track.workWidth * 5, 40, 90), tostring(_curTrack))
           end
@@ -1346,7 +1356,10 @@ function FS25_EnhancedVehicle:onRegisterActionEvents(isSelected, isOnActiveVehic
   if isOnActiveVehicle and self:getIsControlled() then
 
     -- assemble list of actions to attach
-    local actionList = FS25_EnhancedVehicle.actions.global
+    local actionList = {}
+    for _, v in ipairs(FS25_EnhancedVehicle.actions.global) do
+      table.insert(actionList, v)
+    end
     for _, v in ipairs(FS25_EnhancedVehicle.actions.snap) do
       table.insert(actionList, v)
     end
@@ -1369,13 +1382,17 @@ function FS25_EnhancedVehicle:onRegisterActionEvents(isSelected, isOnActiveVehic
          actionName == "FS25_EnhancedVehicle_SNAP_TRACKW" or
          actionName == "FS25_EnhancedVehicle_SNAP_TRACKO" or
          actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" or
-         actionName == "FS25_EnhancedVehicle_ODO_MODE"then
-        _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCall, false, true, true, true)
+         actionName == "FS25_EnhancedVehicle_ODO_MODE"    or
+         actionName == "FS25_EnhancedVehicle_SNAP_ANGLE1" or
+         actionName == "FS25_EnhancedVehicle_SNAP_ANGLE2" or
+         actionName == "FS25_EnhancedVehicle_SNAP_ANGLE3"
+      then
+        local _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCallDown, false, true, true, true)
         FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
-        _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCallUp, true, false, false, true)
+        local _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCallUp, true, false, false, true)
         FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
       else
-        _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCall, false, true, false, true)
+        local _, eventName = g_inputBinding:registerActionEvent(actionName, self, FS25_EnhancedVehicle.onActionCall, false, true, false, true)
         FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
       end
     end
@@ -1409,12 +1426,31 @@ end
 
 -- #############################################################################
 
+function FS25_EnhancedVehicle:onActionCallDown(actionName, keyStatus, arg4, arg5, arg6)
+  if FS25_EnhancedVehicle.startActionTime == 0 then
+    FS25_EnhancedVehicle.startActionTime = g_currentMission.time
+  end
+
+  if g_currentMission.time < FS25_EnhancedVehicle.nextActionTime then
+    return
+  else
+    FS25_EnhancedVehicle.nextActionTime = g_currentMission.time + FS25_EnhancedVehicle.deltaActionTime
+    if FS25_EnhancedVehicle.deltaActionTime >= FS25_EnhancedVehicle.minActionTime then
+      FS25_EnhancedVehicle.deltaActionTime = FS25_EnhancedVehicle.deltaActionTime * 0.5
+    end
+  end
+
+  FS25_EnhancedVehicle.onActionCall(self, actionName, keyStatus, arg4, arg5, arg6)
+end
+
+-- #############################################################################
+
 function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, arg6)
   if debug > 1 then print("-> " .. myName .. ": onActionCallUp " .. actionName .. ", keyStatus: " .. keyStatus .. mySelf(self)) end
 
   -- switch operational mode (off -> snap direction -> snap track)
   if actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" then
-    if g_currentMission.time < FS25_EnhancedVehicle.nextActionTime + 1000 then
+    if g_currentMission.time <= FS25_EnhancedVehicle.startActionTime + 1000 then
 
       if self.vData.opModeOld ~= nil then
         self.vData.opMode = self.vData.opModeOld
@@ -1450,7 +1486,7 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
   -- switch odo mode
   if FS25_EnhancedVehicle.functionOdoMeterIsEnabled then
     if actionName == "FS25_EnhancedVehicle_ODO_MODE" then
-      if g_currentMission.time < FS25_EnhancedVehicle.nextActionTime + 1000 then
+      if g_currentMission.time <= FS25_EnhancedVehicle.startActionTime + 1000 then
         -- switch odo mode (odo <-> trip)
         self.vData.want[16] = (self.vData.want[16] + 1) % 2
         if self.isClient and not self.isServer then
@@ -1462,6 +1498,7 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
   end
 
   -- reset key press delay
+  FS25_EnhancedVehicle.startActionTime = 0
   FS25_EnhancedVehicle.nextActionTime  = 0
   FS25_EnhancedVehicle.deltaActionTime = 500
 end
@@ -1699,18 +1736,25 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
   if FS25_EnhancedVehicle.functionSnapIsEnabled then
     -- switch operational mode (off -> snap direction -> snap track)
     if actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" then
-      if FS25_EnhancedVehicle.nextActionTime == 0 then
-        FS25_EnhancedVehicle.nextActionTime = g_currentMission.time
-      end
-      if g_currentMission.time > FS25_EnhancedVehicle.nextActionTime + 1000 then
+      if g_currentMission.time > FS25_EnhancedVehicle.startActionTime + 1000 then
         if self.vData.opModeOld == nil then
           self.vData.opModeOld = self.vData.opMode
         end
         self.vData.opMode = 0
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_LINES_MODE" then
-      FS25_EnhancedVehicle.track.showLines = FS25_EnhancedVehicle.track.showLines + 1
-      if FS25_EnhancedVehicle.track.showLines > 4 then FS25_EnhancedVehicle.track.showLines = 1 end
+      -- Make the toggle of "show lines" behave in a slightly different sequence:
+      --   hidden -> show yellow tracks -> show yellow tracks and vehicle red lines -> show vehicle red lines -> hidden
+      local currentShowLines = FS25_EnhancedVehicle.track.showLines
+      if     currentShowLines == 2 then
+        FS25_EnhancedVehicle.track.showLines = 3
+      elseif currentShowLines == 3 then
+        FS25_EnhancedVehicle.track.showLines = 1
+      elseif currentShowLines == 1 then
+        FS25_EnhancedVehicle.track.showLines = 4
+      else
+        FS25_EnhancedVehicle.track.showLines = 2
+      end
       lC:setConfigValue("track", "showLines", FS25_EnhancedVehicle.track.showLines)
     elseif actionName == "FS25_EnhancedVehicle_SNAP_ONOFF" then
       -- steering angle snap on/off
@@ -1810,54 +1854,41 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       _snap = true
     elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE1" then
       -- 1°
+      local angleAdjustment = 1 * (keyStatus >= 0 and 1 or -1)
       if self.vData.is[5] then
-        self.vData.want[4] = Round(self.vData.is[4] + 1 * (keyStatus >= 0 and 1 or -1), 0)
-        if (self.vData.want[4] ~= self.vData.want[4]) then
-          self.vData.want[4] = 0
-        end
-        if self.vData.want[4] >= 360 then self.vData.want[4] = self.vData.want[4] - 360 end
-        if self.vData.want[4] < 0 then self.vData.want[4] = self.vData.want[4] + 360 end
-        -- if track is enabled -> also rotate track
-        if self.vData.opMode == 2 and self.vData.track.isCalculated then
-          FS25_EnhancedVehicle:updateTrack(self, true, Angle2ModAngle(self.vData.is[9], self.vData.is[10], 1 * (keyStatus >= 0 and 1 or -1)), true, 0, true, 0, 0)
-        end
+        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
+        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
         _snap = true
       end
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, Angle2ModAngle(self.vData.is[9], self.vData.is[10], 1 * (keyStatus >= 0 and 1 or -1)), true, 0, true, 0, 0)
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
         _snap = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE2" then
     -- 45°
+      local angleAdjustment = 45 * (keyStatus >= 0 and 1 or -1)
       if self.vData.is[5] then
-        self.vData.want[4] = Round(self.vData.is[4] + 45 * (keyStatus >= 0 and 1 or -1), 0)
-        if (self.vData.want[4] ~= self.vData.want[4]) then
-          self.vData.want[4] = 0
-        end
-        if self.vData.want[4] >= 360 then self.vData.want[4] = self.vData.want[4] - 360 end
-        if self.vData.want[4] < 0 then self.vData.want[4] = self.vData.want[4] + 360 end
+        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
+        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
         _snap = true
       end
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, Angle2ModAngle(self.vData.is[9], self.vData.is[10], 45 * (keyStatus >= 0 and 1 or -1)), true, 0, true, 0, 0)
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
         _snap = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE3" then
       -- 90°
+      local angleAdjustment = 90 * (keyStatus >= 0 and 1 or -1)
       if self.vData.is[5] then
-        self.vData.want[4] = Round(self.vData.is[4] + 90 * (keyStatus >= 0 and 1 or -1), 0)
-        if (self.vData.want[4] ~= self.vData.want[4]) then
-          self.vData.want[4] = 0
-        end
-        if self.vData.want[4] >= 360 then self.vData.want[4] = self.vData.want[4] - 360 end
-        if self.vData.want[4] < 0 then self.vData.want[4] = self.vData.want[4] + 360 end
+        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
+        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
         _snap = true
       end
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, Angle2ModAngle(self.vData.is[9], self.vData.is[10], 90 * (keyStatus >= 0 and 1 or -1)), true, 0, true, 0, 0)
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
         _snap = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACK" then
@@ -1868,29 +1899,17 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACKP" then
     -- track position
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        if g_currentMission.time > FS25_EnhancedVehicle.nextActionTime then
-          FS25_EnhancedVehicle.nextActionTime = g_currentMission.time + FS25_EnhancedVehicle.deltaActionTime
-          if FS25_EnhancedVehicle.deltaActionTime >= FS25_EnhancedVehicle.minActionTime then FS25_EnhancedVehicle.deltaActionTime = FS25_EnhancedVehicle.deltaActionTime * 0.5 end
-          FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0.1 * (keyStatus >= 0 and 1 or -1), true, 0, 0)
-        end
+        FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0.1 * (keyStatus >= 0 and 1 or -1), true, 0, 0)
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACKW" then
     -- track width
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        if g_currentMission.time > FS25_EnhancedVehicle.nextActionTime then
-          FS25_EnhancedVehicle.nextActionTime = g_currentMission.time + FS25_EnhancedVehicle.deltaActionTime
-          if FS25_EnhancedVehicle.deltaActionTime >= FS25_EnhancedVehicle.minActionTime then FS25_EnhancedVehicle.deltaActionTime = FS25_EnhancedVehicle.deltaActionTime * 0.5 end
-          FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0, false, 0, 0, 0.1 * (keyStatus >= 0 and 1 or -1))
-        end
+        FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0, false, 0, 0, 0.1 * (keyStatus >= 0 and 1 or -1))
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACKO" then
     -- track offset
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        if g_currentMission.time > FS25_EnhancedVehicle.nextActionTime then
-          FS25_EnhancedVehicle.nextActionTime = g_currentMission.time + FS25_EnhancedVehicle.deltaActionTime
-          if FS25_EnhancedVehicle.deltaActionTime >= FS25_EnhancedVehicle.minActionTime then FS25_EnhancedVehicle.deltaActionTime = FS25_EnhancedVehicle.deltaActionTime * 0.5 end
-          FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0, false, 0, 0.05 * (keyStatus >= 0 and 1 or -1))
-        end
+        FS25_EnhancedVehicle:updateTrack(self, false, -1, false, 0, false, 0, 0.05 * (keyStatus >= 0 and 1 or -1))
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACKJ" then
     -- track jump
@@ -1955,10 +1974,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
   -- reset odo/trip
   if FS25_EnhancedVehicle.functionOdoMeterIsEnabled then
     if actionName == "FS25_EnhancedVehicle_ODO_MODE" then
-      if FS25_EnhancedVehicle.nextActionTime == 0 then
-        FS25_EnhancedVehicle.nextActionTime = g_currentMission.time
-      end
-      if g_currentMission.time > FS25_EnhancedVehicle.nextActionTime + 1000 then
+      if g_currentMission.time > FS25_EnhancedVehicle.startActionTime + 1000 then
         if (self.vData.is[15] > 0) then
           self.vData.want[15] = 0
           if self.isClient and not self.isServer then
@@ -2011,20 +2027,24 @@ function FS25_EnhancedVehicle:getHeadlandDistance(self)
   local _x = x
   local _z = z
 
+  local y
+  local groundTypeMapId, groundTypeFirstChannel, groundTypeNumChannels
+  local _density, _densityType
+
   local isOnField = true
   local _dist = 0.0
   local _delta = 0.5
 
   while(_dist < 100) do
-    local y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, 1, z)
-    local groundTypeMapId, groundTypeFirstChannel, groundTypeNumChannels = g_currentMission.fieldGroundSystem:getDensityMapData(FieldDensityMap.GROUND_TYPE)
-    local _density = getDensityAtWorldPos(groundTypeMapId, x, y, z)
-    local _densityType = bitAND(bitShiftRight(_density, groundTypeFirstChannel), 2^groundTypeNumChannels - 1)
+    y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, x, 1, z)
+    groundTypeMapId, groundTypeFirstChannel, groundTypeNumChannels = g_currentMission.fieldGroundSystem:getDensityMapData(FieldDensityMap.GROUND_TYPE)
+    _density = getDensityAtWorldPos(groundTypeMapId, x, y, z)
+    _densityType = bitAND(bitShiftRight(_density, groundTypeFirstChannel), 2^groundTypeNumChannels - 1)
     isOnField = isOnField and (_densityType ~= g_currentMission.grassValue and _densityType ~= 0)
 
     if not isOnField then
       self.vData.track.eofDistance = MathUtil.vector2Length(_x - x, _z - z)
-      _dist = 100
+      return
     end
 
     x = x + (self.vData.dirX * _delta)
@@ -2032,7 +2052,7 @@ function FS25_EnhancedVehicle:getHeadlandDistance(self)
     _dist = _dist + _delta
   end
 
-  if _dist == 100 then self.vData.track.eofDistance = -1 end
+  self.vData.track.eofDistance = -1
 end
 
 -- #############################################################################
@@ -2372,7 +2392,6 @@ end
 function FS25_EnhancedVehicle:enumerateAttachments2(rootNode, obj)
   if debug > 1 then print("entering: "..obj.rootNode) end
 
-  local idx, attacherJoint
   local relX, relY, relZ
 
   if obj.spec_attacherJoints == nil then return end
@@ -2508,7 +2527,7 @@ function FS25_EnhancedVehicle:updateVehiclePhysics( originalFunction, axisForwar
       self.vData.rot = rot
 
       -- when snap to track mode -> get dot
-      dotLR = 0
+      local dotLR = 0
       if self.vData.is[6] then
         local dx, dz = px - self.vData.is[11], pz - self.vData.is[12]
         dotLR = -(dx * -self.vData.is[10] + dz * self.vData.is[9])
@@ -2607,18 +2626,13 @@ function FS25_EnhancedVehicle:updateWheelsPhysics(originalFunction, dt, currentS
   if debug > 2 then print("function WheelsUtil.updateWheelsPhysics("..self.typeDesc..", "..tostring(dt)..", "..tostring(currentSpeed)..", "..tostring(acceleration)..", "..tostring(doHandbrake)..", "..tostring(stopAndGoBraking)) end
 
   local brakeLights = false
-  if self.vData ~= nil then
+  if self.vData ~= nil and self.vData.is[13] then
     if self:getIsVehicleControlledByPlayer() and self:getIsMotorStarted() then
       -- parkBreakIsOn
-      if self.vData.is[13] then
-        brakeLights = true
-        if currentSpeed >= -0.0003 and currentSpeed <= 0.0003 then
-          brakeLights = false
-        end
-        acceleration = 0
-        currentSpeed = 0
-        doHandbrake = true
-      end
+      brakeLights = not (currentSpeed >= -0.0003 and currentSpeed <= 0.0003)
+      acceleration = 0
+      currentSpeed = 0
+      doHandbrake = true
     end
   end
 
@@ -2628,10 +2642,8 @@ function FS25_EnhancedVehicle:updateWheelsPhysics(originalFunction, dt, currentS
     print("Ooops in updateWheelsPhysics :" .. tostring(result))
   end
 
-  if self:getIsVehicleControlledByPlayer() and self:getIsMotorStarted() then
-    if brakeLights and type(self.setBrakeLightsVisibility) == "function" then
-      self:setBrakeLightsVisibility(true)
-    end
+  if brakeLights and type(self.setBrakeLightsVisibility) == "function" then
+    self:setBrakeLightsVisibility(true)
   end
 
   return result

@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 08.12.2024
--- @Version: 1.1.4.0
+-- @Date: 02.05.2025
+-- @Version: 1.1.5.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -93,6 +93,8 @@ FS25_EnhancedVehicle_HUD.TEXT_SIZE = {
   TEMP       = 10,
   ODO        = 9,
 }
+
+local dmg_txt
 
 -- #############################################################################
 
@@ -419,7 +421,7 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
 
   if self.trackBox ~= nil then
     -- some globals
-    local boxWidth, boxHeight = self.trackBox:getWidth(), self.trackBox:getHeight()
+    --local boxWidth, boxHeight = self.trackBox:getWidth(), self.trackBox:getHeight()
     local boxPosX = self.speedMeter.speedBg.x -- left border of gauge
     local boxPosY = self.speedMeter.speedBg.y + self.speedMeter.speedBg.height + self.marginElement -- move above gauge and some spacing
     local boxPosY2 = boxPosY
@@ -700,7 +702,7 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
       self.icons.hldown:setVisible(false)
     else
       -- headland mode icon
-      local color = self.iconIsActive.track and FS25_EnhancedVehicle_HUD.COLOR.ACTIVE or FS25_EnhancedVehicle_HUD.COLOR.INACTIVE
+      --local color = self.iconIsActive.track and FS25_EnhancedVehicle_HUD.COLOR.ACTIVE or FS25_EnhancedVehicle_HUD.COLOR.INACTIVE
       local _b1, _b2, _b3 = false, false, false
       if self.vehicle.vData.track.headlandMode == 1 then
         _b1 = true
@@ -735,7 +737,8 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
     -- snap degree display
     if self.vehicle.vData.rot ~= nil then
       -- prepare text
-      snap_txt2 = ''
+      local snap_txt
+      local snap_txt2 = ''
       if self.vehicle.vData.is[5] then
         local degree = self.vehicle.vData.is[4]
         if (degree ~= degree) then
@@ -773,7 +776,7 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
     local workwidth_txt = self.default_workwidth_txt
 
     if self.vehicle.vData.track.isCalculated then
-      _prefix = "+"
+      local _prefix = "+"
       if self.vehicle.vData.track.deltaTrack == 0 then _prefix = "+/-" end
       if self.vehicle.vData.track.deltaTrack < 0 then _prefix = "" end
       local _curTrack = Round(self.vehicle.vData.track.originalTrackLR, 0)
@@ -984,10 +987,14 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
   -- fuel display
   if self.vehicle.spec_fillUnit ~= nil and FS25_EnhancedVehicle.hud.fuel.enabled then
     -- get values
-    fuel_diesel_current   = -1
-    fuel_adblue_current   = -1
-    fuel_electric_current = -1
-    fuel_methane_current  = -1
+    local fuel_diesel_current   = -1
+    local fuel_adblue_current   = -1
+    local fuel_electric_current = -1
+    local fuel_methane_current  = -1
+    local fuel_diesel_max   = -1
+    local fuel_adblue_max   = -1
+    local fuel_electric_max = -1
+    local fuel_methane_max  = -1
 
     for _, fillUnit in ipairs(self.vehicle.spec_fillUnit.fillUnits) do
       if fillUnit.fillType == FillType.DIESEL then -- Diesel
@@ -1009,7 +1016,7 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
     end
 
     -- prepare text
-    fuel_txt = { }
+    local fuel_txt = { }
     if fuel_diesel_current >= 0 then
       table.insert(fuel_txt, { string.format("%.1f l/%.1f l", fuel_diesel_current, fuel_diesel_max), 1 })
     end
