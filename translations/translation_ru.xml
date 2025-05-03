@@ -8,10 +8,10 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Переключить режим работы (привязать направление/трек)"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Увеличить направление привязки/трека на 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Уменьшить направление привязки/трека на 1°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Увеличить направление привязки/трека на 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Уменьшить направление привязки/трека 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Увеличить направление привязки/трека на 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Уменьшить направление привязки/трека 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Увеличить направление привязки/трека на 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Уменьшить направление привязки/трека 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Увеличить направление привязки/трека на 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Уменьшить направление привязки/трека 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Перерассчитать рабочую ширину"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Перерассчитать сетку треков"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Изменить режим отображения линий"/>

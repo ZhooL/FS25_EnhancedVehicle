@@ -8,10 +8,10 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Operationele modus wisselen (snaprichting/track)"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Vergroot de snap-/trackrichting met 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Verlaag de snap-/trackrichting met 1°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Vergroot de snap-/trackrichting met 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Verlaag de snap-/trackrichting met 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Vergroot de snap-/trackrichting met 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Verlaag de snap-/trackrichting met 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Vergroot de snap-/trackrichting met 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Verlaag de snap-/trackrichting met 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Vergroot de snap-/trackrichting met 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Verlaag de snap-/trackrichting met 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Her)bereken de werkbreedte"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Her)bereken de baanindeling"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Wijzig de weergavemodus van lijnen"/>

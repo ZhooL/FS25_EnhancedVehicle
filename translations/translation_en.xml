@@ -8,10 +8,10 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Switch operational mode (snap direction/track)"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Increase snap/track direction by 1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Decrease snap/track direction by 1°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Increase snap/track direction by 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Decrease snap/track direction by 45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Increase snap/track direction by 90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Decrease snap/track direction by 90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Increase snap/track direction by 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Decrease snap/track direction by 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Increase snap/track direction by 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Decrease snap/track direction by 45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (Re)calculate working width"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (Re)calculate track layout"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Change display mode of lines"/>

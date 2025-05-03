@@ -3,14 +3,16 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 02.05.2025
+-- @Date: 03.05.2025
 -- @Version: 1.1.5.0
 
 --[[
 CHANGELOG
 
-2025-05-02 - V1.1.5.0
-+ some code/performance optimizations here and there and fix for bug #59 (thanks to DeckerMMIV)
+2025-05-03 - V1.1.5.0
+* some code/performance optimizations here and there and fix for bug #59 (thanks to DeckerMMIV)
++ ability to rotate in 0.25 degrees, instead of 90 degrees (thanks to DeckerMMIV)
++ display value of compass direction aligned to be the same as the base-game's mini-map (thanks to DeckerMMIV)
 + made rotation input-action repeatable similar to when setting width/offset of track (thanks to DeckerMMIV)
 + reordered the "showLines" sequence: hidden -> yellow -> yellow & red -> red -> hidden (thanks to DeckerMMIV)
 
@@ -728,17 +730,9 @@ function FS25_EnhancedVehicle:onUpdate(dt)
       self.vData.dirX = self.vData.dx / length
       self.vData.dirZ = self.vData.dz / length
 
-      -- calculate current rotation
-      local rot = 180 - math.deg(math.atan2(self.vData.dx, self.vData.dz))
-
-      -- if cabin is rotated -> direction should rotate also
-      if self.spec_drivable.reverserDirection < 0 then
-        rot = rot + 180
-        if rot >= 360 then rot = rot - 360 end
-      end
-      rot = Round(rot, 1)
-      if rot >= 360.0 then rot = 0 end
-      self.vData.rot = rot
+      -- calculate current rotation, including if cabin is rotated -> direction should rotate also
+      local rot = Direction2RotationDeg(self.vData.dx, self.vData.dz, self.spec_drivable.reverserDirection)
+      self.vData.rot = NormalizeAngle(Round(rot, 1))
 
       -- when track assistant is active and calculated
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
@@ -777,7 +771,7 @@ function FS25_EnhancedVehicle:onUpdate(dt)
         if self.vData.is[5] and self.vData.is[6] then
           local isOnField = FS25_EnhancedVehicle:getHeadlandInfo(self)
           if self.vData.track.isOnField <= 5 and isOnField then
-            if Round(self.vData.rot, 0) == Round(self.vData.is[4], 0) then
+            if math.abs(self.vData.rot - self.vData.is[4]) <= 0.5 then
               self.vData.track.isOnField = self.vData.track.isOnField + 1
               if debug > 1 then print("Headland: enter field") end
             end
@@ -1407,7 +1401,7 @@ function FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
     if actionName == "FS25_EnhancedVehicle_MENU" or
        actionName == "FS25_EnhancedVehicle_PARK" or
        actionName == "FS25_EnhancedVehicle_SNAP_ONOFF" or
-       actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
+--       actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
        actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" then
       g_inputBinding:setActionEventTextVisibility(eventName, true)
       g_inputBinding:setActionEventTextPriority(eventName, GS_PRIO_VERY_LOW)
@@ -1773,33 +1767,19 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
         end
 
         -- calculate snap angle
-        local snapToAngle = FS25_EnhancedVehicle.snap.snapToAngle
-        if snapToAngle == 0 or snapToAngle == 1 or snapToAngle < 0 or snapToAngle >= 360 then
-          snapToAngle = self.vData.rot
-        end
+        local snapToAngle = Between(Round(FS25_EnhancedVehicle.snap.snapToAngle, 0), 1, 90)
         self.vData.want[4] = Round(ClosestAngle(self.vData.rot, snapToAngle), 0)
-        if (self.vData.want[4] ~= self.vData.want[4]) then
-          self.vData.want[4] = 0
-        end
         if self.vData.want[4] == 360 then self.vData.want[4] = 0 end
 
         -- if track is enabled -> set angle to track angle
         if self.vData.opMode == 2 and self.vData.track.isCalculated then
           self.vData.want[6] = true
 
-          -- ToDo: optimize this
           local lx,_,lz = localDirectionToWorld(self.rootNode, 0, 0, 1)
-          local rot1 = 180 - math.deg(math.atan2(lx, lz))
-          if rot1 >= 360 then rot1 = rot1 - 360 end
+          local rot1 = Direction2RotationDeg(lx, lz, self.spec_drivable.reverserDirection)
+          local rot2 = Direction2RotationDeg(self.vData.track.origin.dX, self.vData.track.origin.dZ)
+          rot2 = ClosestAngle(rot2, 0.25)
 
-          -- if cabin is rotated -> direction should rotate also
-          if self.spec_drivable.reverserDirection < 0 then
-            rot1 = rot1 + 180
-            if rot1 >= 360 then rot1 = rot1 - 360 end
-          end
-
-          local rot2 = 180 - math.deg(math.atan2(self.vData.track.origin.dX, self.vData.track.origin.dZ))
-          if rot2 >= 360 then rot2 = rot2 - 360 end
           local diffdeg = rot1 - rot2
           if diffdeg > 180 then diffdeg = diffdeg - 360 end
           if diffdeg < -180 then diffdeg = diffdeg + 360 end
@@ -1810,9 +1790,6 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
           end
           FS25_EnhancedVehicle:updateTrack(self, true, rot2, false, 0, true, 0, 0)
           self.vData.want[4] = rot2
-          if (self.vData.want[4] ~= self.vData.want[4]) then
-            self.vData.want[4] = 0
-          end
 
           -- update headland
           self.vData.track.isOnField = FS25_EnhancedVehicle:getHeadlandInfo(self) and 10 or 0
@@ -1836,15 +1813,12 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
 
       -- turn snap on
       self.vData.want[5] = true
-      self.vData.want[4] = Round(self.vData.is[4] + 180, 0)
-      if (self.vData.want[4] ~= self.vData.want[4]) then
-        self.vData.want[4] = 0
-      end
-      if self.vData.want[4] >= 360 then self.vData.want[4] = self.vData.want[4] - 360 end
+      self.vData.want[4] = NormalizeAngle(ClosestAngle(self.vData.is[4] + 180, 0.25))
+
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
         self.vData.want[6] = true
-        local _newrot = Angle2ModAngle(self.vData.is[9], self.vData.is[10], 180)
+        local _newrot = Direction2RotationDeg(self.vData.is[9], self.vData.is[10], 0, 180)
         FS25_EnhancedVehicle:updateTrack(self, true, _newrot, false, 0, true, self.vData.track.deltaTrack, 0)
         self.vData.want[4] = _newrot
 
@@ -1856,39 +1830,36 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       -- 1°
       local angleAdjustment = 1 * (keyStatus >= 0 and 1 or -1)
       if self.vData.is[5] then
-        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
-        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
+        self.vData.want[4] = NormalizeAngle(ClosestAngle(self.vData.is[4] + angleAdjustment, 1))
         _snap = true
       end
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
-        _snap = true
-      end
-    elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE2" then
-    -- 45°
-      local angleAdjustment = 45 * (keyStatus >= 0 and 1 or -1)
-      if self.vData.is[5] then
-        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
-        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
-        _snap = true
-      end
-      -- if track is enabled -> also rotate track
-      if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Direction2RotationDeg(self.vData.is[9], self.vData.is[10], 0, angleAdjustment), 1), true, 0, true, 0, 0)
         _snap = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE3" then
-      -- 90°
-      local angleAdjustment = 90 * (keyStatus >= 0 and 1 or -1)
+    -- 45°
+      local angleAdjustment = 45 * (keyStatus >= 0 and 1 or -1)
       if self.vData.is[5] then
-        self.vData.want[4] = ClosestAngle(self.vData.is[4] + angleAdjustment, 1)
-        self.vData.want[4] = NormalizeAngle(self.vData.want[4])
+        self.vData.want[4] = NormalizeAngle(ClosestAngle(self.vData.is[4] + angleAdjustment, 1))
         _snap = true
       end
       -- if track is enabled -> also rotate track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
-        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Angle2ModAngle(self.vData.is[9], self.vData.is[10], angleAdjustment), 1), true, 0, true, 0, 0)
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Direction2RotationDeg(self.vData.is[9], self.vData.is[10], 0, angleAdjustment), 1), true, 0, true, 0, 0)
+        _snap = true
+      end
+    elseif actionName == "FS25_EnhancedVehicle_SNAP_ANGLE2" then
+      -- 0.25°
+      local angleAdjustment = 0.25 * (keyStatus >= 0 and 1 or -1)
+      if self.vData.is[5] then
+        self.vData.want[4] = NormalizeAngle(ClosestAngle(self.vData.is[4] + angleAdjustment, 0.25))
+        _snap = true
+      end
+      -- if track is enabled -> also rotate track
+      if self.vData.opMode == 2 and self.vData.track.isCalculated then
+        FS25_EnhancedVehicle:updateTrack(self, true, ClosestAngle(Direction2RotationDeg(self.vData.is[9], self.vData.is[10], 0, angleAdjustment), 0.25), true, 0, true, 0, 0)
         _snap = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACK" then
@@ -2111,22 +2082,10 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     -- if no angle provided -> use current vehicle rotation
     local _rot = 0
     if updateAngleValue == -1 then
-      local _length = MathUtil.vector2Length(self.vData.dx, self.vData.dz);
-      local _dX = self.vData.dx / _length
-      local _dZ = self.vData.dz / _length
-      _rot = 180 - math.deg(math.atan2(_dX, _dZ))
-
-      -- if cabin is rotated -> angle should rotate also
-      if self.spec_drivable.reverserDirection < 0 then
-        _rot = NormalizeAngle(_rot + 180)
-      end
-      _rot = Round(_rot, 1)
+      _rot = Direction2RotationDeg(self.vData.dx, self.vData.dz, self.spec_drivable.reverserDirection)
 
       -- smoothen track angle to snapToAngle
-      local snapToAngle = FS25_EnhancedVehicle.snap.snapToAngle
-      if snapToAngle <= 1 or snapToAngle >= 360 then
-        snapToAngle = _rot
-      end
+      local snapToAngle = Between(Round(FS25_EnhancedVehicle.snap.snapToAngle, 0), 1, 90)
       _rot = Round(ClosestAngle(_rot, snapToAngle), 0)
     else -- use provided angle
       _rot = updateAngleValue
@@ -2190,13 +2149,13 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     -- calculate dot in direction left-right and forward-backward
     local dotLR = dx * -self.vData.track.origin.originaldZ + dz * self.vData.track.origin.originaldX
     local trackLR2 = Round(dotLR / self.vData.track.workWidth, 0)
-    local dotLR = dx * -self.vData.track.origin.dZ + dz * self.vData.track.origin.dX
+--    local dotLR = dx * -self.vData.track.origin.dZ + dz * self.vData.track.origin.dX
     local dotFB = dx * -self.vData.track.origin.dX - dz * self.vData.track.origin.dZ
-    local trackLR = Round(dotLR / self.vData.track.workWidth, 0)
+--    local trackLR = Round(dotLR / self.vData.track.workWidth, 0)
 
     -- do we move in original grid oriontation direction?
-    local _drivingDir = trackLR - trackLR2
-    if _drivingDir == 0 then _drivingDir = 1 else _drivingDir = -1 end
+--    local _drivingDir = trackLR - trackLR2
+--    if _drivingDir == 0 then _drivingDir = 1 else _drivingDir = -1 end
     -- new destination track
     trackLR2 = trackLR2 + deltaTrack
 
@@ -2491,12 +2450,16 @@ end
 
 -- #############################################################################
 
-function Angle2ModAngle(x, z, diff)
-  local rot = 180 - math.deg(math.atan2(x, z))
+function Direction2RotationDeg(x, z, reverserDirection, diff)
+  diff = diff or 0
+
+  local rot = 180 - math.deg(MathUtil.getYRotationFromDirection(x,z))
   rot = rot + diff
-  if rot < 0 then rot = rot + 360 end
-  if rot >= 360 then rot = rot - 360 end
-  return rot
+  if reverserDirection ~= nil and reverserDirection < 0 then
+    rot = rot + 180
+  end
+
+  return NormalizeAngle(rot)
 end
 
 -- #############################################################################
@@ -2515,13 +2478,7 @@ function FS25_EnhancedVehicle:updateVehiclePhysics( originalFunction, axisForwar
       -- get current position and rotation of vehicle
       local px, _, pz = localToWorld(self.rootNode, 0, 0, 0)
       local lx, _, lz = localDirectionToWorld(self.rootNode, 0, 0, 1)
-      local rot = 180 - math.deg(math.atan2(lx, lz))
-
-      -- if cabin is rotated -> direction should rotate also
-      if self.spec_drivable.reverserDirection < 0 then
-        rot = rot + 180
-        if rot >= 360 then rot = rot - 360 end
-      end
+      local rot = Direction2RotationDeg(lx, lz, self.spec_drivable.reverserDirection)
       rot = Round(rot, 1)
       if rot >= 360.0 then rot = 0 end
       self.vData.rot = rot
@@ -2535,7 +2492,8 @@ function FS25_EnhancedVehicle:updateVehiclePhysics( originalFunction, axisForwar
       end
 
       -- if wanted direction is different than current direction OR we're not on track
-      if self.vData.rot ~= self.vData.is[4] or dotLR ~= 0 then
+--      if self.vData.rot ~= self.vData.is[4] or dotLR ~= 0 then
+      if math.abs(self.vData.rot - self.vData.is[4]) > 0.0001 or dotLR ~= 0 then
 
         -- get movingDirection (1=forward, 0=nothing, -1=reverse) but if nothing we choose forward
         local movingDirection = 0

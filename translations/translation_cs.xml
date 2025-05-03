@@ -8,10 +8,10 @@
     <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: 切换操作模式(捕捉方向​​/轨迹)"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: 将捕捉/跟踪方向增加1°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: 将捕捉/跟踪方向减少1°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: 将捕捉/跟踪方向增加45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: 将捕捉/跟踪方向减少45°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: 将捕捉/跟踪方向增加90°"/>
-    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: 将捕捉/跟踪方向减少90°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: 将捕捉/跟踪方向增加0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: 将捕捉/跟踪方向减少0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: 将捕捉/跟踪方向增加45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: 将捕捉/跟踪方向减少45°"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: (重新)计算工作宽度"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: (重新)计算轨道布局"/>
     <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: 更改线路显示模式"/>

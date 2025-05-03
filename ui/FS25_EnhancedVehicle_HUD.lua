@@ -3,7 +3,7 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 02.05.2025
+-- @Date: 03.05.2025
 -- @Version: 1.1.5.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
@@ -421,7 +421,6 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
 
   if self.trackBox ~= nil then
     -- some globals
-    --local boxWidth, boxHeight = self.trackBox:getWidth(), self.trackBox:getHeight()
     local boxPosX = self.speedMeter.speedBg.x -- left border of gauge
     local boxPosY = self.speedMeter.speedBg.y + self.speedMeter.speedBg.height + self.marginElement -- move above gauge and some spacing
     local boxPosY2 = boxPosY
@@ -702,7 +701,6 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
       self.icons.hldown:setVisible(false)
     else
       -- headland mode icon
-      --local color = self.iconIsActive.track and FS25_EnhancedVehicle_HUD.COLOR.ACTIVE or FS25_EnhancedVehicle_HUD.COLOR.INACTIVE
       local _b1, _b2, _b3 = false, false, false
       if self.vehicle.vData.track.headlandMode == 1 then
         _b1 = true
@@ -736,33 +734,34 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
 
     -- snap degree display
     if self.vehicle.vData.rot ~= nil then
-      -- prepare text
-      local snap_txt
-      local snap_txt2 = ''
-      if self.vehicle.vData.is[5] then
-        local degree = self.vehicle.vData.is[4]
-        if (degree ~= degree) then
-          degree = 0
-        end
-        snap_txt = string.format("%.1f°", degree)
-        if (Round(self.vehicle.vData.rot, 0) ~= Round(degree, 0)) then
-          snap_txt2 = string.format("%.1f°", self.vehicle.vData.rot)
-        end
-      else
-        snap_txt = string.format("%.1f°", self.vehicle.vData.rot)
-      end
-
-      -- render text
       setTextAlignment(RenderText.ALIGN_CENTER)
       setTextVerticalAlignment(RenderText.VERTICAL_ALIGN_MIDDLE)
       setTextBold(true)
 
+      local degree_vrot = NormalizeAngle(180 + self.vehicle.vData.rot)
+      local snap_txt = string.format("%.1f°", degree_vrot)
+      local snap_txt2 = nil
+
+      if self.vehicle.vData.is[5] then
+        local degree = NormalizeAngle(180 + self.vehicle.vData.is[4])
+
+        local function getQuarterSymbol(angle)
+          local fraction = angle % 1
+          if fraction < 0.125 or fraction >= 0.875 then return "" end
+          if fraction < 0.375 then return "¼" end
+          if fraction < 0.625 then return "½" end
+          return "¾"
+        end
+
+        snap_txt2 = snap_txt
+        snap_txt = string.format("%d%s°", degree, getQuarterSymbol(degree))
+      end
+
       local color = self.vehicle.vData.is[5] and FS25_EnhancedVehicle_HUD.COLOR.ACTIVE or FS25_EnhancedVehicle_HUD.COLOR.INACTIVE
       setTextColor(unpack(color))
-
       renderText(self.snapText1.posX, self.snapText1.posY, self.snapText1.size, snap_txt)
 
-      if (snap_txt2 ~= "") then
+      if snap_txt2 then
         setTextColor(1,1,1,1)
         renderText(self.snapText2.posX, self.snapText2.posY, self.snapText2.size, snap_txt2)
       end

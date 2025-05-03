@@ -34,8 +34,8 @@ Lizenz: https://creativecommons.org/licenses/by-nc-sa/4.0/
 | <kbd>R Shift</kbd>+<kbd>Num -</kbd> / <kbd>Num +</kbd> | Fahrspurbreite verringern/erhöhen |
 | <kbd>R Strg</kbd>+<kbd>Einfg</kbd> / <kbd>Entf</kbd> | Fahrzeug eine Fahrspur nach rechts/links bewegen (ohne zu wenden) |
 | <kbd>R Strg</kbd>+<kbd>Bild-hoch</kbd> / <kbd>Bild-runter</kbd> | Fahrzeug/Spurausrichtung um 1° erhöhen/verringern |
-| <kbd>R Shift</kbd>+<kbd>Bild-hoch</kbd> / <kbd>Bild-runter</kbd> | Fahrzeug/Spurausrichtung um 90° erhöhen/verringern |
-| <kbd>R Strg</kbd>+<kbd>R Shift</kbd>+<kbd>Bild-hoch</kbd> / <kbd>Bild-runter</kbd> | Fahrzeug/Spurausrichtung um 45° erhöhen/verringern |
+| <kbd>R Shift</kbd>+<kbd>Bild-hoch</kbd> / <kbd>Bild-runter</kbd> | Fahrzeug/Spurausrichtung um 45° erhöhen/verringern |
+| <kbd>R Strg</kbd>+<kbd>R Shift</kbd>+<kbd>Bild-hoch</kbd> / <kbd>Bild-runter</kbd> | Fahrzeug/Spurausrichtung um 0,25° erhöhen/verringern |
 | <kbd>R Strg</kbd>+<kbd>Num *</kbd> | Durch verschiedene Modi für automatisierte Aktionen am Feldende wechseln |
 | <kbd>R Shift</kbd>+<kbd>Num /</kbd> / <kbd>Num *</kbd> | Durch verschiedene Abstände zum Feldende wechseln |
 | <kbd>R Strg</kbd>+<kbd>Num 5</kbd> | Zwischen Gesamtkilometeranzeige oder "Tageskilometerzähler" wechseln.<br/>Drücken und halten, um Tageskilometer auf 0 zu setzen |
@@ -109,8 +109,8 @@ License: https://creativecommons.org/licenses/by-nc-sa/4.0/
 | <kbd>R Shift</kbd>+<kbd>Num -</kbd> / <kbd>Num +</kbd> | decrease/increase track width |
 | <kbd>R Ctrl</kbd>+<kbd>Insert</kbd> / <kbd>Delete</kbd> | move vehicle one track to the right/left without turning around |
 | <kbd>R Ctrl</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | increase/decrease snap/track direction by 1° |
-| <kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | increase/decrease snap/track direction by 90° |
-| <kbd>R Ctrl</kbd>+<kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | increase/decrease snap/track direction by 45° |
+| <kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | increase/decrease snap/track direction by 45° |
+| <kbd>R Ctrl</kbd>+<kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | increase/decrease snap/track direction by 0.25° |
 | <kbd>R Ctrl</kbd>+<kbd>Num *</kbd> | cycle through the different headland modes |
 | <kbd>R Shift</kbd>+<kbd>Num /</kbd> / <kbd>Num *</kbd> | cycle through headland distances |
 | <kbd>R Ctrl</kbd>+<kbd>Num 5</kbd> | Switch between overall kilometer counter or trip kilometer counter.<br/>Press and hold to reset trip kilometer counter to 0|
