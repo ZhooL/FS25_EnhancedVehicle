@@ -3,11 +3,15 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 03.05.2025
--- @Version: 1.1.5.0
+-- @Date: 04.05.2025
+-- @Version: 1.1.6.0
 
 --[[
 CHANGELOG
+
+2025-xx-xx - V1.1.6.0
+* fix config setting "showKeysInHelpMenu" was not working at all
++ key bindings and help menu will no longer be set if functionality (e.g. park brake) is disabled in the global settings (Attn: need to re-enter vehicle to activate change)
 
 2025-05-03 - V1.1.5.0
 * some code/performance optimizations here and there and fix for bug #59 (thanks to DeckerMMIV)
@@ -1354,23 +1358,33 @@ function FS25_EnhancedVehicle:onRegisterActionEvents(isSelected, isOnActiveVehic
     for _, v in ipairs(FS25_EnhancedVehicle.actions.global) do
       table.insert(actionList, v)
     end
-    for _, v in ipairs(FS25_EnhancedVehicle.actions.snap) do
-      table.insert(actionList, v)
+    if FS25_EnhancedVehicle.functionSnapIsEnabled then
+      for _, v in ipairs(FS25_EnhancedVehicle.actions.snap) do
+        table.insert(actionList, v)
+      end
     end
-    for _, v in ipairs(FS25_EnhancedVehicle.actions.diff) do
-      table.insert(actionList, v)
+    if FS25_EnhancedVehicle.functionDiffIsEnabled then
+      for _, v in ipairs(FS25_EnhancedVehicle.actions.diff) do
+        table.insert(actionList, v)
+      end
     end
-    for _, v in ipairs(FS25_EnhancedVehicle.actions.hydraulic) do
-      table.insert(actionList, v)
+    if FS25_EnhancedVehicle.functionHydraulicIsEnabled then
+      for _, v in ipairs(FS25_EnhancedVehicle.actions.hydraulic) do
+        table.insert(actionList, v)
+      end
     end
-    for _, v in ipairs(FS25_EnhancedVehicle.actions.park) do
-      table.insert(actionList, v)
+    if FS25_EnhancedVehicle.functionParkingBrakeIsEnabled then
+      for _, v in ipairs(FS25_EnhancedVehicle.actions.park) do
+        table.insert(actionList, v)
+      end
     end
-    for _, v in ipairs(FS25_EnhancedVehicle.actions.odo) do
-      table.insert(actionList, v)
+    if FS25_EnhancedVehicle.functionOdoMeterIsEnabled then
+      for _, v in ipairs(FS25_EnhancedVehicle.actions.odo) do
+        table.insert(actionList, v)
+      end
     end
 
-    -- attach our actions
+      -- attach our actions
     for _ ,actionName in pairs(actionList) do
       if actionName == "FS25_EnhancedVehicle_SNAP_TRACKP" or
          actionName == "FS25_EnhancedVehicle_SNAP_TRACKW" or
@@ -1398,11 +1412,12 @@ end
 function FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
   -- help menu priorization
   if g_inputBinding ~= nil and g_inputBinding.events ~= nil and g_inputBinding.events[eventName] ~= nil then
-    if actionName == "FS25_EnhancedVehicle_MENU" or
+    if (actionName == "FS25_EnhancedVehicle_MENU" or
        actionName == "FS25_EnhancedVehicle_PARK" or
        actionName == "FS25_EnhancedVehicle_SNAP_ONOFF" or
 --       actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
-       actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" then
+       actionName == "FS25_EnhancedVehicle_SNAP_OPMODE") and
+       FS25_EnhancedVehicle.showKeysInHelpMenu then
       g_inputBinding:setActionEventTextVisibility(eventName, true)
       g_inputBinding:setActionEventTextPriority(eventName, GS_PRIO_VERY_LOW)
     else
