@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>ilia235_1</translationContributors>
+
+  <texts>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ONOFF"      text="EV: Прив'язати поточний напрямок/трек"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_REVERSE"    text="EV: Зворотній напрямок прив'язки/треку (180°)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_OPMODE"     text="EV: Переключити режим роботи (прив'язати напрямок/трек)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_1"   text="EV: Збільшити напрямок прив'язки/треку на 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE1_2"   text="EV: Зменшити напрямок прив'язки/треку на 1°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_1"   text="EV: Збільшити напрямок прив'язки/треку на 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE2_2"   text="EV: Зменшити напрямок прив'язки/треку 0.25°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_1"   text="EV: Збільшити напрямок прив'язки/треку на 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_ANGLE3_2"   text="EV: Зменшити напрямок прив'язки/треку 45°"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_CALC_WW"    text="EV: Перерахувати робочу ширину"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_GRID_RESET" text="EV: Перерахувати сітку треків"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_LINES_MODE" text="EV: Змінити режим відображення ліній"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_1"    text="EV: Збільшити кількість поворотних смуг"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACK_2"    text="EV: Зменшити кількість поворотних смуг"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_1"   text="EV: Зрушити трек праворуч"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKP_2"   text="EV: Зрушити трек вліворуч"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_1"   text="EV: Збільшити ширину для треку"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKW_2"   text="EV: Зменшити ширину для треку"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_1"   text="EV: Зрушити смугу зміщення праворуч"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKO_2"   text="EV: Зрушити смугу зміщення вліво"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_1"   text="EV: Зміститися на одну смугу вправо (без розвороту)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_TRACKJ_2"   text="EV: Зміститися на одну смугу вліво (без розвороту)"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_MODE"    text="EV: Змінити режим поворотної смуги"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_1"  text="EV: Збіл. відст. розворотної смуги до кінця поля"/>
+    <text name="input_FS25_EnhancedVehicle_SNAP_HL_DIST_2"  text="EV: Змен. відст. розворотної смуги до кінця поля"/>
+    <text name="input_FS25_EnhancedVehicle_FD"              text="EV: Увімк./викл. блокування переднього диференціала"/>
+    <text name="input_FS25_EnhancedVehicle_RD"              text="EV: Увімк./викл. блокування заднього диференціала"/>
+    <text name="input_FS25_EnhancedVehicle_BD"              text="EV: Увімкнути/вимкнути блок. переднього та заднього диференціала"/>
+    <text name="input_FS25_EnhancedVehicle_DM"              text="EV: Змінити режим приводу"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_UPDOWN"  text="EV: Задня гідравліка: підняти/опустити"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_ONOFF"   text="EV: Задня гідравліка: вкл/викл"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_REAR_FOLD"    text="EV: Задня гідравліка: розкласти/скласти"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_UPDOWN" text="EV: Передня гідравліка: підняти/опустити"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_ONOFF"  text="EV: Передня гідравліка: вкл/викл"/>
+    <text name="input_FS25_EnhancedVehicle_AJ_FRONT_FOLD"   text="EV: Передня гідравліка: розкласти/скласти"/>
+    <text name="input_FS25_EnhancedVehicle_MENU"            text="EV: Відкрити меню конфігурації"/>
+    <text name="input_FS25_EnhancedVehicle_PARK"            text="EV: Вкл/викл ручне гальмо"/>
+    <text name="input_FS25_EnhancedVehicle_ODO_MODE"        text="EV: Переключити/скинути режим відображення пробігу"/>
+
+    <text name="hud_FS25_EnhancedVehicle_notrack"     text="немає треку"/>
+    <text name="hud_FS25_EnhancedVehicle_nowidth"     text="шир. невідома"/>
+    <text name="hud_FS25_EnhancedVehicle_noheadland"  text="немає пов. смуги"/>
+    <text name="hud_FS25_EnhancedVehicle_header_dmg"  text="Пошкодження |Фарбування"/>
+    <text name="hud_FS25_EnhancedVehicle_header_fuel" text="Паливо"/>
+
+    <text name="ui_FS25_EnhancedVehicle_on"  text="Увімк."/>
+    <text name="ui_FS25_EnhancedVehicle_off" text="Вимк."/>
+
+    <text name="ui_FS25_EnhancedVehicle_sectionGlobalFunctions"  text="Глобальні налаштування"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHUD"              text="Установки HUD"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionSnapSettings"     text="Налаштування для помічника"/>
+    <text name="ui_FS25_EnhancedVehicle_sectionHeadlandSettings" text="Налаштування поворотної смуги для"/>
+
+    <text name="ui_FS25_EnhancedVehicle_resetConfigButton"  text="Скинути налаштування мода (Обережно!)"/>
+    <text name="ui_FS25_EnhancedVehicle_reloadConfigButton" text="Перезавантажити конфігурацію мода (з XML)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapTitle"         text="Помічник"/>
+    <text name="ui_FS25_EnhancedVehicle_snapTT"            text="Увімкнути/вимкнути глобальні функції помічника"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTitle"         text="Блокування диференціалу"/>
+    <text name="ui_FS25_EnhancedVehicle_diffTT"            text="Увімк./вимкн. глобальні функції блокування диференціала"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTitle"    text="Покращене керування гідравлікою"/>
+    <text name="ui_FS25_EnhancedVehicle_hydraulicTT"       text="Увімк./вимкн. глобальні функції покращеного керування гідравлікою"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTitle" text="Гальмо стоянки"/>
+    <text name="ui_FS25_EnhancedVehicle_parkingBrakeTT"    text="Увімк./вимкн. глобальні функції ручного гальма"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTitle"     text="Одометр"/>
+    <text name="ui_FS25_EnhancedVehicle_odoMeterTT"        text="Увімк./вимк. глобальні функції одометра"/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTitle"   text="HUD: Блокування диференціалу"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdiffTT"      text="Увімк/вимк відображення на дисплеї блокування диференціалу"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTitle"    text="HUD: Відсоток ушкоджень"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgTT"       text="Увімк/вимк відображення відсотка пошкоджень"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTitle"   text="HUD: Рівень палива"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDfuelTT"      text="Увімк/вимк відображення рівня палива на дисплеї."/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTitle"  text="HUD: Помічник"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtrackTT"     text="Увім/вимк відображення на дисплеї помічника"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTitle"    text="HUD: Об/хв"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDrpmTT"       text="Увімк/вимкн відображення на дисплеї Об/хв."/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTitle"   text="HUD: Температура двигуна"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDtempTT"      text="Увімк/вимк відображення температури двигуна"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTitle"   text="HUD: Різні значення (вага)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDmiscTT"      text="Увімк/вимк відображення на дисплеї різного значення (вага)"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTitle"   text="HUD: Гальмо стоянки"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDparkTT"      text="Увімк/вимкн відображення функції стоянкового гальма на дисплеї."/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTitle"    text="HUD: Одометр"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDodoTT"       text="Увімк/вимк відображення функції одометра на дисплеї."/>
+
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTitle" text="HUD: режиму відсотка ушкоджень"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftTT"    text="Показувати відсоток ушкоджень '% залишилося' или  '% пошкоджено'"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO1"    text="% залишилося"/>
+    <text name="ui_FS25_EnhancedVehicle_HUDdmgAmountLeftO2"    text="% пошкоджено"/>
+
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTitle" text="Прив'язка до кута"/>
+    <text name="ui_FS25_EnhancedVehicle_snapSettingsAngleTT"    text="Визначає з яким кроком включається напрямок руху(1°-90°)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTitle" text="Кількість видимих треків"/>
+    <text name="ui_FS25_EnhancedVehicle_visibleTracksTT"    text="Скільки всього показано треків (ліворуч + праворуч від транспорту)"/>
+
+    <text name="ui_FS25_EnhancedVehicle_showLinesTitle"   text="Показати лінії"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesTT"      text="Вказує, які лінії відображаються"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption1" text="Усі"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption2" text="Жодні"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption3" text="Тільки трек"/>
+    <text name="ui_FS25_EnhancedVehicle_showLinesOption4" text="Тільки транспортний засіб+робоча ширина"/>
+
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTitle"      text="Автоматично приховувати напрямні лінії"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesTT"         text="Вказує, чи слід автоматично приховувати допоміжні лінії та лінії треку"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTitle" text="Час до приховання ліній треку(сек)"/>
+    <text name="ui_FS25_EnhancedVehicle_hideLinesAfterTT"    text="Через кілька секунд допоміжні лінії та лінії треку будуть автоматично приховані."/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTitle"   text="Режим поворотної смуги"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeTT"      text="Що має статися, якщо буде досягнуто точки розвороту"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption1" text="Нічого"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption2" text="Автоматично розвертатися"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandModeOption3" text="Вимкнути круїз-контроль"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTitle"        text="Відстань до поворотної смуги"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceTT"           text="Яка відстань має бути до краю поля, щоб розвернутися (м)"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOption1"      text="Робоча ширина"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionBefore" text="до краю поля"/>
+    <text name="ui_FS25_EnhancedVehicle_headlandDistanceOptionAfter"  text="за краєм поля"/>
+
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTitle" text="Відстань до відтворення сигналу."/>
+    <text name="ui_FS25_EnhancedVehicle_headlandSoundTriggerDistanceTT"    text="Вказує, за скільки метрів до розворотної смуги відтворюватиметься звуковий сигнал."/>
+
+    <text name="global_FS25_EnhancedVehicle_snapNotEnabled"   text="Помічник не включено."/>
+    <text name="global_FS25_EnhancedVehicle_snapNoImplement"  text="Не знайдено пристрої з робочою шириною."/>
+    <text name="global_FS25_EnhancedVehicle_workWidthUpdated" text="Робоча ширина була перерахована."/>
+    <text name="global_FS25_EnhancedVehicle_brakeBlocks"      text="Спочатку відпустіть гальмо стоянки."/>
+
+  </texts>
+</l10n>
