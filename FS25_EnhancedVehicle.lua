@@ -3,7 +3,7 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 04.05.2025
+-- @Date: 06.06.2025
 -- @Version: 1.1.6.0
 
 --[[
@@ -12,6 +12,7 @@ CHANGELOG
 2025-xx-xx - V1.1.6.0
 * fix config setting "showKeysInHelpMenu" was not working at all
 + key bindings and help menu will no longer be set if functionality (e.g. park brake) is disabled in the global settings (Attn: need to re-enter vehicle to activate change)
++ added translation: uk (thanks to ilia235 on Discord)
 
 2025-05-03 - V1.1.5.0
 * some code/performance optimizations here and there and fix for bug #59 (thanks to DeckerMMIV)
@@ -1415,7 +1416,7 @@ function FS25_EnhancedVehicle:helpMenuPrio(actionName, eventName)
     if (actionName == "FS25_EnhancedVehicle_MENU" or
        actionName == "FS25_EnhancedVehicle_PARK" or
        actionName == "FS25_EnhancedVehicle_SNAP_ONOFF" or
---       actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
+       actionName == "FS25_EnhancedVehicle_SNAP_REVERSE" or
        actionName == "FS25_EnhancedVehicle_SNAP_OPMODE") and
        FS25_EnhancedVehicle.showKeysInHelpMenu then
       g_inputBinding:setActionEventTextVisibility(eventName, true)
