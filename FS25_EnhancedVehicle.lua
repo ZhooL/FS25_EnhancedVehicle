@@ -3,11 +3,13 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 06.06.2025
--- @Version: 1.1.6.0
+-- @Date: 06.07.2025
+-- @Version: 1.1.7.0
 
 --[[
 CHANGELOG
+2025-xx-xx - V1.1.7.0
++ added translation: br (TKPorreta)
 
 2025-xx-xx - V1.1.6.0
 * fix config setting "showKeysInHelpMenu" was not working at all
