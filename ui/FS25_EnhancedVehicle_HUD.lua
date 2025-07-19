@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 03.05.2025
--- @Version: 1.1.5.0
+-- @Date: 19.07.2025
+-- @Version: 1.1.7.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -738,12 +738,12 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
       setTextVerticalAlignment(RenderText.VERTICAL_ALIGN_MIDDLE)
       setTextBold(true)
 
-      local degree_vrot = NormalizeAngle(180 + self.vehicle.vData.rot)
+      local degree_vrot = self.vehicle.vData.rot
       local snap_txt = string.format("%.1f°", degree_vrot)
       local snap_txt2 = nil
 
       if self.vehicle.vData.is[5] then
-        local degree = NormalizeAngle(180 + self.vehicle.vData.is[4])
+        local degree = self.vehicle.vData.is[4]
 
         local function getQuarterSymbol(angle)
           local fraction = angle % 1

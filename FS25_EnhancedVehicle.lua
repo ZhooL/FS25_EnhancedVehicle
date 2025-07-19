@@ -3,15 +3,17 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 06.07.2025
+-- @Date: 19.07.2025
 -- @Version: 1.1.7.0
 
 --[[
 CHANGELOG
-2025-xx-xx - V1.1.7.0
-+ added translation: br (TKPorreta)
 
-2025-xx-xx - V1.1.6.0
+2025-07-19 - V1.1.7.0
+* fix degree display #68
++ added translation: br (thanks to TKPorreta)
+
+2025-06-06 - V1.1.6.0
 * fix config setting "showKeysInHelpMenu" was not working at all
 + key bindings and help menu will no longer be set if functionality (e.g. park brake) is disabled in the global settings (Attn: need to re-enter vehicle to activate change)
 + added translation: uk (thanks to ilia235 on Discord)

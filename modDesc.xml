@@ -7,14 +7,12 @@
   <title>
     <de>EnhancedVehicle</de>
     <en>EnhancedVehicle</en>
-	<en>Enhanced Vehicle</en>
   </title>
 
   <description>
     <de><![CDATA[Fahrspurassistent ("GPS light"). Feststellbremse. Differentialsperren und Antriebsmodi für dein Fahrzeug. Mehr Fahrzeugsdetails im HUD.]]></de>
     <en><![CDATA[Track assistant ("GPS light"). Parking brake. Differential locks and wheel drive modes for your vehicle. Shows more vehicle details on HUD.]]></en>
-	<br><![CDATA[Assistente de traçado ("GPS light"). Freio de estacionamento. Bloqueios diferenciais e modos de tração das rodas para o seu veículo. Exibe mais detalhes do veículo no HUD.]]></br>
-  </description>
+	</description>
 
   <iconFilename>FS25_EnhancedVehicle.dds</iconFilename>
 
