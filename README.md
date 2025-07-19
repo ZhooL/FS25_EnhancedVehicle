@@ -152,6 +152,85 @@ License: https://creativecommons.org/licenses/by-nc-sa/4.0/
 ## What this mod doesn't (fully) do
 * Work on consoles. Buy a PC for proper gaming.
 
+# Português (Brasil)
+
+Esta é uma modificação para o Farming Simulator 25. Ela adiciona um "assistente de traçado" ("GPS") e um recurso de "ajuste para a direção de condução", um freio de estacionamento, bloqueios diferenciais, modos de tração das rodas e controles hidráulicos aprimorados ao seu veículo. Também exibe mais detalhes do veículo no HUD, incluindo um hodômetro/contador de viagem.
+
+\*\*Nota: As únicas fontes válidas de download são o meu site (https://www.majo76.de) e este repositório no Github (https://github.com/ZhooL/FS25_EnhancedVehicle). Todos os outros endereços de download não são validados por mim - então, por favor, use-os com cautela.
+
+(c) 2018-2025 por Majo76 (anteriormente ZhooL). Seja gentil e me credite ao usar este mod ou o código-fonte (ou partes dele) em qualquer lugar. A monetização deste mod é proibida.
+Licença: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+## Known bugs
+
+- Provavelmente muitos... por favor, reporte-os via issues no Github.
+
+## Visão geral do HUD
+
+![HUD overview](/misc/hud_overview_en.png)
+
+## Atalhos de Teclado
+| Tecla | Descrição |
+| --    | --        |
+| <kbd>R Ctrl</kbd>+<kbd>Num /</kbd> | abre o diálogo de configurações para ajustar várias configurações |
+| <kbd>Num Enter</kbd> | aplicar/liberar o freio de estacionamento |
+| <kbd>R Ctrl</kbd>+<kbd>End</kbd> | ajustar para a direção de condução atual ou para o traçado atual |
+| <kbd>R Ctrl</kbd>+<kbd>Home</kbd> | reverter a direção do snap/traçado (180°) (= virar) |
+| <kbd>R Shift</kbd>+<kbd>Home</kbd> | mudar o modo operacional (ajustar para direção ou ajustar para traçado)<br/>pressione e segure por um segundo para desativar o assistente de snap |
+| <kbd>R Ctrl</kbd>+<kbd>Num 1</kbd> | recalcular a largura de trabalho (por exemplo, largura de pulverização alterada) |
+| <kbd>R Ctrl</kbd>+<kbd>Num 2</kbd> | recalcular o layout do traçado (por exemplo, direção alterada ou largura de trabalho alterada) |
+| <kbd>R Ctrl</kbd>+<kbd>Num 3</kbd> | alternar entre os diferentes modos de exibição das linhas |
+| <kbd>R Ctrl</kbd>+<kbd>Num 4</kbd> / <kbd>Num 6</kbd> | diminuir/aumentar o número de trilhas de virada |
+| <kbd>R Ctrl</kbd>+<kbd>Num -</kbd> / <kbd>Num +</kbd> | mover o layout do traçado para a esquerda/direita |
+| <kbd>R Ctrl</kbd>+<kbd>R Shift</kbd>+<kbd>Num -</kbd> / <kbd>Num +</kbd> | mover a linha de deslocamento do traçado para a esquerda/direita |
+| <kbd>R Shift</kbd>+<kbd>Num -</kbd> / <kbd>Num +</kbd> | diminuir/aumentar a largura do traçado |
+| <kbd>R Ctrl</kbd>+<kbd>Insert</kbd> / <kbd>Delete</kbd> | mover o veículo uma trilha para a direita/esquerda sem virar |
+| <kbd>R Ctrl</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | aumentar/diminuir a direção do snap/traçado em 1° |
+| <kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | aumentar/diminuir a direção do snap/traçado em 45° |
+| <kbd>R Ctrl</kbd>+<kbd>R Shift</kbd>+<kbd>PageUp</kbd> / <kbd>PageDown</kbd> | aumentar/diminuir a direção do snap/traçado em 0.25° |
+| <kbd>R Ctrl</kbd>+<kbd>Num *</kbd> | alternar entre os diferentes modos de cabeceira |
+| <kbd>R Shift</kbd>+<kbd>Num /</kbd> / <kbd>Num *</kbd> | alternar entre as distâncias da cabeceira |
+| <kbd>R Ctrl</kbd>+<kbd>Num 5</kbd> | alternar entre o contador de quilômetros geral ou o contador de quilômetros da viagem.<br/>pressione e segure para resetar o contador de quilômetros da viagem para 0 |
+| <kbd>R Ctrl</kbd>+<kbd>Num 7</kbd> | ativar/desativar o bloqueio diferencial do eixo dianteiro |
+| <kbd>R Ctrl</kbd>+<kbd>Num 8</kbd> | ativar/desativar o bloqueio diferencial do eixo traseiro |
+| <kbd>R Ctrl</kbd>+<kbd>Num 9</kbd> | alternar o modo de tração das rodas entre 4WD (tração nas quatro rodas) ou 2WD (tração nas duas rodas) |
+| <kbd>L Alt</kbd>+<kbd>1</kbd> | todos os dispositivos traseiros para cima/baixo |
+| <kbd>L Alt</kbd>+<kbd>2</kbd> | todos os dispositivos traseiros ligar/desligar |
+| <kbd>L Alt</kbd>+<kbd>3</kbd> | todos os dispositivos dianteiros para cima/baixo |
+| <kbd>L Alt</kbd>+<kbd>4</kbd> | todos os dispositivos dianteiros ligar/desligar |
+| <kbd>L Alt</kbd>+<kbd>5</kbd> | todos os dispositivos traseiros desdobrar/dobrar |
+| <kbd>L Alt</kbd>+<kbd>6</kbd> | todos os dispositivos dianteiros desdobrar/dobrar |
+
+## O que este mod faz
+
+- Quando o jogo começa, ele altera todos os veículos "motorizados" e "controláveis" no mapa para as configurações padrão: modo de tração das rodas para "tração integral (4WD)" e desativação de ambos os diferenciais.
+- Pressione <kbd>Ctrl</kbd>+<kbd>Numpad /</kbd> para abrir o diálogo de configurações.
+- Pressione <kbd>R Shift</kbd>+<kbd>Home</kbd> para ativar o assistente de snap para direção ou snap para traçado.
+  - Pressione e segure <kbd>R Shift</kbd>+<kbd>Home</kbd> por um segundo ou mais para desativar completamente o assistente de snap e traçado.
+- Pressione <kbd>R Ctrl</kbd>+<kbd>End</kbd> para manter seu veículo dirigindo na direção atual ou no traçado atual.
+  - Pressione <kbd>R Ctrl</kbd>+<kbd>Home</kbd> para reverter a direção do snap/traçado (por exemplo, para virar no final do campo).
+- Pressione <kbd>R Ctrl</kbd>+<kbd>Numpad 2</kbd> para calcular um layout de traçado com base na direção atual do veículo e na largura de trabalho do implemento.
+  - Se agora você ativar o modo de snap, o veículo seguirá o traçado marcado atual.
+  - Pressione <kbd>R Ctrl</kbd>+<kbd>Numpad 4/6</kbd> para ajustar o número de trilhas de virada (de -5 a 5).
+  - Configure o comportamento da cabeceira no menu de configuração ou via teclas.
+- Pressione <kbd>R Ctrl</kbd>+<kbd>Numpad 1</kbd> para (re)calcular a largura de trabalho. Isso não alterará o layout atual do traçado.
+- Pressione <kbd>Numpad Enter</kbd> para colocar seu veículo no modo de estacionamento. Ele não se moverá nem um centímetro neste modo.
+- No HUD, ele exibe:
+  - (Quando o snap/traçado está ativado) O ângulo atual do snap e o número do traçado e da virada.
+  - Valores de dano em % para o veículo controlado e todos os seus implementos.
+  - Nível de combustível para Diesel/AdBlue/Eletro/Metano e a taxa atual de consumo de combustível<sup>1</sup>.
+  - O contador total de quilômetros do veículo ou o contador de quilômetros da viagem atual.
+  - O status atual dos bloqueios diferenciais e do modo de tração das rodas.
+  - A rotação atual do motor (RPM) e a temperatura<sup>1</sup>.
+  - A massa atual do veículo e a massa total do veículo, seus implementos e cargas.
+- Os atalhos de teclado podem ser alterados no menu de opções do jogo.
+
+**<sup>1</sup> Em jogos multiplayer, todos os clientes, exceto o host, não exibirão corretamente a taxa de consumo de combustível e a temperatura do motor devido às limitações do GIANTS Engine.**
+
+## O que este mod não faz (completamente)
+
+- Funcionar em consoles. Compre um PC para uma experiência de jogo adequada.
+
 # Und sonst so / The rest
 * Twitch: https://www.twitch.tv/Majo76_ (Freue mich über ein Follow / A follow is much appreciated)
 * Instagram: https://www.instagram.com/Majo76__/
