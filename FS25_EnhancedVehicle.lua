@@ -1321,7 +1321,9 @@ function FS25_EnhancedVehicle:onLeaveVehicle()
 ]]--
 
   -- hide some HUD elements
-  FS25_EnhancedVehicle.ui_hud:hideSomething(self)
+  if FS25_EnhancedVehicle.ui_hud ~= nil then
+    FS25_EnhancedVehicle.ui_hud:hideSomething(self)
+  end
 end
 
 -- #############################################################################
