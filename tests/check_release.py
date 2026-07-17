@@ -212,6 +212,18 @@ def validate_archive(path: Path, expected_entries: list[str]) -> None:
             corrupt = archive.testzip()
             if corrupt is not None:
                 raise ValidationError(f"archive CRC check failed for: {corrupt}")
+
+            mismatched_payloads: list[str] = []
+            for name in expected_entries:
+                relative = PurePosixPath(name)
+                source = REPOSITORY.joinpath(*relative.parts)
+                if archive.read(name) != source.read_bytes():
+                    mismatched_payloads.append(name)
+            if mismatched_payloads:
+                raise ValidationError(
+                    "archive payload does not match runtime source: "
+                    + ", ".join(mismatched_payloads)
+                )
     except (OSError, zipfile.BadZipFile) as error:
         raise ValidationError(f"invalid ZIP archive {path}: {error}") from error
 

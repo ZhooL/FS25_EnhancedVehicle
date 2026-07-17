@@ -39,7 +39,7 @@ fi
 python3 tests/check_release.py
 python3 tests/check_contracts.py
 python3 tests/check_engine_contract.py
-python3 -m unittest tests.test_integration_tools
+python3 -m unittest tests.test_integration_tools tests.test_release_archive
 python3 scripts/package.py
 python3 tests/check_release.py --archive build/FS25_EnhancedVehicle.zip
 
