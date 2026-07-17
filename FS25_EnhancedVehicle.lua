@@ -733,6 +733,24 @@ local function clampNetworkNumber(value, fallback, minValue, maxValue)
   return math.max(minValue, math.min(maxValue, value))
 end
 
+function FS25_EnhancedVehicle.wrapTrackOffset(offset, workWidth, fallback)
+  if not isFiniteNumber(workWidth) or workWidth <= 0 then
+    return 0
+  end
+  if not isFiniteNumber(offset) or math.abs(offset) > 100000 then
+    offset = fallback
+  end
+  if not isFiniteNumber(offset) or math.abs(offset) > 100000 then
+    offset = 0
+  end
+
+  local halfWidth = workWidth * 0.5
+  if offset < -halfWidth or offset > halfWidth then
+    offset = (offset + halfWidth) % workWidth - halfWidth
+  end
+  return offset
+end
+
 local function copyNetworkValues(values)
   local copy = {}
   for index = 1, 16 do
@@ -845,7 +863,7 @@ function FS25_EnhancedVehicle.sanitizeNetworkSnapshot(vehicle, incoming, fromCli
   local snapX = positionValue(incoming.trackSnapX, current.trackSnapX or vehicleX)
   local snapZ = positionValue(incoming.trackSnapZ, current.trackSnapZ or vehicleZ)
   local workWidth = clampNetworkNumber(incoming.trackWorkWidth, current.trackWorkWidth, 0.1, 100)
-  local offset = clampNetworkNumber(incoming.trackOffset, current.trackOffset, -workWidth * 0.5, workWidth * 0.5)
+  local offset = FS25_EnhancedVehicle.wrapTrackOffset(incoming.trackOffset, workWidth, current.trackOffset)
   local trackDelta = math.floor(clampNetworkNumber(incoming.trackDelta, current.trackDelta, -5, 5) + 0.5)
   local headlandMode = math.floor(clampNetworkNumber(incoming.headlandMode, current.headlandMode, 1, 3) + 0.5)
 
@@ -2544,9 +2562,6 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     end
   end
 
-  if self.vData.track.offset < (-self.vData.track.workWidth / 2) then self.vData.track.offset = self.vData.track.offset + (self.vData.track.workWidth) end
-  if self.vData.track.offset > ( self.vData.track.workWidth / 2) then self.vData.track.offset = self.vData.track.offset - (self.vData.track.workWidth) end
-
   local _broadcastUpdate = false
 
   -- shall we update the track direction?
@@ -2613,6 +2628,11 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     self.vData.track.workWidth = Between(self.vData.track.workWidth + deltaWorkWidth, 0.1, 100)
     updateSnap = true
   end
+
+  -- Keep a manual offset on the equivalent pass after either the offset or
+  -- work width changes, before calculating and broadcasting the snap point.
+  self.vData.track.offset = FS25_EnhancedVehicle.wrapTrackOffset(
+    self.vData.track.offset, self.vData.track.workWidth, 0)
 
   -- shall we update the snap position?
   if updateSnap then

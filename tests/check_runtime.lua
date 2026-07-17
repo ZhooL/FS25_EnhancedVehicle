@@ -127,11 +127,22 @@ assertEqual(canonical.trackOriginX, 100, "out-of-map origin rejection")
 assertNear(canonical.trackDirectionX, math.sqrt(0.5), 0.000001, "normalized direction X")
 assertNear(canonical.trackDirectionZ, math.sqrt(0.5), 0.000001, "normalized direction Z")
 assertEqual(canonical.trackWorkWidth, 100, "work-width clamp")
-assertEqual(canonical.trackOffset, 50, "offset clamp")
+assertEqual(canonical.trackOffset, -1, "offset wrapping")
 assertEqual(canonical.trackDelta, 5, "turnover clamp")
 assertEqual(canonical.opMode, 2, "operation-mode clamp")
 assertEqual(canonical.headlandMode, 3, "headland-mode clamp")
 assertEqual(canonical.headlandDistance, 10, "unsupported headland distance rejection")
+
+local wrappingRequest = FS25_EnhancedVehicle.buildNetworkSnapshot(vehicle, false)
+wrappingRequest.trackWorkWidth = 6
+wrappingRequest.trackOffset = 2.99 + 0.05
+local wrapped = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(vehicle, wrappingRequest, true)
+assertNear(wrapped.trackOffset, -2.96, 0.000001, "positive offset increment wraps")
+wrappingRequest.trackOffset = -2.99 - 0.05
+wrapped = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(vehicle, wrappingRequest, true)
+assertNear(wrapped.trackOffset, 2.96, 0.000001, "negative offset increment wraps")
+assertEqual(FS25_EnhancedVehicle.wrapTrackOffset(3, 6, 0), 3, "positive half-width endpoint")
+assertEqual(FS25_EnhancedVehicle.wrapTrackOffset(-3, 6, 0), -3, "negative half-width endpoint")
 
 request.tripReset = true
 canonical = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(vehicle, request, true)
