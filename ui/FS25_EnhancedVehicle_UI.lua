@@ -22,6 +22,7 @@ function FS25_EnhancedVehicle_UI.new(target, custom_mt)
   local self = DialogElement.new(target, custom_mt or FS25_EnhancedVehicle_UI_mt)
 
   self.vehicle = nil
+  self.evIsDeleted = false
 
   return self
 end
@@ -30,6 +31,9 @@ end
 
 function FS25_EnhancedVehicle_UI:delete()
   if debug > 1 then print("-> " .. myName .. ": delete ") end
+  if self.evIsDeleted then return end
+  self.evIsDeleted = true
+  FS25_EnhancedVehicle_UI:superClass().delete(self)
 end
 
 -- #############################################################################
@@ -231,19 +235,19 @@ function FS25_EnhancedVehicle_UI:onClickOk()
   for _, v in pairs(EV_elements_global) do
     local v1 = v.."Setting"
     state = self[v1]:getState() == 1
-    lC:setConfigValue("global.functions", v.."IsEnabled", state)
+    lC:setConfigValue("global.functions", v.."IsEnabled", state, true)
   end
 
   -- HUD
   for _, v in pairs(EV_elements_HUD) do
     local v1 = "HUD"..v.."Setting"
     state = self[v1]:getState() == 1
-    lC:setConfigValue("hud."..v, "enabled", state)
+    lC:setConfigValue("hud."..v, "enabled", state, true)
   end
 
   -- HUD dmg display
   state = self.HUDdmgAmountLeftSetting:getState() == 1
-  lC:setConfigValue("hud.dmg", "showAmountLeft", state)
+  lC:setConfigValue("hud.dmg", "showAmountLeft", state, true)
 
   -- snapto angle
   local n = tonumber(self.snapSettingsAngleValue:getText())
@@ -253,23 +257,23 @@ function FS25_EnhancedVehicle_UI:onClickOk()
   else
     n = 10
   end
-  lC:setConfigValue("snap", "snapToAngle", n)
+  lC:setConfigValue("snap", "snapToAngle", n, true)
 
   -- visible tracks
   local _state = self.visibleTracksSetting:getState() * 2 - 1
-  lC:setConfigValue("track", "numberOfTracks", _state)
+  lC:setConfigValue("track", "numberOfTracks", _state, true)
 
   -- show lines
   state = Between(self.showLinesSetting:getState(), 1, 4)
-  lC:setConfigValue("track", "showLines", state)
+  lC:setConfigValue("track", "showLines", state, true)
 
   -- hide lines
   state = self.hideLinesSetting:getState() == 1
-  lC:setConfigValue("track", "hideLines", state)
+  lC:setConfigValue("track", "hideLines", state, true)
 
   -- hide lines after
   state = self.hideLinesAfterSetting:getState()
-  lC:setConfigValue("track", "hideLinesAfter", state)
+  lC:setConfigValue("track", "hideLinesAfter", state, true)
 
   -- headland mode
   self.vehicle.vData.track.headlandMode = self.headlandModeSetting:getState()
@@ -290,14 +294,17 @@ function FS25_EnhancedVehicle_UI:onClickOk()
 
   -- headland sound trigger distance
   state = self.headlandSoundTriggerDistanceSetting:getState()
-  lC:setConfigValue("track", "headlandSoundTriggerDistance", state * 5)
+  lC:setConfigValue("track", "headlandSoundTriggerDistance", state * 5, true)
 
   -- write and update our config
   lC:writeConfig()
   FS25_EnhancedVehicle:activateConfig()
+  FS25_EnhancedVehicle_Event.sendEvent(self.vehicle)
 
   -- update HUD
-  FS25_EnhancedVehicle.ui_hud:storeScaledValues(true)
+  if FS25_EnhancedVehicle.ui_hud ~= nil then
+    FS25_EnhancedVehicle.ui_hud:storeScaledValues(true)
+  end
 
   -- close screen
   g_gui:closeDialogByName("FS25_EnhancedVehicle_UI")

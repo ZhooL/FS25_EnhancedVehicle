@@ -70,8 +70,23 @@ function libConfig:addConfigValue(section, name, typ, value, newLine)
   newData.value   = value
   newData.newLine = newLine or false
 
-  -- insert into our data storage
-  table.insert(self.dataDefault, newData)
+  local defaultValue = value
+  if type(value) == "table" then
+    defaultValue = {}
+    for key, item in pairs(value) do
+      defaultValue[key] = item
+    end
+  end
+
+  -- Keep independent objects so changing the current value never mutates the
+  -- default used by the reset/reload paths.
+  table.insert(self.dataDefault, {
+    section = newData.section,
+    typ = newData.typ,
+    name = newData.name,
+    value = defaultValue,
+    newLine = newData.newLine
+  })
   table.insert(self.dataCurrent, newData)
 
   if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
@@ -96,7 +111,7 @@ end
 
 -- #############################################################################
 
-function libConfig:setConfigValue(section, name, value)
+function libConfig:setConfigValue(section, name, value, deferWrite)
   if self.debug > 0 then print("-> "..myName.." ("..self.myName..") setConfigValue()") end
   if self.debug > 1 then print("--> section: "..section..", name: "..name..", value: "..tostring(value)) end
 
@@ -107,8 +122,11 @@ function libConfig:setConfigValue(section, name, value)
     end
   end
 
-  -- save changes
-  self:writeConfig()
+  -- Preserve the historical immediate-write behaviour for callers which do
+  -- not opt in to batching.
+  if not deferWrite then
+    self:writeConfig()
+  end
 
   if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
 end
@@ -163,6 +181,8 @@ function libConfig:readConfig()
       self.dataCurrent[key].value = self:splitter( Utils.getNoNil(getXMLString(xml, groupNameTag .. "#" .. data.name), self.dataCurrent[key].value), ",")
     end
   end
+
+  delete(xml)
 end
 
 -- #############################################################################
@@ -222,6 +242,7 @@ function libConfig:writeConfig()
 
   -- write file to disk
   saveXMLFile(xml)
+  delete(xml)
 
   if self.debug > 2 then print(DebugUtil.printTableRecursively(self.dataCurrent, 0, 0, 3)) end
 end

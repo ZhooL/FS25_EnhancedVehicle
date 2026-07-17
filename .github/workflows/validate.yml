@@ -1,0 +1,29 @@
+name: Validate release
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Lua 5.1 compiler
+        run: sudo apt-get update && sudo apt-get install --yes lua5.1
+
+      - name: Validate and package
+        run: scripts/validate.sh
+
+      - name: Upload validated mod archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: FS25_EnhancedVehicle
+          path: build/FS25_EnhancedVehicle.zip
+          if-no-files-found: error

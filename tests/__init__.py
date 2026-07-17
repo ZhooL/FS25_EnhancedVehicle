@@ -1,0 +1,1 @@
+"""EnhancedVehicle validation tests."""

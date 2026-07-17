@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 12.11.2024
--- @Version: 1.0.0.0
+-- @Date: 15.07.2026
+-- @Version: 1.1.8.0
 
 -- #############################################################################
 
@@ -17,6 +17,7 @@ source(Utils.getFilename("FS25_EnhancedVehicle.lua", directory))
 source(Utils.getFilename("FS25_EnhancedVehicle_Event.lua", directory))
 source(Utils.getFilename("ui/FS25_EnhancedVehicle_UI.lua", directory))
 source(Utils.getFilename("ui/FS25_EnhancedVehicle_HUD.lua", directory))
+source(Utils.getFilename("ui/FS25_EnhancedVehicle_LineRenderer.lua", directory))
 
 -- include our libUtils
 source(Utils.getFilename("libUtils.lua", g_currentModDirectory))
@@ -44,8 +45,8 @@ function EV_init()
   -- hook into late load
   Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, EV_loadedMission)
 
-  -- hook into late unload
-  FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, EV_unload)
+  -- Release HUD/GUI/scene resources before the base mission tears them down.
+  FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, EV_unload)
 
   -- hook into validateTypes
   TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, EV_validateTypes)
@@ -58,7 +59,8 @@ function EV_load(mission)
   
   -- create our EV class
   assert(g_EnhancedVehicle == nil)
-  EnhancedVehicle = FS25_EnhancedVehicle:new(mission, directory, modName, g_i18n, g_gui, g_gui.inputManager, g_messageCenter)
+  local inputManager = g_gui ~= nil and g_gui.inputManager or nil
+  EnhancedVehicle = FS25_EnhancedVehicle:new(mission, directory, modName, g_i18n, g_gui, inputManager, g_messageCenter)
   getfenv(0)["g_EnhancedVehicle"] = EnhancedVehicle
 
   mission.EnhancedVehicle = EnhancedVehicle

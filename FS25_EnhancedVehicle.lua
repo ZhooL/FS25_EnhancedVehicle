@@ -3,11 +3,19 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 15.10.2025
--- @Version: 1.1.7.1
+-- @Date: 15.07.2026
+-- @Version: 1.1.8.0
 
 --[[
 CHANGELOG
+
+2026-07-15 - V1.1.8.0
+* FS25 1.20 compatibility and dedicated-server lifecycle hardening
+* synchronized and validated multiplayer guidance/headland state
+* corrected guidance coordinates/work widths for rotating tool carriers
+* AA-independent guidance-line renderer and HUD restoration fixes
+* specialization-scoped physics hook and consistent hydraulic group toggles
+* batched configuration writes, XML/sample cleanup, and release validation
 
 2025-10-15 - V1.1.7.1
 * possible fix for arithmetic mul error when stop-and-go-breaking is disabled in combination with some other mods
@@ -72,7 +80,6 @@ local joints_front
 local joints_back
 local implements_front
 local implements_back
-local listOfObjects
 
 -- #############################################################################
 
@@ -91,12 +98,16 @@ function FS25_EnhancedVehicle:new(mission, modDirectory, modName, i18n, gui, inp
   self.inputManager  = inputManager
   self.messageCenter = messageCenter
 
-  local modDesc = loadXMLFile("modDesc", modDirectory .. "modDesc.xml");
-  self.version = getXMLString(modDesc, "modDesc.version");
+  local modDesc = loadXMLFile("modDesc", modDirectory .. "modDesc.xml")
+  self.version = getXMLString(modDesc, "modDesc.version") or "unknown"
+  delete(modDesc)
 
   -- some global stuff - DONT touch
   FS25_EnhancedVehicle.hud = {}
-  FS25_EnhancedVehicle.fS = g_currentMission.hud.speedMeter:scalePixelToScreenHeight(12)
+  FS25_EnhancedVehicle.fS = 12 / 1080
+  if mission ~= nil and mission.hud ~= nil and mission.hud.speedMeter ~= nil then
+    FS25_EnhancedVehicle.fS = mission.hud.speedMeter:scalePixelToScreenHeight(12)
+  end
   FS25_EnhancedVehicle.sections = { 'fuel', 'dmg', 'misc', 'rpm', 'temp', 'diff', 'track', 'park', 'odo' }
   FS25_EnhancedVehicle.actions = {}
   FS25_EnhancedVehicle.actions.global =    { 'FS25_EnhancedVehicle_MENU' }
@@ -160,16 +171,10 @@ function FS25_EnhancedVehicle:new(mission, modDirectory, modName, i18n, gui, inp
 
   FS25_EnhancedVehicle.hl_distances = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -12, -14, -16, -18, -20 }
 
-  -- load sound effects
-  if g_dedicatedServerInfo == nil then
-    local file, id
-    FS25_EnhancedVehicle.sounds = {}
-    for _, id in ipairs({"diff_lock", "brakeOn", "brakeOff", "snap_on", "snap_off", "hl_approach"}) do
-      FS25_EnhancedVehicle.sounds[id] = createSample(id)
-      file = self.modDirectory.."resources/"..id..".ogg"
-      loadSample(FS25_EnhancedVehicle.sounds[id], file, false)
-    end
-  end
+  -- Client sound effects are loaded only after the mission's HUD and GUI are
+  -- available.  Some headless server launch paths populate
+  -- g_dedicatedServerInfo too late for this constructor to be a safe gate.
+  FS25_EnhancedVehicle.sounds = {}
 
   return self
 end
@@ -180,16 +185,49 @@ function FS25_EnhancedVehicle:delete()
   if debug > 1 then print("-> " .. myName .. ": delete ") end
 
   -- delete our UI
-  FS25_EnhancedVehicle.ui_menu:delete()
+  if FS25_EnhancedVehicle.ui_menu ~= nil then
+    FS25_EnhancedVehicle.ui_menu:delete()
+    FS25_EnhancedVehicle.ui_menu = nil
+  end
 
   -- delete our HUD
-  FS25_EnhancedVehicle.ui_hud:delete()
+  if FS25_EnhancedVehicle.ui_hud ~= nil then
+    FS25_EnhancedVehicle.ui_hud:delete()
+    FS25_EnhancedVehicle.ui_hud = nil
+  end
+
+  if FS25_EnhancedVehicle.lineRenderer ~= nil then
+    FS25_EnhancedVehicle.lineRenderer:delete()
+    FS25_EnhancedVehicle.lineRenderer = nil
+    FS25_EnhancedVehicle.lineRendererVehicle = nil
+  end
+
+  if FS25_EnhancedVehicle.sounds ~= nil then
+    for _, sampleId in pairs(FS25_EnhancedVehicle.sounds) do
+      if sampleId ~= nil then
+        delete(sampleId)
+      end
+    end
+    FS25_EnhancedVehicle.sounds = {}
+  end
 end
 
 -- #############################################################################
 
 function FS25_EnhancedVehicle:onMissionLoaded(mission)
   if debug > 1 then print("-> " .. myName .. ": onMissionLoaded ") end
+
+  -- Dedicated servers do not construct the client HUD/GUI objects.
+  if g_dedicatedServerInfo ~= nil or mission == nil or mission.hud == nil or
+     mission.hud.speedMeter == nil or mission.hud.gameInfoDisplay == nil or g_gui == nil then
+    return
+  end
+
+  for _, id in ipairs({"diff_lock", "brakeOn", "brakeOff", "snap_on", "snap_off", "hl_approach"}) do
+    FS25_EnhancedVehicle.sounds[id] = createSample(id)
+    local filename = self.modDirectory .. "resources/" .. id .. ".ogg"
+    loadSample(FS25_EnhancedVehicle.sounds[id], filename, false)
+  end
 
   -- create configuration dialog
   FS25_EnhancedVehicle.ui_menu = FS25_EnhancedVehicle_UI.new()
@@ -199,18 +237,33 @@ function FS25_EnhancedVehicle:onMissionLoaded(mission)
   FS25_EnhancedVehicle.ui_hud = FS25_EnhancedVehicle_HUD:new(mission.hud.speedMeter, mission.hud.gameInfoDisplay, self.modDirectory)
   FS25_EnhancedVehicle.ui_hud:load()
 
+  -- Persistent scene geometry remains visible with every anti-aliasing mode,
+  -- unlike the engine's debug-line primitives.
+  FS25_EnhancedVehicle.lineRenderer = FS25_EnhancedVehicle_LineRenderer.new(self.modDirectory)
+  FS25_EnhancedVehicle.lineRenderer:load()
+
   -- hook into function, which is called only if the HUD is really visible for a vehicle
   mission.hud.drawControlledEntityHUD = Utils.appendedFunction(mission.hud.drawControlledEntityHUD,
     function(self)
       if self.isVisible then
-        FS25_EnhancedVehicle.ui_hud:drawHUD()
+        if FS25_EnhancedVehicle.ui_hud ~= nil then
+          FS25_EnhancedVehicle.ui_hud:drawHUD()
+        end
       end
     end)
 
   -- hook into function, which sets the vehicle for HUD display
   mission.hud.setControlledVehicle = Utils.appendedFunction(mission.hud.setControlledVehicle,
     function(self, vehicle)
-      FS25_EnhancedVehicle.ui_hud:setVehicle(vehicle)
+      if FS25_EnhancedVehicle.lineRenderer ~= nil and
+         FS25_EnhancedVehicle.lineRendererVehicle ~= nil and
+         FS25_EnhancedVehicle.lineRendererVehicle ~= vehicle then
+        FS25_EnhancedVehicle.lineRenderer:clear()
+        FS25_EnhancedVehicle.lineRendererVehicle = nil
+      end
+      if FS25_EnhancedVehicle.ui_hud ~= nil then
+        FS25_EnhancedVehicle.ui_hud:setVehicle(vehicle)
+      end
     end)
 end
 
@@ -279,6 +332,12 @@ function FS25_EnhancedVehicle.registerEventListeners(vehicleType)
 end
 
 -- #############################################################################
+
+function FS25_EnhancedVehicle.registerOverwrittenFunctions(vehicleType)
+  SpecializationUtil.registerOverwrittenFunction(vehicleType, "updateVehiclePhysics", FS25_EnhancedVehicle.updateVehiclePhysics)
+end
+
+-- #############################################################################
 -- ### function for others mods to enable/disable EnhancedVehicle functions
 -- ###   name: differential, hydraulic, snap, park, odometer
 -- ###  state: true or false
@@ -336,6 +395,28 @@ end
 function FS25_EnhancedVehicle:activateConfig()
   -- here we will "move" our config from the libConfig internal storage to the variables we actually use
 
+  local configChanged = false
+  local function numberValue(section, name, defaultValue, minValue, maxValue, integerValue, oddValue)
+    local originalValue = lC:getConfigValue(section, name)
+    local value = tonumber(originalValue) or defaultValue
+    value = math.max(minValue, math.min(maxValue, value))
+    if integerValue then
+      value = math.floor(value + 0.5)
+    end
+    if oddValue and value % 2 == 0 then
+      value = math.max(minValue, value - 1)
+    end
+    if originalValue ~= value then
+      lC:setConfigValue(section, name, value, true)
+      configChanged = true
+    end
+    return value
+  end
+
+  local function colorValue(section, name)
+    return numberValue(section, name, 1, 0, 1, false, false)
+  end
+
   -- functions
   FS25_EnhancedVehicle.functionDiffIsEnabled         = lC:getConfigValue("global.functions", "diffIsEnabled")
   FS25_EnhancedVehicle.functionHydraulicIsEnabled    = lC:getConfigValue("global.functions", "hydraulicIsEnabled")
@@ -349,27 +430,27 @@ function FS25_EnhancedVehicle:activateConfig()
 
   -- snap
   FS25_EnhancedVehicle.snap = {}
-  FS25_EnhancedVehicle.snap.snapToAngle = lC:getConfigValue("snap", "snapToAngle")
-  FS25_EnhancedVehicle.snap.attachmentSpikeHeight = lC:getConfigValue("snap", "attachmentSpikeHeight")
-  FS25_EnhancedVehicle.snap.trackSpikeHeight      = lC:getConfigValue("snap", "trackSpikeHeight")
-  FS25_EnhancedVehicle.snap.distanceAboveGroundVehicleMiddleLine  = lC:getConfigValue("snap", "distanceAboveGroundVehicleMiddleLine")
-  FS25_EnhancedVehicle.snap.distanceAboveGroundVehicleSideLine    = lC:getConfigValue("snap", "distanceAboveGroundVehicleSideLine")
-  FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine = lC:getConfigValue("snap", "distanceAboveGroundAttachmentSideLine")
+  FS25_EnhancedVehicle.snap.snapToAngle = numberValue("snap", "snapToAngle", 10, 1, 90, false, false)
+  FS25_EnhancedVehicle.snap.attachmentSpikeHeight = numberValue("snap", "attachmentSpikeHeight", 0.75, 0, 10, false, false)
+  FS25_EnhancedVehicle.snap.trackSpikeHeight      = numberValue("snap", "trackSpikeHeight", 0, 0, 10, false, false)
+  FS25_EnhancedVehicle.snap.distanceAboveGroundVehicleMiddleLine  = numberValue("snap", "distanceAboveGroundVehicleMiddleLine", 0.3, 0, 10, false, false)
+  FS25_EnhancedVehicle.snap.distanceAboveGroundVehicleSideLine    = numberValue("snap", "distanceAboveGroundVehicleSideLine", 0.25, 0, 10, false, false)
+  FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine = numberValue("snap", "distanceAboveGroundAttachmentSideLine", 0.2, 0, 10, false, false)
 
-  FS25_EnhancedVehicle.snap.colorVehicleMiddleLine  = { lC:getConfigValue("snap.colorVehicleMiddleLine",  "red"), lC:getConfigValue("snap.colorVehicleMiddleLine",  "green"), lC:getConfigValue("snap.colorVehicleMiddleLine",  "blue") }
-  FS25_EnhancedVehicle.snap.colorVehicleSideLine    = { lC:getConfigValue("snap.colorVehicleSideLine",    "red"), lC:getConfigValue("snap.colorVehicleSideLine",    "green"), lC:getConfigValue("snap.colorVehicleSideLine",    "blue") }
-  FS25_EnhancedVehicle.snap.colorAttachmentSideLine = { lC:getConfigValue("snap.colorAttachmentSideLine", "red"), lC:getConfigValue("snap.colorAttachmentSideLine", "green"), lC:getConfigValue("snap.colorAttachmentSideLine", "blue") }
+  FS25_EnhancedVehicle.snap.colorVehicleMiddleLine  = { colorValue("snap.colorVehicleMiddleLine",  "red"), colorValue("snap.colorVehicleMiddleLine",  "green"), colorValue("snap.colorVehicleMiddleLine",  "blue") }
+  FS25_EnhancedVehicle.snap.colorVehicleSideLine    = { colorValue("snap.colorVehicleSideLine",    "red"), colorValue("snap.colorVehicleSideLine",    "green"), colorValue("snap.colorVehicleSideLine",    "blue") }
+  FS25_EnhancedVehicle.snap.colorAttachmentSideLine = { colorValue("snap.colorAttachmentSideLine", "red"), colorValue("snap.colorAttachmentSideLine", "green"), colorValue("snap.colorAttachmentSideLine", "blue") }
 
   -- track
   FS25_EnhancedVehicle.track = {}
-  FS25_EnhancedVehicle.track.distanceAboveGround = lC:getConfigValue("track", "distanceAboveGround")
-  FS25_EnhancedVehicle.track.numberOfTracks      = lC:getConfigValue("track", "numberOfTracks")
-  FS25_EnhancedVehicle.track.showLines           = lC:getConfigValue("track", "showLines")
+  FS25_EnhancedVehicle.track.distanceAboveGround = numberValue("track", "distanceAboveGround", 0.15, 0, 10, false, false)
+  FS25_EnhancedVehicle.track.numberOfTracks      = numberValue("track", "numberOfTracks", 5, 1, 9, true, true)
+  FS25_EnhancedVehicle.track.showLines           = numberValue("track", "showLines", 2, 1, 4, true, false)
   FS25_EnhancedVehicle.track.hideLines           = lC:getConfigValue("track", "hideLines")
-  FS25_EnhancedVehicle.track.hideLinesAfter      = lC:getConfigValue("track", "hideLinesAfter")
+  FS25_EnhancedVehicle.track.hideLinesAfter      = numberValue("track", "hideLinesAfter", 5, 0, 60, true, false)
   FS25_EnhancedVehicle.track.hideLinesAfterValue = 0
-  FS25_EnhancedVehicle.track.color = { lC:getConfigValue("track.color", "red"), lC:getConfigValue("track.color", "green"), lC:getConfigValue("track.color", "blue") }
-  FS25_EnhancedVehicle.track.headlandSoundTriggerDistance = lC:getConfigValue("track", "headlandSoundTriggerDistance")
+  FS25_EnhancedVehicle.track.color = { colorValue("track.color", "red"), colorValue("track.color", "green"), colorValue("track.color", "blue") }
+  FS25_EnhancedVehicle.track.headlandSoundTriggerDistance = numberValue("track", "headlandSoundTriggerDistance", 10, 0, 100, true, false)
 
   -- HUD stuff
   for _, section in pairs(FS25_EnhancedVehicle.sections) do
@@ -382,15 +463,19 @@ function FS25_EnhancedVehicle:activateConfig()
   FS25_EnhancedVehicle.hud.dmg.showAmountLeft                = lC:getConfigValue("hud.dmg",   "showAmountLeft")
   FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY = lC:getConfigValue("hud.track", "moveFillLevelsDisplayDeltaY")
 
-  FS25_EnhancedVehicle.hud.colorActive   = { lC:getConfigValue("hud.colorActive",   "red"), lC:getConfigValue("hud.colorActive",   "green"), lC:getConfigValue("hud.colorActive",   "blue"), 1 }
-  FS25_EnhancedVehicle.hud.colorInactive = { lC:getConfigValue("hud.colorInactive", "red"), lC:getConfigValue("hud.colorInactive", "green"), lC:getConfigValue("hud.colorInactive", "blue"), 1 }
-  FS25_EnhancedVehicle.hud.colorStandby  = { lC:getConfigValue("hud.colorStandby",  "red"), lC:getConfigValue("hud.colorStandby",  "green"), lC:getConfigValue("hud.colorStandby",  "blue"), 1 }
+  FS25_EnhancedVehicle.hud.colorActive   = { colorValue("hud.colorActive",   "red"), colorValue("hud.colorActive",   "green"), colorValue("hud.colorActive",   "blue"), 1 }
+  FS25_EnhancedVehicle.hud.colorInactive = { colorValue("hud.colorInactive", "red"), colorValue("hud.colorInactive", "green"), colorValue("hud.colorInactive", "blue"), 1 }
+  FS25_EnhancedVehicle.hud.colorStandby  = { colorValue("hud.colorStandby",  "red"), colorValue("hud.colorStandby",  "green"), colorValue("hud.colorStandby",  "blue"), 1 }
 
   FS25_EnhancedVehicle.sfx_volume = {}
-  FS25_EnhancedVehicle.sfx_volume.track       = lC:getConfigValue("sfx.track",       "volume")
-  FS25_EnhancedVehicle.sfx_volume.brake       = lC:getConfigValue("sfx.brake",       "volume")
-  FS25_EnhancedVehicle.sfx_volume.diff        = lC:getConfigValue("sfx.diff",        "volume")
-  FS25_EnhancedVehicle.sfx_volume.hl_approach = lC:getConfigValue("sfx.hl_approach", "volume")
+  FS25_EnhancedVehicle.sfx_volume.track       = numberValue("sfx.track",       "volume", 0.1, 0, 1, false, false)
+  FS25_EnhancedVehicle.sfx_volume.brake       = numberValue("sfx.brake",       "volume", 0.1, 0, 1, false, false)
+  FS25_EnhancedVehicle.sfx_volume.diff        = numberValue("sfx.diff",        "volume", 0.5, 0, 1, false, false)
+  FS25_EnhancedVehicle.sfx_volume.hl_approach = numberValue("sfx.hl_approach", "volume", 0.1, 0, 1, false, false)
+
+  if configChanged then
+    lC:writeConfig()
+  end
 end
 
 -- #############################################################################
@@ -605,6 +690,9 @@ function FS25_EnhancedVehicle:onPostLoad(savegame)
 
   -- update vehicle parameters
   if self.isServer then
+    local snapshot = FS25_EnhancedVehicle.buildNetworkSnapshot(self, false)
+    snapshot = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(self, snapshot, false)
+    FS25_EnhancedVehicle.applyNetworkSnapshot(self, snapshot, false)
     FS25_EnhancedVehicle:updatevData(self)
   elseif self.isClient then
     self.vData.is = { unpack(self.vData.want) }
@@ -629,56 +717,252 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle:onReadStream(streamId, connection)
-  if debug > 1 then print("-> " .. myName .. ": onReadStream - " .. streamId .. mySelf(self)) end
+local EV_NETWORK_DEFAULTS = { false, false, 1, 0, false, false, 0, 0, 0, 1, 0, 0, false, 0, 0, 0 }
 
-  -- receive initial data from server
-  self.vData.is[1] =  streamReadBool(streamId)    -- front diff
-  self.vData.is[2] =  streamReadBool(streamId)    -- back diff
-  self.vData.is[3] =  streamReadInt8(streamId)    -- drive mode
-  self.vData.is[4] =  streamReadFloat32(streamId) -- snap angle
-  self.vData.is[5] =  streamReadBool(streamId)    -- snap.enable
-  self.vData.is[6] =  streamReadBool(streamId)    -- snap on track
-  self.vData.is[7] =  streamReadFloat32(streamId) -- snap track px
-  self.vData.is[8] =  streamReadFloat32(streamId) -- snap track pz
-  self.vData.is[9] =  streamReadFloat32(streamId) -- snap track dX
-  self.vData.is[10] = streamReadFloat32(streamId) -- snap track dZ
-  self.vData.is[11] = streamReadFloat32(streamId) -- snap track snap x
-  self.vData.is[12] = streamReadFloat32(streamId) -- snap track snap z
-  self.vData.is[13] = streamReadBool(streamId)    -- parking brake on
-  self.vData.is[14] = streamReadFloat32(streamId) -- odoMeter
-  self.vData.is[15] = streamReadFloat32(streamId) -- tripMeter
-  self.vData.is[16] = streamReadInt8(streamId)    -- odo mode
+local function isFiniteNumber(value)
+  return type(value) == "number" and value == value and value ~= math.huge and value ~= -math.huge
+end
 
-  if self.isClient then
-    self.vData.want = { unpack(self.vData.is) }
+local function clampNetworkNumber(value, fallback, minValue, maxValue)
+  if not isFiniteNumber(value) then
+    value = fallback
+  end
+  if not isFiniteNumber(value) then
+    value = minValue
+  end
+  return math.max(minValue, math.min(maxValue, value))
+end
+
+local function copyNetworkValues(values)
+  local copy = {}
+  for index = 1, 16 do
+    local value = values ~= nil and values[index] or nil
+    if value == nil then value = EV_NETWORK_DEFAULTS[index] end
+    copy[index] = value
+  end
+  return copy
+end
+
+local function getGuidanceWorldPose(vehicle)
+  local directionNode = FS25_EnhancedVehicle.getGuidanceDirectionNode(vehicle)
+  local directionSign = FS25_EnhancedVehicle.getGuidanceDirectionSign(vehicle)
+  local px, _, pz = localToWorld(directionNode, 0, 0, 0)
+  local dx, _, dz = localDirectionToWorld(directionNode, 0, 0, directionSign)
+  local length = MathUtil.vector2Length(dx, dz)
+  if length < 0.0001 then
+    return px, pz, 0, 1
+  end
+  return px, pz, dx / length, dz / length
+end
+
+function FS25_EnhancedVehicle.buildNetworkSnapshot(vehicle, tripReset)
+  local vData = vehicle.vData
+  local values = copyNetworkValues(vData.want or vData.is)
+  local track = vData.track or {}
+  local origin = track.origin or {}
+  local px, pz, dx, dz = getGuidanceWorldPose(vehicle)
+
+  return {
+    values = values,
+    tripReset = tripReset == true,
+    trackValid = track.isCalculated == true,
+    opMode = vData.opMode or 0,
+    trackOriginX = origin.px or values[7] or px,
+    trackOriginZ = origin.pz or values[8] or pz,
+    trackDirectionX = origin.dX or values[9] or dx,
+    trackDirectionZ = origin.dZ or values[10] or dz,
+    trackOriginalDirectionX = origin.originaldX or origin.dX or values[9] or dx,
+    trackOriginalDirectionZ = origin.originaldZ or origin.dZ or values[10] or dz,
+    trackSnapX = origin.snapx or values[11] or px,
+    trackSnapZ = origin.snapz or values[12] or pz,
+    trackWorkWidth = track.workWidth or (vData.impl and vData.impl.workWidth) or 6,
+    trackOffset = track.offset or 0,
+    trackDelta = track.deltaTrack or 1,
+    headlandMode = track.headlandMode or 1,
+    headlandDistance = track.headlandDistance or 9999
+  }
+end
+
+function FS25_EnhancedVehicle.sanitizeNetworkSnapshot(vehicle, incoming, fromClient)
+  incoming = incoming or {}
+  local current = FS25_EnhancedVehicle.buildNetworkSnapshot(vehicle, false)
+  local requestedValues = incoming.values or {}
+  local values = copyNetworkValues(current.values)
+
+  values[1] = requestedValues[1] == true
+  values[2] = requestedValues[2] == true
+  values[3] = math.floor(clampNetworkNumber(requestedValues[3], values[3], 0, 2) + 0.5)
+  values[4] = clampNetworkNumber(requestedValues[4], values[4], -100000, 100000) % 360
+  values[5] = requestedValues[5] == true
+  values[6] = requestedValues[6] == true
+  values[13] = requestedValues[13] == true
+  values[16] = math.floor(clampNetworkNumber(requestedValues[16], values[16], 0, 1) + 0.5)
+
+  if fromClient then
+    -- Odometer values are server-authoritative. A client can request only the
+    -- explicit, narrowly scoped trip reset operation.
+    values[14] = clampNetworkNumber(current.values[14], 0, 0, 1000000000)
+    values[15] = incoming.tripReset == true and 0 or clampNetworkNumber(current.values[15], 0, 0, 1000000000)
+  else
+    values[14] = clampNetworkNumber(requestedValues[14], current.values[14], 0, 1000000000)
+    values[15] = clampNetworkNumber(requestedValues[15], current.values[15], 0, 1000000000)
   end
 
---  if debug then print(DebugUtil.printTableRecursively(self.vData, 0, 0, 2)) end
+  local positionLimit = 8192
+  if g_currentMission ~= nil and isFiniteNumber(g_currentMission.terrainSize) then
+    positionLimit = g_currentMission.terrainSize
+  end
+  local vehicleX, vehicleZ, vehicleDirX, vehicleDirZ = getGuidanceWorldPose(vehicle)
+  local function positionValue(value, fallback)
+    if not isFiniteNumber(value) or math.abs(value) > positionLimit then
+      value = fallback
+    end
+    if not isFiniteNumber(value) or math.abs(value) > positionLimit then
+      value = 0
+    end
+    return value
+  end
+  local function normalizedDirection(x, z, fallbackX, fallbackZ)
+    local length = isFiniteNumber(x) and isFiniteNumber(z) and MathUtil.vector2Length(x, z) or 0
+    if length < 0.5 or length > 1.5 then
+      x, z = fallbackX, fallbackZ
+      length = MathUtil.vector2Length(x, z)
+    end
+    if length < 0.0001 then
+      x, z, length = vehicleDirX, vehicleDirZ, 1
+    end
+    return x / length, z / length
+  end
+
+  local originX = positionValue(incoming.trackOriginX, current.trackOriginX or vehicleX)
+  local originZ = positionValue(incoming.trackOriginZ, current.trackOriginZ or vehicleZ)
+  local directionX, directionZ = normalizedDirection(
+    incoming.trackDirectionX, incoming.trackDirectionZ,
+    current.trackDirectionX or vehicleDirX, current.trackDirectionZ or vehicleDirZ)
+  local originalDirectionX, originalDirectionZ = normalizedDirection(
+    incoming.trackOriginalDirectionX, incoming.trackOriginalDirectionZ,
+    current.trackOriginalDirectionX or directionX, current.trackOriginalDirectionZ or directionZ)
+  local snapX = positionValue(incoming.trackSnapX, current.trackSnapX or vehicleX)
+  local snapZ = positionValue(incoming.trackSnapZ, current.trackSnapZ or vehicleZ)
+  local workWidth = clampNetworkNumber(incoming.trackWorkWidth, current.trackWorkWidth, 0.1, 100)
+  local offset = clampNetworkNumber(incoming.trackOffset, current.trackOffset, -workWidth * 0.5, workWidth * 0.5)
+  local trackDelta = math.floor(clampNetworkNumber(incoming.trackDelta, current.trackDelta, -5, 5) + 0.5)
+  local headlandMode = math.floor(clampNetworkNumber(incoming.headlandMode, current.headlandMode, 1, 3) + 0.5)
+
+  local headlandDistance = current.headlandDistance
+  if incoming.headlandDistance == 9999 then
+    headlandDistance = 9999
+  elseif isFiniteNumber(incoming.headlandDistance) then
+    for _, supportedDistance in ipairs(FS25_EnhancedVehicle.hl_distances or {}) do
+      if incoming.headlandDistance == supportedDistance then
+        headlandDistance = supportedDistance
+        break
+      end
+    end
+  end
+
+  local trackValid = incoming.trackValid == true
+  local opMode = math.floor(clampNetworkNumber(incoming.opMode, current.opMode, 0, 2) + 0.5)
+  if not trackValid then
+    values[6] = false
+    if opMode == 2 then opMode = 1 end
+  end
+
+  -- The duplicated legacy slots stay canonical with the named track state.
+  values[7], values[8] = originX, originZ
+  values[9], values[10] = directionX, directionZ
+  values[11], values[12] = snapX, snapZ
+
+  return {
+    values = values,
+    tripReset = false,
+    trackValid = trackValid,
+    opMode = opMode,
+    trackOriginX = originX,
+    trackOriginZ = originZ,
+    trackDirectionX = directionX,
+    trackDirectionZ = directionZ,
+    trackOriginalDirectionX = originalDirectionX,
+    trackOriginalDirectionZ = originalDirectionZ,
+    trackSnapX = snapX,
+    trackSnapZ = snapZ,
+    trackWorkWidth = workWidth,
+    trackOffset = offset,
+    trackDelta = trackDelta,
+    headlandMode = headlandMode,
+    headlandDistance = headlandDistance
+  }
+end
+
+function FS25_EnhancedVehicle.applyNetworkSnapshot(vehicle, snapshot, receivedFromServer)
+  local values = copyNetworkValues(snapshot.values)
+  local needsImplementRebuild = receivedFromServer and snapshot.trackValid == true and
+    (vehicle.vData.impl == nil or vehicle.vData.impl.left == nil or vehicle.vData.impl.right == nil)
+  vehicle.vData.want = copyNetworkValues(values)
+  if receivedFromServer then
+    vehicle.vData.is = copyNetworkValues(values)
+  end
+
+  local track = vehicle.vData.track or {}
+  vehicle.vData.track = track
+  track.isCalculated = snapshot.trackValid == true
+  track.deltaTrack = snapshot.trackDelta
+  track.headlandMode = snapshot.headlandMode
+  track.headlandDistance = snapshot.headlandDistance
+  track.workWidth = snapshot.trackWorkWidth
+  track.offset = snapshot.trackOffset
+  track.isOnField = track.isOnField or 0
+  track.eofDistance = track.eofDistance or -1
+  track.eofNext = track.eofNext or 0
+  track.origin = {
+    px = snapshot.trackOriginX,
+    pz = snapshot.trackOriginZ,
+    dX = snapshot.trackDirectionX,
+    dZ = snapshot.trackDirectionZ,
+    originaldX = snapshot.trackOriginalDirectionX,
+    originaldZ = snapshot.trackOriginalDirectionZ,
+    snapx = snapshot.trackSnapX,
+    snapz = snapshot.trackSnapZ,
+    rot = Direction2RotationDeg(snapshot.trackDirectionX, snapshot.trackDirectionZ)
+  }
+
+  local px, pz = getGuidanceWorldPose(vehicle)
+  local deltaX, deltaZ = px - track.origin.px, pz - track.origin.pz
+  track.dotFBPrev = deltaX * -track.origin.dX - deltaZ * track.origin.dZ
+  vehicle.vData.opMode = snapshot.opMode
+
+  vehicle.vData.impl = vehicle.vData.impl or {}
+  if track.isCalculated and not vehicle.vData.impl.isCalculated then
+    vehicle.vData.impl.isCalculated = true
+    vehicle.vData.impl.workWidth = track.workWidth
+    vehicle.vData.impl.offset = track.offset
+    vehicle.vData.impl.left = { px = track.workWidth * 0.5 + track.offset, marker = nil }
+    vehicle.vData.impl.right = { px = -track.workWidth * 0.5 + track.offset, marker = nil }
+  end
+
+  if needsImplementRebuild then
+    vehicle.vData.networkTrackNeedsRebuild = true
+  elseif not track.isCalculated then
+    vehicle.vData.networkTrackNeedsRebuild = false
+  end
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle:onReadStream(streamId, connection)
+  if debug > 1 then print("-> " .. myName .. ": onReadStream - " .. streamId .. mySelf(self)) end
+  local snapshot = FS25_EnhancedVehicle_Event.readSnapshot(streamId)
+  snapshot = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(self, snapshot, false)
+  FS25_EnhancedVehicle.applyNetworkSnapshot(self, snapshot, true)
 end
 
 -- #############################################################################
 
 function FS25_EnhancedVehicle:onWriteStream(streamId, connection)
   if debug > 1 then print("-> " .. myName .. ": onWriteStream - " .. streamId .. mySelf(self)) end
-
-  -- send initial data to client
-  streamWriteBool(streamId,    self.vData.is[1])
-  streamWriteBool(streamId,    self.vData.is[2])
-  streamWriteInt8(streamId,    self.vData.is[3])
-  streamWriteFloat32(streamId, self.vData.is[4])
-  streamWriteBool(streamId,    self.vData.is[5])
-  streamWriteBool(streamId,    self.vData.is[6])
-  streamWriteFloat32(streamId, self.vData.is[7])
-  streamWriteFloat32(streamId, self.vData.is[8])
-  streamWriteFloat32(streamId, self.vData.is[9])
-  streamWriteFloat32(streamId, self.vData.is[10])
-  streamWriteFloat32(streamId, self.vData.is[11])
-  streamWriteFloat32(streamId, self.vData.is[12])
-  streamWriteBool(streamId,    self.vData.is[13])
-  streamWriteFloat32(streamId, self.vData.is[14])
-  streamWriteFloat32(streamId, self.vData.is[15])
-  streamWriteInt8(streamId,    self.vData.is[16])
+  local snapshot = FS25_EnhancedVehicle.buildNetworkSnapshot(self, false)
+  snapshot = FS25_EnhancedVehicle.sanitizeNetworkSnapshot(self, snapshot, false)
+  FS25_EnhancedVehicle_Event.writeSnapshot(streamId, snapshot)
 end
 
 -- #############################################################################
@@ -716,11 +1000,106 @@ end
 
 -- #############################################################################
 
+function FS25_EnhancedVehicle.getGuidanceDirectionNode(vehicle)
+  if vehicle ~= nil and vehicle.getAIDirectionNode ~= nil then
+    local directionNode = vehicle:getAIDirectionNode()
+    if directionNode ~= nil then
+      return directionNode
+    end
+  end
+  return vehicle.rootNode
+end
+
+function FS25_EnhancedVehicle.getGuidanceDirectionSign(vehicle)
+  local reverseSpec = vehicle ~= nil and vehicle.spec_reverseDriving or nil
+  local drivableSpec = vehicle ~= nil and vehicle.spec_drivable or nil
+  if reverseSpec ~= nil and reverseSpec.aiSteeringNode == nil and
+     drivableSpec ~= nil and drivableSpec.reverserDirection ~= nil and drivableSpec.reverserDirection < 0 then
+    -- ReverseDriving:getAIDirectionNode() falls back to the ordinary forward
+    -- node when a vehicle has no dedicated reverse AI node. Flip this one
+    -- documented fallback without applying reverserDirection a second time to
+    -- vehicles whose AI node already represents their driving direction.
+    return -1
+  end
+  return 1
+end
+
+local GUIDANCE_FRAME_POSITION_EPSILON = 0.01
+local GUIDANCE_FRAME_DIRECTION_EPSILON = 0.01
+
+local function getGuidanceGeometryFrame(vehicle, directionNode, directionSign)
+  local rootNode = vehicle.rootNode
+  local positionX, positionY, positionZ = localToLocal(directionNode, rootNode, 0, 0, 0)
+  -- Applying the sign to both horizontal axes represents the same effective
+  -- 180-degree frame used when the reverse-driving fallback is active.
+  local rightX, rightY, rightZ = localDirectionToLocal(directionNode, rootNode, directionSign, 0, 0)
+  local forwardX, forwardY, forwardZ = localDirectionToLocal(directionNode, rootNode, 0, 0, directionSign)
+
+  return {
+    node = directionNode,
+    sign = directionSign,
+    positionX = positionX,
+    positionY = positionY,
+    positionZ = positionZ,
+    rightX = rightX,
+    rightY = rightY,
+    rightZ = rightZ,
+    forwardX = forwardX,
+    forwardY = forwardY,
+    forwardZ = forwardZ
+  }
+end
+
+local function guidanceFrameComponentChanged(current, cached, epsilon)
+  return type(current) ~= "number" or type(cached) ~= "number" or math.abs(current - cached) > epsilon
+end
+
+function FS25_EnhancedVehicle.guidanceGeometryNeedsRefresh(vehicle, directionNode, directionSign)
+  local impl = vehicle ~= nil and vehicle.vData ~= nil and vehicle.vData.impl or nil
+  local cached = impl ~= nil and impl.guidanceFrame or nil
+  if cached == nil then
+    return false
+  end
+  if cached.node ~= directionNode or cached.sign ~= directionSign then
+    return true
+  end
+
+  -- Avoid allocating a frame table in the per-frame update path.
+  local rootNode = vehicle.rootNode
+  local positionX, positionY, positionZ = localToLocal(directionNode, rootNode, 0, 0, 0)
+  local rightX, rightY, rightZ = localDirectionToLocal(directionNode, rootNode, directionSign, 0, 0)
+  local forwardX, forwardY, forwardZ = localDirectionToLocal(directionNode, rootNode, 0, 0, directionSign)
+
+  return guidanceFrameComponentChanged(positionX, cached.positionX, GUIDANCE_FRAME_POSITION_EPSILON)
+      or guidanceFrameComponentChanged(positionY, cached.positionY, GUIDANCE_FRAME_POSITION_EPSILON)
+      or guidanceFrameComponentChanged(positionZ, cached.positionZ, GUIDANCE_FRAME_POSITION_EPSILON)
+      or guidanceFrameComponentChanged(rightX, cached.rightX, GUIDANCE_FRAME_DIRECTION_EPSILON)
+      or guidanceFrameComponentChanged(rightY, cached.rightY, GUIDANCE_FRAME_DIRECTION_EPSILON)
+      or guidanceFrameComponentChanged(rightZ, cached.rightZ, GUIDANCE_FRAME_DIRECTION_EPSILON)
+      or guidanceFrameComponentChanged(forwardX, cached.forwardX, GUIDANCE_FRAME_DIRECTION_EPSILON)
+      or guidanceFrameComponentChanged(forwardY, cached.forwardY, GUIDANCE_FRAME_DIRECTION_EPSILON)
+      or guidanceFrameComponentChanged(forwardZ, cached.forwardZ, GUIDANCE_FRAME_DIRECTION_EPSILON)
+end
+
+-- #############################################################################
+
 function FS25_EnhancedVehicle:onUpdate(dt)
   if debug > 2 then print("-> " .. myName .. ": onUpdate " .. dt .. ", S: " .. tostring(self.isServer) .. ", C: " .. tostring(self.isClient) .. mySelf(self)) end
 
   -- (client)
   if FS25_EnhancedVehicle.functionSnapIsEnabled and self.isClient then
+    if self.vData.networkTrackNeedsRebuild and self.finishedFirstUpdate then
+      self.vData.networkTrackNeedsRebuild = false
+      FS25_EnhancedVehicle:enumerateImplements(self)
+      if self.vData.track.isCalculated and not self.vData.impl.isCalculated then
+        self.vData.impl.isCalculated = true
+        self.vData.impl.workWidth = self.vData.track.workWidth
+        self.vData.impl.offset = self.vData.track.offset
+        self.vData.impl.left = { px = self.vData.track.workWidth * 0.5 + self.vData.track.offset, marker = nil }
+        self.vData.impl.right = { px = -self.vData.track.workWidth * 0.5 + self.vData.track.offset, marker = nil }
+      end
+    end
+
     -- delayed onPostDetach
     if self.vData.triggerCalculate and self.vData.triggerCalculateTime < g_currentMission.time then
       self.vData.triggerCalculate = false
@@ -733,17 +1112,29 @@ function FS25_EnhancedVehicle:onUpdate(dt)
     -- get current vehicle position, direction
     local isControlled = self.getIsControlled ~= nil and self:getIsControlled()
     local isEntered = self.getIsEntered ~= nil and self:getIsEntered()
-		if isControlled and isEntered then
+    if isControlled and isEntered then
 
-      -- position, direction, rotation
-      self.vData.px, self.vData.py, self.vData.pz = localToWorld(self.rootNode, 0, 0, 0)
-      self.vData.dx, self.vData.dy, self.vData.dz = localDirectionToWorld(self.rootNode, 0, 0, 1)
+      -- Use the same AI direction space for position, heading, markers and work
+      -- areas. Articulated/rotating machines such as NEXAT can have a rootNode
+      -- whose local forward direction is not the direction of travel.
+      local directionNode = FS25_EnhancedVehicle.getGuidanceDirectionNode(self)
+      local directionSign = FS25_EnhancedVehicle.getGuidanceDirectionSign(self)
+      if FS25_EnhancedVehicle.guidanceGeometryNeedsRefresh(self, directionNode, directionSign) then
+        FS25_EnhancedVehicle:enumerateImplements(self)
+      end
+      self.vData.px, self.vData.py, self.vData.pz = localToWorld(directionNode, 0, 0, 0)
+      self.vData.dx, self.vData.dy, self.vData.dz = localDirectionToWorld(directionNode, 0, 0, directionSign)
       local length = MathUtil.vector2Length(self.vData.dx, self.vData.dz);
-      self.vData.dirX = self.vData.dx / length
-      self.vData.dirZ = self.vData.dz / length
+      if length > 0.0001 then
+        self.vData.dirX = self.vData.dx / length
+        self.vData.dirZ = self.vData.dz / length
+      else
+        self.vData.dirX = 0
+        self.vData.dirZ = 1
+      end
 
-      -- calculate current rotation, including if cabin is rotated -> direction should rotate also
-      local rot = Direction2RotationDeg(self.vData.dx, self.vData.dz, self.spec_drivable.reverserDirection)
+      -- getAIDirectionNode already accounts for reverse-driving/cabin rotation.
+      local rot = Direction2RotationDeg(self.vData.dirX, self.vData.dirZ)
       self.vData.rot = NormalizeAngle(Round(rot, 1))
 
       -- when track assistant is active and calculated
@@ -1008,15 +1399,25 @@ end
 -- #############################################################################
 
 function FS25_EnhancedVehicle:drawVisualizationLines(_step, _segments, _x, _y, _z, _dX, _dZ, _length, _colorR, _colorG, _colorB, _addY, _spikes, _spikeHeight)
+  local renderer = FS25_EnhancedVehicle.lineRenderer
+  if renderer == nil then
+    return
+  end
+
   local p1 = { x = _x, y = _y, z = _z }
   local p2
   -- For-loop instead of recursion
   for i = _step, _segments do
     p2 = { x = p1.x + _dX * _length, y = p1.y, z = p1.z + _dZ * _length }
     p2.y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, p2.x, 0, p2.z) + _addY
-    drawDebugLine(p1.x, p1.y, p1.z, _colorR, _colorG, _colorB, p2.x, p2.y, p2.z, _colorR, _colorG, _colorB)
+    renderer:drawSegment(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, _colorR, _colorG, _colorB)
     if _spikes then
-      drawDebugLine(p2.x, p2.y, p2.z, _colorR, _colorG, _colorB, p2.x, p2.y + _spikeHeight, p2.z, _colorR, _colorG, _colorB)
+      renderer:drawSegment(
+        p2.x, p2.y, p2.z,
+        p2.x, p2.y + _spikeHeight, p2.z,
+        _colorR, _colorG, _colorB,
+        FS25_EnhancedVehicle_LineRenderer.POST_SIZE,
+        FS25_EnhancedVehicle_LineRenderer.POST_SIZE)
     end
     p1 = p2
   end
@@ -1027,8 +1428,16 @@ end
 function FS25_EnhancedVehicle:onDraw()
   if debug > 2 then print("-> " .. myName .. ": onDraw, S: " .. tostring(self.isServer) .. ", C: " .. tostring(self.isClient) .. mySelf(self)) end
 
+  local isControlled = self.isClient and self.getIsEnteredForInput ~= nil and self:getIsEnteredForInput()
+  local renderer = FS25_EnhancedVehicle.lineRenderer
+  local rendererFrame = false
+  if isControlled and renderer ~= nil then
+    FS25_EnhancedVehicle.lineRendererVehicle = self
+    rendererFrame = renderer:beginFrame()
+  end
+
   -- only on client side and GUI is visible
-  if self.isClient and not g_gui:getIsGuiVisible() and self:getIsControlled() then
+  if isControlled and g_gui ~= nil and not g_gui:getIsGuiVisible() then
     -- update current track
     local dx, dz = 0, 0
     if FS25_EnhancedVehicle.functionSnapIsEnabled and self.vData.track.isCalculated then
@@ -1112,15 +1521,13 @@ function FS25_EnhancedVehicle:onDraw()
         if self.vData.impl.left.marker ~= nil then
           p1.x, p1.y, p1.z = localToWorld(self.vData.impl.left.marker, 0, 0, 0)
           p1.y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, p1.x, 0, p1.z) + FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine
-          local _dx, _, _dz = localDirectionToWorld(self.vData.impl.left.marker, 0, 0, 1)
-          local _length = MathUtil.vector2Length(_dx, _dz);
           FS25_EnhancedVehicle:drawVisualizationLines(1,
             4,
             p1.x,
             p1.y,
             p1.z,
-            _dx / _length,
-            _dz / _length,
+            self.vData.dirX,
+            self.vData.dirZ,
             4,
             FS25_EnhancedVehicle.snap.colorAttachmentSideLine[1], FS25_EnhancedVehicle.snap.colorAttachmentSideLine[2], FS25_EnhancedVehicle.snap.colorAttachmentSideLine[3],
             FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine)
@@ -1130,15 +1537,13 @@ function FS25_EnhancedVehicle:onDraw()
         if self.vData.impl.right.marker ~= nil then
           p1.x, p1.y, p1.z = localToWorld(self.vData.impl.right.marker, 0, 0, 0)
           p1.y = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, p1.x, 0, p1.z) + FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine
-          local _dx, _, _dz = localDirectionToWorld(self.vData.impl.right.marker, 0, 0, 1)
-          local _length = MathUtil.vector2Length(_dx, _dz);
           FS25_EnhancedVehicle:drawVisualizationLines(1,
             4,
             p1.x,
             p1.y,
             p1.z,
-            _dx / _length,
-            _dz / _length,
+            self.vData.dirX,
+            self.vData.dirZ,
             4,
             FS25_EnhancedVehicle.snap.colorAttachmentSideLine[1], FS25_EnhancedVehicle.snap.colorAttachmentSideLine[2], FS25_EnhancedVehicle.snap.colorAttachmentSideLine[3],
             FS25_EnhancedVehicle.snap.distanceAboveGroundAttachmentSideLine)
@@ -1288,6 +1693,10 @@ function FS25_EnhancedVehicle:onDraw()
     setTextVerticalAlignment(RenderText.VERTICAL_ALIGN_BASELINE)
     setTextBold(false)
   end
+
+  if rendererFrame then
+    renderer:endFrame()
+  end
 end
 
 -- #############################################################################
@@ -1313,7 +1722,7 @@ function FS25_EnhancedVehicle:onLeaveVehicle()
       self.vData.is[5] = self.vData.want[5]
       self.vData.is[6] = self.vData.want[6]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   end
 
   -- update work width for snap lines
@@ -1321,7 +1730,13 @@ function FS25_EnhancedVehicle:onLeaveVehicle()
 ]]--
 
   -- hide some HUD elements
-  FS25_EnhancedVehicle.ui_hud:hideSomething(self)
+  if FS25_EnhancedVehicle.ui_hud ~= nil then
+    FS25_EnhancedVehicle.ui_hud:hideSomething(self)
+  end
+  if FS25_EnhancedVehicle.lineRenderer ~= nil and FS25_EnhancedVehicle.lineRendererVehicle == self then
+    FS25_EnhancedVehicle.lineRenderer:clear()
+    FS25_EnhancedVehicle.lineRendererVehicle = nil
+  end
 end
 
 -- #############################################################################
@@ -1337,6 +1752,7 @@ function FS25_EnhancedVehicle:onPostAttachImplement(implementIndex)
     self.vData.opMode = self.vData.opModeOld
     self.vData.opModeOld = nil
   end
+
 end
 
 -- #############################################################################
@@ -1346,6 +1762,15 @@ function FS25_EnhancedVehicle:onPostDetachImplement(implementIndex)
 
   self.vData.triggerCalculate = true
   self.vData.triggerCalculateTime = g_currentMission.time + 1*1000
+  self.vData.track.isCalculated = false
+  self.vData.want[6] = false
+
+  -- Attachment state is authoritative on the server and may change while a
+  -- vehicle is unoccupied or AI-controlled, so do not depend on a client owner
+  -- to invalidate the synchronized guidance layout.
+  if self.isServer then
+    FS25_EnhancedVehicle_Event.sendEvent(self)
+  end
 end
 
 -- #############################################################################
@@ -1497,6 +1922,8 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
       if FS25_EnhancedVehicle.track.hideLines then
         FS25_EnhancedVehicle.track.hideLinesAfterValue = g_currentMission.time + 1000 * FS25_EnhancedVehicle.track.hideLinesAfter
       end
+
+      FS25_EnhancedVehicle_Event.sendEvent(self)
     end
   end
 
@@ -1509,7 +1936,7 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
         if self.isClient and not self.isServer then
           self.vData.is[16] = self.vData.want[16]
         end
-        FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+        FS25_EnhancedVehicle_Event.sendEvent(self)
       end
     end
   end
@@ -1518,6 +1945,54 @@ function FS25_EnhancedVehicle:onActionCallUp(actionName, keyStatus, arg4, arg5, 
   FS25_EnhancedVehicle.startActionTime = 0
   FS25_EnhancedVehicle.nextActionTime  = 0
   FS25_EnhancedVehicle.deltaActionTime = 500
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle.setHydraulicGroupTurnedOn(vehicle, implements, label)
+  local eligibleImplements = {}
+  local targetOn = false
+  local groupUnavailable = false
+
+  for _, object in pairs(implements) do
+    if object.spec_turnOnVehicle ~= nil then
+      if object.getIsTurnedOn == nil or object.setIsTurnedOn == nil or object.getCanToggleTurnedOn == nil then
+        groupUnavailable = true
+      elseif not object:getCanToggleTurnedOn() then
+        -- Always-on/attacher-controlled tools are not members of the manual
+        -- toggle group and must not force the remaining tools off.
+      else
+        table.insert(eligibleImplements, object)
+        if not object:getIsTurnedOn() then
+          targetOn = true
+        end
+      end
+    end
+  end
+
+  if #eligibleImplements == 0 then
+    return
+  end
+
+  -- getCanBeTurnedOn includes the FS25 power chain (PTO/external power and
+  -- motor state). If any member cannot start, switch the whole group off.
+  if targetOn then
+    for _, object in ipairs(eligibleImplements) do
+      if object.getCanBeTurnedOn == nil or not object:getCanBeTurnedOn() then
+        groupUnavailable = true
+        break
+      end
+    end
+  end
+
+  if groupUnavailable then
+    targetOn = false
+  end
+
+  for _, object in ipairs(eligibleImplements) do
+    object:setIsTurnedOn(targetOn)
+    if debug > 1 then print("--> "..label.." on/off: "..object.rootNode.."/"..tostring(targetOn)) end
+  end
 end
 
 -- #############################################################################
@@ -1531,6 +2006,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
   end
 
   local _snap = false
+  local _networkStateChanged = false
   -- disable steering angle snap if user interacts
   if actionName == "AXIS_MOVE_SIDE_VEHICLE" and math.abs( keyStatus ) > 0.05 then
     if self.vData.is[5] then
@@ -1543,7 +2019,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       _snap = true
     end
   elseif (actionName == "AXIS_ACCELERATE_VEHICLE" or actionName == "AXIS_BRAKE_VEHICLE") and self.vData.is[13] then
-    if self.spec_motorized and self.spec_motorized:getIsOperating() then
+    if self.getIsOperating ~= nil and self:getIsOperating() then
       g_currentMission:showBlinkingWarning(g_i18n:getText("global_FS25_EnhancedVehicle_brakeBlocks"), 1500)
     end
   elseif actionName == "FS25_EnhancedVehicle_MENU" then
@@ -1558,8 +2034,10 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
 
     if not g_currentMission.isSynchronizingWithPlayers then
       if not g_gui:getIsGuiVisible() then
-        FS25_EnhancedVehicle.ui_menu:setVehicle(self)
-        g_gui:showDialog("FS25_EnhancedVehicle_UI")
+        if FS25_EnhancedVehicle.ui_menu ~= nil then
+          FS25_EnhancedVehicle.ui_menu:setVehicle(self)
+          g_gui:showDialog("FS25_EnhancedVehicle_UI")
+        end
       end
     end
   elseif FS25_EnhancedVehicle.functionDiffIsEnabled and actionName == "FS25_EnhancedVehicle_FD" then
@@ -1571,7 +2049,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if self.isClient and not self.isServer then
       self.vData.is[1] = self.vData.want[1]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   elseif FS25_EnhancedVehicle.functionDiffIsEnabled and actionName == "FS25_EnhancedVehicle_RD" then
     -- back diff
     if FS25_EnhancedVehicle.sounds["diff_lock"] ~= nil and FS25_EnhancedVehicle.soundIsOn and g_dedicatedServerInfo == nil then
@@ -1581,7 +2059,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if self.isClient and not self.isServer then
       self.vData.is[2] = self.vData.want[2]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   elseif FS25_EnhancedVehicle.functionDiffIsEnabled and actionName == "FS25_EnhancedVehicle_BD" then
     -- both diffs
     if FS25_EnhancedVehicle.sounds["diff_lock"] ~= nil and FS25_EnhancedVehicle.soundIsOn and g_dedicatedServerInfo == nil then
@@ -1593,7 +2071,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       self.vData.is[1] = self.vData.want[2]
       self.vData.is[2] = self.vData.want[2]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   elseif FS25_EnhancedVehicle.functionDiffIsEnabled and actionName == "FS25_EnhancedVehicle_DM" then
     -- wheel drive mode
     if FS25_EnhancedVehicle.sounds["diff_lock"] ~= nil and FS25_EnhancedVehicle.soundIsOn and g_dedicatedServerInfo == nil then
@@ -1606,7 +2084,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if self.isClient and not self.isServer then
       self.vData.is[3] = self.vData.want[3]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   elseif FS25_EnhancedVehicle.functionHydraulicIsEnabled and actionName == "FS25_EnhancedVehicle_AJ_REAR_UPDOWN" then
     -- rear hydraulic up/down
     FS25_EnhancedVehicle:enumerateAttachments(self)
@@ -1652,46 +2130,11 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
   elseif FS25_EnhancedVehicle.functionHydraulicIsEnabled and actionName == "FS25_EnhancedVehicle_AJ_REAR_ONOFF" then
     -- rear hydraulic on/off
     FS25_EnhancedVehicle:enumerateAttachments(self)
-
-    for _, object in pairs(implements_back) do
-      -- can it be turned off and on again
-      if object.spec_turnOnVehicle ~= nil then
-        -- new onoff status
-        local _onoff = nil
-        if _onoff == nil then
-          _onoff = not object.spec_turnOnVehicle.isTurnedOn
-        end
-        if _onoff and object.spec_turnOnVehicle.requiresMotorTurnOn and self.spec_motorized and not self.spec_motorized:getIsOperating() then
-          _onoff = false
-        end
-
-        -- set new onoff status
-        object.spec_turnOnVehicle.setIsTurnedOn(object, _onoff)
-        if debug > 1 then print("--> rear on/off: "..object.rootNode.."/"..tostring(_onoff)) end
-      end
-    end
+    FS25_EnhancedVehicle.setHydraulicGroupTurnedOn(self, implements_back, "rear")
   elseif FS25_EnhancedVehicle.functionHydraulicIsEnabled and actionName == "FS25_EnhancedVehicle_AJ_FRONT_ONOFF" then
     -- front hydraulic on/off
     FS25_EnhancedVehicle:enumerateAttachments(self)
-
-    for _, object in pairs(implements_front) do
-      -- can it be turned off and on again
-      if object.spec_turnOnVehicle ~= nil then
-        -- new onoff status
-        local _onoff = nil
-        if _onoff == nil then
-          _onoff = not object.spec_turnOnVehicle.isTurnedOn
-        end
-        if _onoff and object.spec_turnOnVehicle.requiresMotorTurnOn and self.spec_motorized and not self.spec_motorized:getIsOperating() then
-          _onoff = false
-        end
-
-        -- set new onoff status
-        object.spec_turnOnVehicle.setIsTurnedOn(object, _onoff)
-
-        if debug > 1 then print("--> front on/off: "..object.rootNode.."/"..tostring(_onoff)) end
-      end
-    end
+    FS25_EnhancedVehicle.setHydraulicGroupTurnedOn(self, implements_front, "front")
   elseif FS25_EnhancedVehicle.functionHydraulicIsEnabled and actionName == "FS25_EnhancedVehicle_AJ_FRONT_FOLD" then
     -- front hydraulic fold/unfold
     FS25_EnhancedVehicle:enumerateAttachments(self)
@@ -1746,7 +2189,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if self.isClient and not self.isServer then
       self.vData.is[13] = self.vData.want[13]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   end
 
   -- snap direction/track assisstant -->
@@ -1754,10 +2197,13 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     -- switch operational mode (off -> snap direction -> snap track)
     if actionName == "FS25_EnhancedVehicle_SNAP_OPMODE" then
       if g_currentMission.time > FS25_EnhancedVehicle.startActionTime + 1000 then
-        if self.vData.opModeOld == nil then
-          self.vData.opModeOld = self.vData.opMode
+        if self.vData.opMode ~= 0 then
+          if self.vData.opModeOld == nil then
+            self.vData.opModeOld = self.vData.opMode
+          end
+          self.vData.opMode = 0
+          _networkStateChanged = true
         end
-        self.vData.opMode = 0
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_LINES_MODE" then
       -- Make the toggle of "show lines" behave in a slightly different sequence:
@@ -1798,8 +2244,10 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
         if self.vData.opMode == 2 and self.vData.track.isCalculated then
           self.vData.want[6] = true
 
-          local lx,_,lz = localDirectionToWorld(self.rootNode, 0, 0, 1)
-          local rot1 = Direction2RotationDeg(lx, lz, self.spec_drivable.reverserDirection)
+          local directionNode = FS25_EnhancedVehicle.getGuidanceDirectionNode(self)
+          local directionSign = FS25_EnhancedVehicle.getGuidanceDirectionSign(self)
+          local lx,_,lz = localDirectionToWorld(directionNode, 0, 0, directionSign)
+          local rot1 = Direction2RotationDeg(lx, lz)
           local rot2 = Direction2RotationDeg(self.vData.track.origin.dX, self.vData.track.origin.dZ)
           rot2 = ClosestAngle(rot2, 0.25)
 
@@ -1889,6 +2337,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       -- delta track
       if self.vData.opMode == 2 and self.vData.track.isCalculated then
         self.vData.track.deltaTrack = Between(self.vData.track.deltaTrack + (keyStatus >= 0 and 1 or -1), -5, 5)
+        _networkStateChanged = true
       end
     elseif actionName == "FS25_EnhancedVehicle_SNAP_TRACKP" then
     -- track position
@@ -1931,6 +2380,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       -- headland mode
       self.vData.track.headlandMode = self.vData.track.headlandMode + 1
       if self.vData.track.headlandMode > 3 then self.vData.track.headlandMode = 1 end
+      _networkStateChanged = true
     elseif actionName == "FS25_EnhancedVehicle_SNAP_HL_DIST" and self.vData.track.headlandDistance ~= nil and self.vData.track.isCalculated then
       -- headland distance
       local _state = 0
@@ -1948,6 +2398,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       if _state < 0 then _state = #FS25_EnhancedVehicle.hl_distances end
       self.vData.track.headlandDistance = FS25_EnhancedVehicle.hl_distances[_state]
       if _state == 0 then self.vData.track.headlandDistance = 9999 end
+      _networkStateChanged = true
     end
   end
 
@@ -1962,7 +2413,9 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
       self.vData.is[9] = self.vData.want[9]
       self.vData.is[10] = self.vData.want[10]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
+  elseif _networkStateChanged then
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   end
 
   -- reset odo/trip
@@ -1970,11 +2423,7 @@ function FS25_EnhancedVehicle:onActionCall(actionName, keyStatus, arg4, arg5, ar
     if actionName == "FS25_EnhancedVehicle_ODO_MODE" then
       if g_currentMission.time > FS25_EnhancedVehicle.startActionTime + 1000 then
         if (self.vData.is[15] > 0) then
-          self.vData.want[15] = 0
-          if self.isClient and not self.isServer then
-            self.vData.is[15] = self.vData.want[15]
-          end
-          FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+          FS25_EnhancedVehicle_Event.sendEvent(self, { tripReset = true })
         end
       end
     end
@@ -2105,7 +2554,7 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     -- if no angle provided -> use current vehicle rotation
     local _rot = 0
     if updateAngleValue == -1 then
-      _rot = Direction2RotationDeg(self.vData.dx, self.vData.dz, self.spec_drivable.reverserDirection)
+      _rot = Direction2RotationDeg(self.vData.dx, self.vData.dz)
 
       -- smoothen track angle to snapToAngle
       local snapToAngle = Between(Round(FS25_EnhancedVehicle.snap.snapToAngle, 0), 1, 90)
@@ -2195,6 +2644,9 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
     _broadcastUpdate = true
   end
 
+  -- The snapshot sent below must already advertise a valid layout.
+  self.vData.track.isCalculated = true
+
   -- broadcast to server/everyone
   if _broadcastUpdate then
     if self.isClient and not self.isServer then
@@ -2206,11 +2658,8 @@ function FS25_EnhancedVehicle:updateTrack(self, updateAngle, updateAngleValue, u
       self.vData.is[11] = self.vData.want[11]
       self.vData.is[12] = self.vData.want[12]
     end
-    FS25_EnhancedVehicle_Event.sendEvent(self, unpack(self.vData.want))
+    FS25_EnhancedVehicle_Event.sendEvent(self)
   end
-
-  -- we have a valid track layout
-  self.vData.track.isCalculated = true
 
   if debug > 1 then print("Origin position: ("..self.vData.track.origin.px.."/"..self.vData.track.origin.pz..") / Origin direction: ("..self.vData.track.origin.dX.."/"..self.vData.track.origin.dZ..") / Snap position: ("..self.vData.track.origin.snapx.."/"..self.vData.track.origin.snapz..") / Rotation: "..self.vData.track.origin.rot.." / Offset: "..self.vData.track.offset) end
   if debug > 2 then print_r(self.vData.track) end
@@ -2247,94 +2696,78 @@ function FS25_EnhancedVehicle:enumerateImplements(self)
   if debug > 1 then print("-> " .. myName .. ": enumerateImplements" .. mySelf(self)) end
 
   -- build list of attachments
-  listOfObjects = {}
-  FS25_EnhancedVehicle:enumerateImplements2(self)
+  local listOfObjects = {}
+  FS25_EnhancedVehicle:enumerateImplements2(self, listOfObjects)
 
   -- add our own vehicle
   if (self.spec_workArea ~= nil) then
     table.insert(listOfObjects, self)
   end
 
-  -- new array and some defaults
-  self.vData.impl = { isCalculated = false, workWidth = 0, offset = 0, left = { px = -99999999, marker = nil }, right = { px = 99999999, marker = nil }, plow = nil }
+  self.vData.impl = { isCalculated = false, workWidth = 0, offset = 0, left = { px = 0, marker = nil }, right = { px = 0, marker = nil }, plow = nil }
 
-  -- now we go through the list and fetch relevant data
-  local _width1, _width2 = 0, 0
-  local _min1, _max1 = -99999999, 99999999
-  local _min2, _max2 = -99999999, 99999999
-  for _, obj in pairs(listOfObjects) do
+  local directionNode = FS25_EnhancedVehicle.getGuidanceDirectionNode(self)
+  local directionSign = FS25_EnhancedVehicle.getGuidanceDirectionSign(self)
+  self.vData.impl.guidanceFrame = getGuidanceGeometryFrame(self, directionNode, directionSign)
+  local minX = math.huge
+  local maxX = -math.huge
+  local leftMarkerX = -math.huge
+  local rightMarkerX = math.huge
 
-    -- for objects with AImarkers
-    local leftMarker, rightMarker = obj:getAIMarkers()
-    if leftMarker ~= nil and rightMarker ~= nil then
-      local _lx, _, _ = localToLocal(leftMarker,  obj.rootNode, 0, 0, 0)
-      local _rx, _, _ = localToLocal(rightMarker, obj.rootNode, 0, 0, 0)
-      if debug > 1 then print(obj.typeName..", lx: ".._lx..", rx: ".._rx) end
-      if _lx > _min2 then
-        _min2 = _lx
-        self.vData.impl.left.marker = leftMarker
+  local function includeNode(node, isMarker)
+    if node == nil then return end
+    local x = localToLocal(node, directionNode, 0, 0, 0) * directionSign
+    minX = math.min(minX, x)
+    maxX = math.max(maxX, x)
+    if isMarker then
+      if x > leftMarkerX then
+        leftMarkerX = x
+        self.vData.impl.left.marker = node
       end
-      if _rx < _max2 then
-        _max2 = _rx
-        self.vData.impl.right.marker = rightMarker
-      end
-
-      -- working width
-      _width2 = math.abs(_min2 - _max2)
-      if debug > 1 then print("width 2: ".._width2) end
-
-      -- if it is a plow -> save plow rotation
-      if obj.typeName == "plow" or obj.typeName == "plowPacker" then
-        self.vData.impl.plow = obj.spec_plow
-        self.vData.track.plow = self.vData.impl.plow.rotationMax
-      end
-    else
-      -- for objects without AIMarkers
-      local _found = false
-      for _, workArea in pairs(obj.spec_workArea.workAreas) do
-        if workArea.functionName ~= nil then
-          if workArea.functionName ~= "processRidgeMarkerArea" and workArea.functionName ~= "processCombineSwathArea" and workArea.functionName ~= "processCombineChopperArea" then
-            local _x1 = localToLocal(workArea.start, obj.rootNode, 0, 0, 0)
-            local _x2 = localToLocal(workArea.width, obj.rootNode, 0, 0, 0)
-
-            if debug > 1 then print(obj.typeName..", "..workArea.type..", x1: ".._x1..", x2: ".._x2) end
-            _min1 = math.max(_min1, _x1)
-            _min1 = math.max(_min1, _x2)
-            _max1 = math.min(_max1, _x1)
-            _max1 = math.min(_max1, _x2)
-            _found = true
-          end
-        end
-      end
-      if _found then
-        _width1 = _min1 + math.abs(_max1)
-        if debug > 1 then print("width 1: ".._width1) end
+      if x < rightMarkerX then
+        rightMarkerX = x
+        self.vData.impl.right.marker = node
       end
     end
-
-    -- working width
-    if _width1 > self.vData.impl.workWidth then
-      self.vData.impl.workWidth = Round(_width1, 4)
-      self.vData.impl.left.px = _min1
-      self.vData.impl.right.px = _max1
-    end
-    if _width2 > self.vData.impl.workWidth then
-      self.vData.impl.workWidth = Round(_width2, 4)
-      self.vData.impl.left.px = _min2
-      self.vData.impl.right.px = _max2
-    end
-    if debug > 1 then print("final width: "..self.vData.impl.workWidth) end
-
-    -- offset
-    self.vData.impl.offset = Round((self.vData.impl.left.px + self.vData.impl.right.px) * 0.5, 4)
-    if self.vData.impl.offset > -0.1 and self.vData.impl.offset < 0.1 then self.vData.impl.offset = 0 end
-
-    if debug > 1 then print("-> Type: "..obj.typeName..", Width: "..self.vData.impl.workWidth..", Offset: "..self.vData.impl.offset) end
-
   end
 
-  -- with a valid workwidth we have finished impl calculation successfully
-  if self.vData.impl.workWidth > 0 then
+  for _, obj in ipairs(listOfObjects) do
+    if obj.getAIMarkers ~= nil then
+      local leftMarker, rightMarker = obj:getAIMarkers()
+      includeNode(leftMarker, true)
+      includeNode(rightMarker, true)
+    end
+
+    if obj.spec_workArea ~= nil and obj.spec_workArea.workAreas ~= nil then
+      for _, workArea in pairs(obj.spec_workArea.workAreas) do
+        local functionName = workArea.functionName
+        if functionName ~= nil and
+           functionName ~= "processRidgeMarkerArea" and
+           functionName ~= "processCombineSwathArea" and
+           functionName ~= "processCombineChopperArea" then
+          -- All three nodes are transformed into vehicle guidance space. The
+          -- height node matters for tools whose work area is skewed/rotated.
+          includeNode(workArea.start, false)
+          includeNode(workArea.width, false)
+          includeNode(workArea.height, false)
+        end
+      end
+    end
+
+    if (obj.typeName == "plow" or obj.typeName == "plowPacker") and obj.spec_plow ~= nil then
+      self.vData.impl.plow = obj.spec_plow
+      self.vData.track.plow = self.vData.impl.plow.rotationMax
+    end
+  end
+
+  if minX ~= math.huge and maxX ~= -math.huge and maxX - minX > 0.001 then
+    self.vData.impl.left.px = maxX
+    self.vData.impl.right.px = minX
+    self.vData.impl.workWidth = Round(maxX - minX, 4)
+    self.vData.impl.offset = Round((maxX + minX) * 0.5, 4)
+    if math.abs(self.vData.impl.offset) < 0.1 then
+      self.vData.impl.offset = 0
+    end
     self.vData.impl.isCalculated = true
   end
 
@@ -2344,7 +2777,7 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle:enumerateImplements2(self)
+function FS25_EnhancedVehicle:enumerateImplements2(self, listOfObjects)
   if debug > 1 then print("-> " .. myName .. ": enumerateImplements2" .. mySelf(self)) end
 
   local attachedImplements = nil
@@ -2362,8 +2795,8 @@ function FS25_EnhancedVehicle:enumerateImplements2(self)
       end
 
       -- recursive dive into more attachments
-      if implement.object.getAttachedImplements ~= nil then
-        FS25_EnhancedVehicle:enumerateImplements2(implement.object)
+      if implement.object ~= nil and implement.object.getAttachedImplements ~= nil then
+        FS25_EnhancedVehicle:enumerateImplements2(implement.object, listOfObjects)
       end
     end
   end
@@ -2493,15 +2926,17 @@ end
 
 -- #############################################################################
 
-function FS25_EnhancedVehicle:updateVehiclePhysics( originalFunction, axisForward, axisSide, doHandbrake, dt)
+function FS25_EnhancedVehicle:updateVehiclePhysics(superFunc, axisForward, axisSide, doHandbrake, dt)
   if debug > 2 then print("function Drivable.updateVehiclePhysics() "..tostring(dt)..", "..tostring(axisForward)..", "..tostring(axisSide)..", "..tostring(doHandbrake)) end
 
-  if self.vData ~= nil and self.vData.is[5] then
+  if FS25_EnhancedVehicle.functionSnapIsEnabled and self.vData ~= nil and self.vData.is[5] then
     if self:getIsVehicleControlledByPlayer() and self:getIsMotorStarted() then
       -- get current position and rotation of vehicle
-      local px, _, pz = localToWorld(self.rootNode, 0, 0, 0)
-      local lx, _, lz = localDirectionToWorld(self.rootNode, 0, 0, 1)
-      local rot = Direction2RotationDeg(lx, lz, self.spec_drivable.reverserDirection)
+      local directionNode = FS25_EnhancedVehicle.getGuidanceDirectionNode(self)
+      local directionSign = FS25_EnhancedVehicle.getGuidanceDirectionSign(self)
+      local px, _, pz = localToWorld(directionNode, 0, 0, 0)
+      local lx, _, lz = localDirectionToWorld(directionNode, 0, 0, directionSign)
+      local rot = Direction2RotationDeg(lx, lz)
       rot = Round(rot, 1)
       if rot >= 360.0 then rot = 0 end
       self.vData.rot = rot
@@ -2593,56 +3028,37 @@ function FS25_EnhancedVehicle:updateVehiclePhysics( originalFunction, axisForwar
     end
   end
 
-  -- call the original function to do the actual physics stuff
-  local state, result = pcall( originalFunction, self, axisForward, axisSide, doHandbrake, dt)
-  if not ( state ) then
-    print("Ooops in updateVehiclePhysics :" .. tostring(result))
+  local parkingBrakeActive = FS25_EnhancedVehicle.functionParkingBrakeIsEnabled and self.vData ~= nil and self.vData.is[13] and self:getIsVehicleControlledByPlayer()
+  if parkingBrakeActive then
+    axisForward = 0
+    doHandbrake = true
   end
 
-  return result
-end
-Drivable.updateVehiclePhysics = Utils.overwrittenFunction( Drivable.updateVehiclePhysics, FS25_EnhancedVehicle.updateVehiclePhysics )
+  -- Use the specialization chain so errors remain visible and other vehicle
+  -- specializations keep their normal ordering.
+  local result = superFunc(self, axisForward, axisSide, doHandbrake, dt)
 
--- #############################################################################
-
-function FS25_EnhancedVehicle:updateWheelsPhysics(originalFunction, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking)
-  if debug > 2 then print("function WheelsUtil.updateWheelsPhysics("..self.typeDesc..", "..tostring(dt)..", "..tostring(currentSpeed)..", "..tostring(acceleration)..", "..tostring(doHandbrake)..", "..tostring(stopAndGoBraking)) end
-
-  local brakeLights = false
-  if self.vData ~= nil and self.vData.is[13] then
-    if self:getIsVehicleControlledByPlayer() and self:getIsMotorStarted() then
-      -- parkBreakIsOn
-      brakeLights = not (currentSpeed >= -0.0003 and currentSpeed <= 0.0003)
-      acceleration = 0
-      currentSpeed = 0
-      doHandbrake = true
-    end
-  end
-
-  -- call the original function to do the actual physics stuff
-  local state, result = pcall( originalFunction, self, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking )
-  if not ( state ) then
-    print("Ooops in updateWheelsPhysics :" .. tostring(result))
-  end
-
-  if brakeLights and type(self.setBrakeLightsVisibility) == "function" then
+  local currentSpeed = self.lastSpeedReal or self.lastSpeed or 0
+  if parkingBrakeActive and math.abs(currentSpeed) > 0.0003 and type(self.setBrakeLightsVisibility) == "function" then
     self:setBrakeLightsVisibility(true)
   end
 
   return result
 end
-WheelsUtil.updateWheelsPhysics = Utils.overwrittenFunction(WheelsUtil.updateWheelsPhysics, FS25_EnhancedVehicle.updateWheelsPhysics)
 
 -- #############################################################################
 -- unfortunately we've to hook into this function to make the parking brake work in manual transmission mode
 function FS25_EnhancedVehicle:getSmoothedAcceleratorAndBrakePedals(originalFunction, acceleratorPedal, brakePedal, dt)
   if debug > 2 then print("function WheelsUtil.getSmoothedAcceleratorAndBrakePedals("..self.typeDesc..", "..tostring(dt)..", "..tostring(acceleratorPedal)..", "..tostring(brakePedal)) end
 
-  if self ~= nil and self.vData ~= nil and self.vData.is[13] then
+  if FS25_EnhancedVehicle.functionParkingBrakeIsEnabled and self ~= nil and self.vData ~= nil and self.vData.is[13] then
     if self:getIsVehicleControlledByPlayer() then
       return originalFunction(self, 0, 1, dt)
     end
   end
   return originalFunction(self, acceleratorPedal, brakePedal, dt)
 end
-WheelsUtil.getSmoothedAcceleratorAndBrakePedals = Utils.overwrittenFunction(WheelsUtil.getSmoothedAcceleratorAndBrakePedals, FS25_EnhancedVehicle.getSmoothedAcceleratorAndBrakePedals)
+if not WheelsUtil.fs25EnhancedVehiclePedalHookInstalled then
+  WheelsUtil.getSmoothedAcceleratorAndBrakePedals = Utils.overwrittenFunction(WheelsUtil.getSmoothedAcceleratorAndBrakePedals, FS25_EnhancedVehicle.getSmoothedAcceleratorAndBrakePedals)
+  WheelsUtil.fs25EnhancedVehiclePedalHookInstalled = true
+end

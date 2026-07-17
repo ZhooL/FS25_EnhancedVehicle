@@ -3,8 +3,8 @@
 --
 -- Author: Majo76
 -- email: ls (at) majo76 (dot) de
--- @Date: 19.07.2025
--- @Version: 1.1.7.0
+-- @Date: 15.07.2026
+-- @Version: 1.1.8.0
 
 local myName = "FS25_EnhancedVehicle_HUD"
 
@@ -96,6 +96,27 @@ FS25_EnhancedVehicle_HUD.TEXT_SIZE = {
 
 local dmg_txt
 
+local function setElementVisible(element, isVisible)
+  if element ~= nil and element.setVisible ~= nil then
+    element:setVisible(isVisible)
+  end
+end
+
+local function deleteElement(element)
+  if element ~= nil and element.delete ~= nil then
+    element:delete()
+  end
+end
+
+local function setIconLayout(speedMeter, icon, baseX, baseY, position, size)
+  if speedMeter == nil or icon == nil then return end
+
+  local width, height = speedMeter:scalePixelToScreenVector(size)
+  local posX, posY = speedMeter:scalePixelToScreenVector(position)
+  icon:setDimension(width, height)
+  icon:setPosition(baseX + posX, baseY + posY)
+end
+
 -- #############################################################################
 
 function FS25_EnhancedVehicle_HUD:new(speedMeter, gameInfoDisplay, modDirectory)
@@ -109,10 +130,25 @@ function FS25_EnhancedVehicle_HUD:new(speedMeter, gameInfoDisplay, modDirectory)
   self.vehicle           = nil
   self.uiFilename        = Utils.getFilename("resources/HUD.dds", modDirectory)
   self.isCalculated      = false
+  self.isLoaded          = false
+  self.isDeleted         = false
+  self.layoutSignature   = nil
+
+  -- The base HUD owns this display. Keep an absolute copy of both values so
+  -- switching to a vehicle without a speed meter can always restore it.
+  self.fillLevelsDisplay          = nil
+  self.fillLevelsBaseY            = nil
+  self.fillLevelsBaseOffsetY      = nil
+  self.fillLevelsAppliedY         = nil
+  self.fillLevelsAppliedOffsetY   = nil
+  self.fillLevelsPositionCaptured = false
+  self.fillLevelsPositionApplied  = false
 
   -- for icons
   self.icons = {}
   self.iconIsActive = { snap = nil, track = nil, hlmode = nil, hldir = nil }
+  self.dmgBox = {}
+  self.fuelBox = {}
 
   -- for text displays
   self.snapText1            = {}
@@ -145,9 +181,198 @@ function FS25_EnhancedVehicle_HUD:new(speedMeter, gameInfoDisplay, modDirectory)
   FS25_EnhancedVehicle_HUD.numberProgessBars = 0
 
   -- hook into some original HUD functions
-  g_currentMission.hud.sideNotifications.markProgressBarForDrawing = Utils.appendedFunction(g_currentMission.hud.sideNotifications.markProgressBarForDrawing, FS25_EnhancedVehicle_HUD.markProgressBarForDrawing)
+  local missionHud = g_currentMission ~= nil and g_currentMission.hud or nil
+  local sideNotifications = missionHud ~= nil and missionHud.sideNotifications or nil
+  if sideNotifications ~= nil and sideNotifications.markProgressBarForDrawing ~= nil and not sideNotifications.fs25EnhancedVehicleProgressHookInstalled then
+    sideNotifications.markProgressBarForDrawing = Utils.appendedFunction(sideNotifications.markProgressBarForDrawing, FS25_EnhancedVehicle_HUD.markProgressBarForDrawing)
+    sideNotifications.fs25EnhancedVehicleProgressHookInstalled = true
+  end
 
   return self
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:getFillLevelsDisplay()
+  local missionHud = g_currentMission ~= nil and g_currentMission.hud or nil
+  return missionHud ~= nil and missionHud.fillLevelsDisplay or nil
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:isVehicleEligible(vehicle)
+  return vehicle ~= nil
+     and vehicle.spec_motorized ~= nil
+     and vehicle["spec_FS25_EnhancedVehicle.EnhancedVehicle"] ~= nil
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:captureFillLevelsPosition()
+  local display = self:getFillLevelsDisplay()
+  if display == nil then return nil end
+
+  if self.fillLevelsDisplay ~= display then
+    self.fillLevelsDisplay = display
+    self.fillLevelsPositionCaptured = false
+    self.fillLevelsPositionApplied = false
+  end
+
+  if not self.fillLevelsPositionCaptured then
+    self.fillLevelsBaseY = display.y
+    self.fillLevelsBaseOffsetY = display.offsetY
+    self.fillLevelsPositionCaptured = true
+  elseif self.fillLevelsPositionApplied then
+    -- UI scaling or another HUD may have recalculated the base display after
+    -- our last assignment. Adopt that new position instead of overwriting it.
+    if display.y ~= self.fillLevelsAppliedY or display.offsetY ~= self.fillLevelsAppliedOffsetY then
+      self.fillLevelsBaseY = display.y
+      self.fillLevelsBaseOffsetY = display.offsetY
+      self.fillLevelsPositionApplied = false
+    end
+  else
+    -- While EV is not moving the display, its current values are authoritative.
+    self.fillLevelsBaseY = display.y
+    self.fillLevelsBaseOffsetY = display.offsetY
+  end
+
+  return display
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:restoreFillLevelsPosition()
+  if not self.fillLevelsPositionCaptured then return end
+
+  local display = self.fillLevelsDisplay
+  if display == nil then return end
+
+  if self.fillLevelsPositionApplied then
+    if display.y == self.fillLevelsAppliedY and display.offsetY == self.fillLevelsAppliedOffsetY then
+      display.y = self.fillLevelsBaseY
+      display.offsetY = self.fillLevelsBaseOffsetY
+    else
+      -- Do not undo a newer position supplied by the game or another mod.
+      self.fillLevelsBaseY = display.y
+      self.fillLevelsBaseOffsetY = display.offsetY
+    end
+  end
+
+  self.fillLevelsAppliedY = nil
+  self.fillLevelsAppliedOffsetY = nil
+  self.fillLevelsPositionApplied = false
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:updateFillLevelsPosition()
+  if not self:isVehicleEligible(self.vehicle) or self.trackBox == nil or self.speedMeter == nil then
+    self:restoreFillLevelsPosition()
+    return
+  end
+
+  local display = self:captureFillLevelsPosition()
+  if display == nil or self.fillLevelsBaseY == nil then return end
+
+  local trackHud = FS25_EnhancedVehicle ~= nil and FS25_EnhancedVehicle.hud ~= nil and FS25_EnhancedVehicle.hud.track or nil
+  if trackHud == nil then
+    self:restoreFillLevelsPosition()
+    return
+  end
+
+  local anchorAboveTrack = FS25_EnhancedVehicle.functionSnapIsEnabled
+                      and trackHud.enabled
+                      and trackHud.offsetX == 0
+                      and trackHud.offsetY == 0
+  local deltaY = trackHud.moveFillLevelsDisplayDeltaY or 0
+
+  local targetY
+  local targetOffsetY = self.fillLevelsBaseOffsetY
+  if anchorAboveTrack then
+    local _, trackY = self.trackBox:getPosition()
+    targetY = trackY + self.trackBox:getHeight() + (self.marginElement or 0)
+    targetOffsetY = 0
+  elseif deltaY ~= 0 then
+    targetY = self.fillLevelsBaseY + self.speedMeter:scalePixelToScreenHeight(deltaY)
+  else
+    self:restoreFillLevelsPosition()
+    return
+  end
+
+  display.y = targetY
+  display.offsetY = targetOffsetY
+  self.fillLevelsAppliedY = targetY
+  self.fillLevelsAppliedOffsetY = targetOffsetY
+  self.fillLevelsPositionApplied = true
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:hideAllElements()
+  setElementVisible(self.trackBox, false)
+  setElementVisible(self.diffBox, false)
+  setElementVisible(self.miscBox, false)
+  setElementVisible(self.parkBox, false)
+
+  for _, element in pairs(self.bgBoxElements or {}) do
+    setElementVisible(self.dmgBox ~= nil and self.dmgBox[element] or nil, false)
+    setElementVisible(self.fuelBox ~= nil and self.fuelBox[element] or nil, false)
+  end
+
+  FS25_EnhancedVehicle_HUD.numberProgessBars = 0
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:invalidateLayout()
+  self.isCalculated = false
+  self.layoutSignature = nil
+end
+
+-- #############################################################################
+
+function FS25_EnhancedVehicle_HUD:getLayoutSignature()
+  if self.speedMeter == nil or self.speedMeter.speedBg == nil then return nil end
+
+  local values = {}
+  local function add(value)
+    values[#values + 1] = tostring(value)
+  end
+
+  local speedBg = self.speedMeter.speedBg
+  add(speedBg.x)
+  add(speedBg.y)
+  add(speedBg.width)
+  add(speedBg.height)
+  add(self.speedMeter.uiScale)
+
+  if self.gameInfoDisplay ~= nil then
+    local infoX, infoY = self.gameInfoDisplay:getPosition()
+    add(infoX)
+    add(infoY)
+    add(self.gameInfoDisplay.uiScale)
+    add(self.gameInfoDisplay.infoBgScale ~= nil and self.gameInfoDisplay.infoBgScale.height or nil)
+  end
+
+  local hud = FS25_EnhancedVehicle ~= nil and FS25_EnhancedVehicle.hud or nil
+  if hud ~= nil then
+    for _, sectionName in ipairs({ "track", "diff", "misc", "park", "dmg", "fuel" }) do
+      local section = hud[sectionName] or {}
+      add(section.enabled)
+      add(section.offsetX)
+      add(section.offsetY)
+      add(section.fontSize)
+      add(section.moveFillLevelsDisplayDeltaY)
+    end
+    for _, colorName in ipairs({ "colorInactive", "colorActive", "colorStandby" }) do
+      for _, channel in ipairs(hud[colorName] or {}) do
+        add(channel)
+      end
+    end
+  end
+  add(FS25_EnhancedVehicle ~= nil and FS25_EnhancedVehicle.functionSnapIsEnabled or nil)
+
+  return table.concat(values, "|")
 end
 
 -- #############################################################################
@@ -155,30 +380,33 @@ end
 function FS25_EnhancedVehicle_HUD:delete()
   if debug > 1 then print("-> " .. myName .. ": delete ") end
 
-  if self.trackBox ~= nil then
-    self.trackBox:delete()
+  if self.isDeleted then return end
+  self.isDeleted = true
+
+  self:restoreFillLevelsPosition()
+  self:hideAllElements()
+
+  deleteElement(self.trackBox)
+  deleteElement(self.diffBox)
+  deleteElement(self.miscBox)
+
+  for _, element in pairs(self.bgBoxElements or {}) do
+    deleteElement(self.dmgBox ~= nil and self.dmgBox[element] or nil)
+    deleteElement(self.fuelBox ~= nil and self.fuelBox[element] or nil)
   end
 
-  if self.diffBox ~= nil then
-    self.diffBox:delete()
-  end
+  deleteElement(self.parkBox)
 
-  if self.miscBox ~= nil then
-    self.miscBox:delete()
-  end
-
-  for _, element in pairs(self.bgBoxElements) do
-    if self.dmgBox[element] ~= nil then
-      self.dmgBox[element]:delete()
-    end
-    if self.fuelBox[element] ~= nil then
-      self.fuelBox[element]:delete()
-    end
-  end
-
-  if self.parkBox ~= nil then
-    self.parkBox:delete()
-  end
+  self.trackBox = nil
+  self.diffBox = nil
+  self.miscBox = nil
+  self.parkBox = nil
+  self.dmgBox = {}
+  self.fuelBox = {}
+  self.icons = {}
+  self.vehicle = nil
+  self.fillLevelsDisplay = nil
+  self.isLoaded = false
 end
 
 -- #############################################################################
@@ -186,8 +414,16 @@ end
 function FS25_EnhancedVehicle_HUD:load()
   if debug > 1 then print("-> " .. myName .. ": load ") end
 
+  if self.isDeleted then return false end
+  if self.isLoaded then return true end
+  if self.speedMeter == nil or self.gameInfoDisplay == nil then return false end
+
+  self:captureFillLevelsPosition()
   self:createElements()
+  self.isLoaded = true
   self:setVehicle(nil)
+
+  return true
 end
 
 -- #############################################################################
@@ -408,12 +644,40 @@ end
 function FS25_EnhancedVehicle_HUD:storeScaledValues()
   if debug > 1 then print("-> " .. myName .. ": storeScaledValues ") end
 
+  if self.isDeleted or not self.isLoaded then return false end
+  if self.speedMeter == nil or self.speedMeter.speedBg == nil or self.gameInfoDisplay == nil then
+    self:restoreFillLevelsPosition()
+    return false
+  end
+
+  self.marginWidth, self.marginHeight = self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.MARGIN)
+  _, self.marginElement = self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.MARGINELEMENT)
+
+  if self.trackBox ~= nil then
+    self.trackBox:setDimension(self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.TRACKBOX))
+  end
+  if self.diffBox ~= nil then
+    self.diffBox:setDimension(self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.DIFFBOX))
+  end
+  if self.parkBox ~= nil then
+    self.parkBox:setDimension(self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.PARKBOX))
+  end
+  if self.miscBox ~= nil then
+    self.miscBox:setDimension(self.speedMeter:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.MISCBOX))
+  end
+
   -- overwrite from config file
   FS25_EnhancedVehicle_HUD.TEXT_SIZE.DMG  = FS25_EnhancedVehicle.hud.dmg.fontSize
   FS25_EnhancedVehicle_HUD.TEXT_SIZE.FUEL = FS25_EnhancedVehicle.hud.fuel.fontSize
   FS25_EnhancedVehicle_HUD.COLOR.INACTIVE = { unpack(FS25_EnhancedVehicle.hud.colorInactive) }
   FS25_EnhancedVehicle_HUD.COLOR.ACTIVE   = { unpack(FS25_EnhancedVehicle.hud.colorActive) }
   FS25_EnhancedVehicle_HUD.COLOR.STANDBY  = { unpack(FS25_EnhancedVehicle.hud.colorStandby) }
+  if self.icons.hlup ~= nil then
+    self.icons.hlup:setColor(unpack(FS25_EnhancedVehicle_HUD.COLOR.INACTIVE))
+  end
+  if self.icons.hldown ~= nil then
+    self.icons.hldown:setColor(unpack(FS25_EnhancedVehicle_HUD.COLOR.INACTIVE))
+  end
 
   -- prepare
   local baseX = self.speedMeter.speedBg.x + self.speedMeter.speedBg.width / 2
@@ -423,7 +687,6 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
     -- some globals
     local boxPosX = self.speedMeter.speedBg.x -- left border of gauge
     local boxPosY = self.speedMeter.speedBg.y + self.speedMeter.speedBg.height + self.marginElement -- move above gauge and some spacing
-    local boxPosY2 = boxPosY
 
     -- global move of box
     local offX, offY = self.speedMeter:scalePixelToScreenVector({ FS25_EnhancedVehicle.hud.track.offsetX, FS25_EnhancedVehicle.hud.track.offsetY })
@@ -432,16 +695,13 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
 
     self.trackBox:setPosition(boxPosX, boxPosY)
 
-    -- move FS25 fill levels display above our display element
-    g_currentMission.hud.fillLevelsDisplay.offsetY = 0
-    if FS25_EnhancedVehicle.functionSnapIsEnabled and FS25_EnhancedVehicle.hud.track.enabled and FS25_EnhancedVehicle.hud.track.offsetX == 0 and FS25_EnhancedVehicle.hud.track.offsetY == 0 then
-      g_currentMission.hud.fillLevelsDisplay.y = boxPosY + self.trackBox:getHeight() + self.marginElement
-    else
-      g_currentMission.hud.fillLevelsDisplay.y = boxPosY2 + self.marginElement / 2
-      if (FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY ~= 0) then
-        local offY = self.speedMeter:scalePixelToScreenHeight(FS25_EnhancedVehicle.hud.track.moveFillLevelsDisplayDeltaY)
-        g_currentMission.hud.fillLevelsDisplay.y = g_currentMission.hud.fillLevelsDisplay.y + offY
-      end
+    setIconLayout(self.speedMeter, self.icons.snap, boxPosX, boxPosY, FS25_EnhancedVehicle_HUD.POSITION.ICON_SNAP, FS25_EnhancedVehicle_HUD.SIZE.ICONTRACK)
+    setIconLayout(self.speedMeter, self.icons.track, boxPosX, boxPosY, FS25_EnhancedVehicle_HUD.POSITION.ICON_TRACK, FS25_EnhancedVehicle_HUD.SIZE.ICONTRACK)
+    for _, iconName in ipairs({ "hl1", "hl2", "hl3" }) do
+      setIconLayout(self.speedMeter, self.icons[iconName], boxPosX, boxPosY, FS25_EnhancedVehicle_HUD.POSITION.ICON_HLMODE, FS25_EnhancedVehicle_HUD.SIZE.ICONTRACK)
+    end
+    for _, iconName in ipairs({ "hlup", "hldown" }) do
+      setIconLayout(self.speedMeter, self.icons[iconName], boxPosX, boxPosY, FS25_EnhancedVehicle_HUD.POSITION.ICON_HLDIR, FS25_EnhancedVehicle_HUD.SIZE.ICONTRACK)
     end
 
     -- snap text
@@ -491,6 +751,9 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
     y = y + offY
 
     self.diffBox:setPosition(x, y)
+    for _, iconName in ipairs({ "diff_bg", "diff_dm", "diff_front", "diff_back" }) do
+      setIconLayout(self.speedMeter, self.icons[iconName], x, y, FS25_EnhancedVehicle_HUD.POSITION.ICON_DIFF, FS25_EnhancedVehicle_HUD.SIZE.ICONDIFF)
+    end
   end
 
   self.dmgText.textMarginWidth, self.dmgText.textMarginHeight = self.gameInfoDisplay:scalePixelToScreenVector(FS25_EnhancedVehicle_HUD.SIZE.MARGINDMG)
@@ -553,6 +816,7 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
     boxPosY = boxPosY + offY
 
     self.parkBox:setPosition(boxPosX, boxPosY)
+    setIconLayout(self.speedMeter, self.icons.park, boxPosX, boxPosY, FS25_EnhancedVehicle_HUD.POSITION.ICON_PARK, FS25_EnhancedVehicle_HUD.SIZE.ICONPARK)
   end
 
   -- rpm & temp & odo
@@ -571,6 +835,12 @@ function FS25_EnhancedVehicle_HUD:storeScaledValues()
   self.odoText.posY = baseY + textY
   self.odoText.size = self.speedMeter:scalePixelToScreenHeight(FS25_EnhancedVehicle_HUD.TEXT_SIZE.ODO)
   self.odoText.size2 = self.speedMeter:scalePixelToScreenHeight(FS25_EnhancedVehicle_HUD.TEXT_SIZE.ODO - 1)
+
+  self.isCalculated = true
+  self.layoutSignature = self:getLayoutSignature()
+  self:updateFillLevelsPosition()
+
+  return true
 end
 
 -- #############################################################################
@@ -578,30 +848,12 @@ end
 function FS25_EnhancedVehicle_HUD:setVehicle(vehicle)
   if debug > 2 then print("-> " .. myName .. ": setVehicle ") end
 
-  self.vehicle = vehicle
+  if self.isDeleted then return end
 
-  if self.trackBox ~= nil then
-    self.trackBox:setVisible(vehicle ~= nil)
-  end
-  if self.diffBox ~= nil then
-    self.diffBox:setVisible(vehicle ~= nil)
-  end
-  if self.miscBox ~= nil then
-    self.miscBox:setVisible(vehicle ~= nil)
-  end
-  if self.dmgBox ~= nil then
-    for _, element in pairs(self.bgBoxElements) do
-      self.dmgBox[element]:setVisible(vehicle ~= nil)
-    end
-  end
-  if self.fuelBox ~= nil then
-    for _, element in pairs(self.bgBoxElements) do
-      self.fuelBox[element]:setVisible(vehicle ~= nil)
-    end
-  end
-  if self.parkBox ~= nil then
-    self.parkBox:setVisible(vehicle ~= nil)
-  end
+  self:restoreFillLevelsPosition()
+  self.vehicle = vehicle
+  self:invalidateLayout()
+  self:hideAllElements()
 end
 
 -- #############################################################################
@@ -609,16 +861,14 @@ end
 function FS25_EnhancedVehicle_HUD:hideSomething(vehicle)
   if debug > 2 then print("-> " .. myName .. ": hideSomething ") end
 
-  if vehicle.isClient then
-    self.trackBox:setVisible(false)
-    self.diffBox:setVisible(false)
-    self.miscBox:setVisible(false)
-    for _, element in pairs(self.bgBoxElements) do
-      self.dmgBox[element]:setVisible(false)
-      self.fuelBox[element]:setVisible(false)
-    end
-    self.parkBox:setVisible(false)
-  end
+  if self.isDeleted then return end
+  if vehicle ~= nil and vehicle.isClient == false then return end
+  if vehicle ~= nil and self.vehicle ~= nil and vehicle ~= self.vehicle then return end
+
+  self.vehicle = nil
+  self:invalidateLayout()
+  self:hideAllElements()
+  self:restoreFillLevelsPosition()
 end
 
 -- #############################################################################
@@ -626,17 +876,28 @@ end
 function FS25_EnhancedVehicle_HUD:drawHUD()
   if debug > 2 then print("-> " .. myName .. ": drawHUD ") end
 
-  -- jump out if we're not ready
-  if self.vehicle == nil or not self.speedMeter.isVehicleDrawSafe or g_dedicatedServerInfo ~= nil then return end
-
-  -- jump out if this vehicle does not have the EV spec (e.g. trains)
-  if self.vehicle["spec_FS25_EnhancedVehicle.EnhancedVehicle"] == nil then return end
-
-  -- as soon as the game gauge appeared -> update our positions only once
-  if self.isCalculated == false then
-    self:storeScaledValues()
-    self.isCalculated = true
+  if self.isDeleted or not self.isLoaded or g_dedicatedServerInfo ~= nil then
+    self:restoreFillLevelsPosition()
+    return
   end
+
+  if not self:isVehicleEligible(self.vehicle) or self.vehicle.vData == nil then
+    self:hideAllElements()
+    self:restoreFillLevelsPosition()
+    return
+  end
+
+  -- FS25 deliberately waits one update after changing the controlled vehicle.
+  if self.speedMeter == nil or not self.speedMeter.isVehicleDrawSafe then return end
+
+  local layoutSignature = self:getLayoutSignature()
+  if not self.isCalculated or layoutSignature ~= self.layoutSignature then
+    if not self:storeScaledValues() then return end
+  end
+
+  -- Reassert the anchor after the base HUD has drawn; this also notices when
+  -- the game recalculates its own position because the UI scale changed.
+  self:updateFillLevelsPosition()
 
   -- should an element be visible at all?
   if not FS25_EnhancedVehicle.functionSnapIsEnabled then
@@ -874,18 +1135,20 @@ function FS25_EnhancedVehicle_HUD:drawHUD()
   end
 
   local deltaY = 0
-  if g_currentMission.hud.sideNotifications ~= nil and FS25_EnhancedVehicle.hud.dmg.offsetX == 0 and FS25_EnhancedVehicle.hud.dmg.offsetY == 0 and FS25_EnhancedVehicle.hud.fuel.offsetX == 0 and FS25_EnhancedVehicle.hud.fuel.offsetY == 0 then
+  local missionHud = g_currentMission ~= nil and g_currentMission.hud or nil
+  local sideNotifications = missionHud ~= nil and missionHud.sideNotifications or nil
+  if sideNotifications ~= nil and FS25_EnhancedVehicle.hud.dmg.offsetX == 0 and FS25_EnhancedVehicle.hud.dmg.offsetY == 0 and FS25_EnhancedVehicle.hud.fuel.offsetX == 0 and FS25_EnhancedVehicle.hud.fuel.offsetY == 0 then
     -- move our elements down if game displays side notifications
-    if #g_currentMission.hud.sideNotifications.notificationQueue > 0 then
-      deltaY = deltaY + (g_currentMission.hud.sideNotifications.bgScale.height + g_currentMission.hud.sideNotifications.notificationOffsetY) * #g_currentMission.hud.sideNotifications.notificationQueue
-      deltaY = deltaY + g_currentMission.hud.sideNotifications.notificationOffsetY
+    if #sideNotifications.notificationQueue > 0 then
+      deltaY = deltaY + (sideNotifications.bgScale.height + sideNotifications.notificationOffsetY) * #sideNotifications.notificationQueue
+      deltaY = deltaY + sideNotifications.notificationOffsetY
     end
     -- move our elements down if game displays progress bars
     if FS25_EnhancedVehicle_HUD.numberProgessBars > 0 then
-      deltaY = deltaY + (g_currentMission.hud.sideNotifications.progressBarBgTop.height +
-                         g_currentMission.hud.sideNotifications.progressBarBgScale.height +
-                         g_currentMission.hud.sideNotifications.progressBarBgBottom.height +
-                         g_currentMission.hud.sideNotifications.progressBarSectionOffsetY) * FS25_EnhancedVehicle_HUD.numberProgessBars
+      deltaY = deltaY + (sideNotifications.progressBarBgTop.height +
+                         sideNotifications.progressBarBgScale.height +
+                         sideNotifications.progressBarBgBottom.height +
+                         sideNotifications.progressBarSectionOffsetY) * FS25_EnhancedVehicle_HUD.numberProgessBars
       deltaY = deltaY + self.marginElement
       FS25_EnhancedVehicle_HUD.numberProgessBars = 0
     end

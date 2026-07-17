@@ -1,0 +1,14 @@
+# Generated release and test artifacts
+/build/
+
+# Python bytecode and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local logs and editor/OS metadata
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+*~

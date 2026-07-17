@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<i3D name="guidanceRibbon" version="1.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://i3d.giants.ch/schema/i3d-1.6.xsd">
+  <Asset>
+    <Export program="FS25_EnhancedVehicle" version="1.1.8.0"/>
+  </Asset>
+
+  <Files>
+    <File fileId="1" filename="$data/shaders/glowShader.xml"/>
+    <File fileId="2" filename="$data/shared/white_diffuse.png"/>
+  </Files>
+
+  <Materials>
+    <Material name="guidanceRibbon_mat" materialId="1" diffuseColor="1 1 1 1" specularColor="0 0 0" alphaBlending="true" customShaderId="1" customShaderVariation="additive_colorScale">
+      <CustomParameter name="colorScale" value="1 1 1"/>
+      <CustomParameter name="lightControl" value="2"/>
+      <Emissivemap fileId="2"/>
+    </Material>
+  </Materials>
+
+  <Shapes>
+    <IndexedTriangleSet name="unitPrism" shapeId="1" bvCenter="0 0 0" bvRadius="0.8660254">
+      <Vertices count="24" normal="true" uv0="true">
+        <v p="-0.5 -0.5 0.5" n="0 0 1" t0="0 0"/>
+        <v p="0.5 -0.5 0.5" n="0 0 1" t0="1 0"/>
+        <v p="0.5 0.5 0.5" n="0 0 1" t0="1 1"/>
+        <v p="-0.5 0.5 0.5" n="0 0 1" t0="0 1"/>
+
+        <v p="-0.5 -0.5 -0.5" n="0 0 -1" t0="0 0"/>
+        <v p="-0.5 0.5 -0.5" n="0 0 -1" t0="0 1"/>
+        <v p="0.5 0.5 -0.5" n="0 0 -1" t0="1 1"/>
+        <v p="0.5 -0.5 -0.5" n="0 0 -1" t0="1 0"/>
+
+        <v p="0.5 -0.5 -0.5" n="1 0 0" t0="0 0"/>
+        <v p="0.5 0.5 -0.5" n="1 0 0" t0="0 1"/>
+        <v p="0.5 0.5 0.5" n="1 0 0" t0="1 1"/>
+        <v p="0.5 -0.5 0.5" n="1 0 0" t0="1 0"/>
+
+        <v p="-0.5 -0.5 -0.5" n="-1 0 0" t0="0 0"/>
+        <v p="-0.5 -0.5 0.5" n="-1 0 0" t0="1 0"/>
+        <v p="-0.5 0.5 0.5" n="-1 0 0" t0="1 1"/>
+        <v p="-0.5 0.5 -0.5" n="-1 0 0" t0="0 1"/>
+
+        <v p="-0.5 0.5 -0.5" n="0 1 0" t0="0 0"/>
+        <v p="-0.5 0.5 0.5" n="0 1 0" t0="0 1"/>
+        <v p="0.5 0.5 0.5" n="0 1 0" t0="1 1"/>
+        <v p="0.5 0.5 -0.5" n="0 1 0" t0="1 0"/>
+
+        <v p="-0.5 -0.5 -0.5" n="0 -1 0" t0="0 0"/>
+        <v p="0.5 -0.5 -0.5" n="0 -1 0" t0="1 0"/>
+        <v p="0.5 -0.5 0.5" n="0 -1 0" t0="1 1"/>
+        <v p="-0.5 -0.5 0.5" n="0 -1 0" t0="0 1"/>
+      </Vertices>
+
+      <Triangles count="12">
+        <t vi="0 1 2"/>
+        <t vi="0 2 3"/>
+        <t vi="4 5 6"/>
+        <t vi="4 6 7"/>
+        <t vi="8 9 10"/>
+        <t vi="8 10 11"/>
+        <t vi="12 13 14"/>
+        <t vi="12 14 15"/>
+        <t vi="16 17 18"/>
+        <t vi="16 18 19"/>
+        <t vi="20 21 22"/>
+        <t vi="20 22 23"/>
+      </Triangles>
+
+      <Subsets count="1">
+        <Subset firstVertex="0" numVertices="24" firstIndex="0" numIndices="36"/>
+      </Subsets>
+    </IndexedTriangleSet>
+  </Shapes>
+
+  <Scene>
+    <TransformGroup name="guidanceRibbon" collision="false" nodeId="1">
+      <Shape name="unitPrism" shapeId="1" collision="false" clipDistance="1000" castsShadows="false" receiveShadows="false" distanceBlending="false" doubleSided="true" materialIds="1" nodeId="2"/>
+    </TransformGroup>
+  </Scene>
+</i3D>
